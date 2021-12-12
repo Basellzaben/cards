@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "427877078838",
+    "project_id": "cardskeeper-9b6df",
+    "storage_bucket": "cardskeeper-9b6df.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427877078838:android:3576085ec167b248a40597",
+        "android_client_info": {
+          "package_name": "com.galaxyinternational.cards"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427877078838-1s6kotjmrorubou5fh629tl5tl6fack2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg8z6oZKaiX7-Tcx1gPq17I_G1z2Y4vjI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427877078838-1s6kotjmrorubou5fh629tl5tl6fack2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
