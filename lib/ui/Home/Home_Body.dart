@@ -3,13 +3,19 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cards/GlobalVaribales.dart';
+import 'package:cards/Models/HttpService.dart';
+import 'package:cards/Models/Fileofcards.dart';
+import 'package:cards/Models/Fileofcards.dart';
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/NavDrawer.dart';
+import 'package:cards/ui/Profile/Body_profile.dart';
 import 'package:cards/ui/Regeister/Register_Body.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../FileDialog.dart';
 class Home_Body extends StatefulWidget {
   goBackToPreviousScreen(BuildContext context){
     // Navigator.pop(context);
@@ -20,6 +26,9 @@ class Home_Body extends StatefulWidget {
   @override
   _Home_Body createState() => _Home_Body();
 }
+
+
+
 goBackToPreviousScreen(BuildContext context) {
 
   /* Navigator.push(
@@ -34,11 +43,13 @@ goBackToPreviousScreen(BuildContext context) {
 }
 
 class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
-   late AnimationController controller;
+  final HttpService httpService = HttpService();
+
+  late AnimationController controller;
    late Animation colorAnimation;
    late Animation sizeAnimation;
    final globalKey = GlobalKey<ScaffoldState>();
-
+var username;
   @override
   void initState() {
     super.initState();
@@ -49,7 +60,7 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
 
     // Defining both color and size animations
     colorAnimation =
-        ColorTween(end: HexColor(Globalvireables.basecolor), begin: HexColor(Globalvireables.secondarycolor)).animate(controller);
+        ColorTween(end: HexColor(Globalvireables.bluedark), begin: HexColor(Globalvireables.bluedark)).animate(controller);
     sizeAnimation = Tween<double>(begin: 70.0, end: 75.0).animate(controller);
 
    /* colorAnimation = ColorTween(begin: Colors.blue, end: Colors.yellow)
@@ -94,39 +105,64 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
     borderRadius: BorderRadius.vertical(
     bottom: Radius.elliptical(
     MediaQuery.of(context).size.width, 50.0)),
-            color: HexColor(Globalvireables.basecolor)),
+            color: HexColor(Globalvireables.bluedark)),
             child: Column(
               //    mainAxisAlignment: MainAxisAlignment.center,
               children: [
+            Container(
+              color: HexColor(Globalvireables.bluedark),
+              child: Material(
+                color: HexColor(Globalvireables.bluedark),
 
-                Row(
-                    children: <Widget>[
-                      Container(
-                          margin: EdgeInsets.only(right: 5, left: 5, top: 40),
+              child: InkWell(
 
-                          child: Icon(
-                            Icons.person_rounded,
-                            size: 40.0,
-                            color: Colors.white,
-                          )),
-                      /* Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Image.asset(
-                          'assest/profile.png',
-                          height: 30,
-                          width: 30,
-                        ),
+              onTap: () {
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder:
+                        (context) =>
+                        Body_profile()
+                    )
+                );
 
 
-                      ),*/
-                      Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(right: 0, left: 0, top: 45),
-                        child: Text(Globalvireables.name,
-                          style: TextStyle(color: Colors.white, fontSize: 16),),
-                      )
-                    ]),
+              },
+              child: ClipRRect(
 
+                  child: Row(
+
+                      children: <Widget>[
+                        Container(
+                            margin: EdgeInsets.only(right: 5, left: 5, top: 40),
+
+                            child: Icon(
+                              Icons.person_rounded,
+                              size: 40.0,
+                              color: Colors.white,
+                            )),
+                        /* Container(
+                          margin: EdgeInsets.only(top: 10),
+                          child: Image.asset(
+                            'assest/profile.png',
+                            height: 30,
+                            width: 30,
+                          ),
+
+
+                        ),*/
+                        Container(
+                          alignment: Alignment.topLeft,
+                          margin: EdgeInsets.only(right: 0, left: 0, top: 45),
+                          child: Text(Globalvireables.name,
+                            style: TextStyle(color: Colors.white, fontSize: 16),),
+                        )
+                      ]),
+
+
+              ),
+              ),
+              ),
+            ),
 
                 Center(
                   child: Container(
@@ -167,15 +203,75 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
           ),
         ),
         backgroundColor: Colors.white,
-        body: Container(
-          /*   decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/emptycards.png"), fit: BoxFit.scaleDown)),
-        //  child: Text(Globalvireables.email),
-*/
+        body: FutureBuilder(
+          future: httpService.getPosts(),
+          builder: (BuildContext context, AsyncSnapshot<List<Fileofcards>> snapshot) {
+            if (snapshot.hasData && !snapshot.data!.isEmpty) {
+              print("snapshot.hasData"+snapshot.hasData.toString());
+              List<Fileofcards>? posts = snapshot.data;
+              return ListView(
+                children: posts!
+                    .map(
+                      (Fileofcards post) => ListTile(
 
-            child: bodyd()));
+                    leading :  Center(
+                      child: Card(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      //margin: EdgeInsets.only(top: 10,bottom: 10),
+                                      width:100,
+                                      height: 100,
+                                      /*color: Colors.green,*/
+                                      child: Center(
+                                        child: Text(
+                                          post.ProfileName.toString(),
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black,fontSize: 17),
+                                        ),),),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      width: 100,
+                                        child: Image.network(
+                                          'http://10.0.1.60:1425/'+post.ProfileImage.toString(),
+                                          //  height: 200,
+                                          // width: 200,
+                                        ),
+                                      /*child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            post.ProfileName,
+                                            textDirection: TextDirection.ltr,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,),
+                                          ))*/
+                                    ),)
+                                ],
+                              ),
+                            ),
+                          ),
+                    ),
+
+
+
+                  ),
+                )
+                    .toList(),
+              );
+            } else {
+              return bodyd();
+            }
+          },
+        ),);
   }
+
+
+
 
 
   Widget bodyd() {
@@ -191,7 +287,7 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
                 child: Text("Add your first card file now", style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w300,
-                    color: HexColor(Globalvireables.secondarycolor)
+                    color: HexColor(Globalvireables.bluedark)
                 ),)),
 
 
@@ -200,7 +296,7 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
           child: Icon(
             Icons.credit_card_outlined,
             size: 80.0,
-            color: HexColor(Globalvireables.secondarycolor),
+            color: HexColor(Globalvireables.bluedark),
           ))
     ,
             Container(
@@ -229,7 +325,14 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
                       fontSize: 18, fontWeight: FontWeight.w300,),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                //  getUser();
+               showDialog(
+                    context: context,
+                    builder: (_) => FileDialog(),
+                  );
+
+                },
               ),
             ),
 
@@ -238,6 +341,8 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
       ),
     );
   }
+
+  
 }
 
 

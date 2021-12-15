@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(children: [
        Center(
          child: new Image.asset('assets/logo.jpg'
-       ,height:280 ,width:250 , ),
+       ,height:250 ,width:250 , ),
       ),
 
     Container(

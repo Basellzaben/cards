@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cards/GlobalVaribales.dart';
+import 'package:cards/Models/Users.dart';
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:cards/ui/Regeister/Register_Body.dart';
@@ -12,7 +13,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+//import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
 class Login_Body extends StatefulWidget {
   goBackToPreviousScreen(BuildContext context){
@@ -86,9 +87,8 @@ backgroundColor: Colors.white,
 
 
 
-              child: new Image.asset('assets/signincover.png'
+              child: new Image.asset('assets/signincovernew.jpg')
 
-                 , ),
 
   ),
 ),
@@ -216,7 +216,7 @@ Row(children: [
           style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold ),
         ),
     ),
-    onPressed: () {signInWithFacebook();},
+    onPressed: () {/*signInWithFacebook();*/},
   ),
   ElevatedButton(
     style: ElevatedButton.styleFrom(
@@ -353,6 +353,12 @@ else
           print(user!.phoneNumber.toString()+"phone"),
           print(user!.photoURL.toString()+"phone"),
           //print(user!.metadata.toString()+"phone");
+            Globalvireables.email=user!.email.toString(),
+            Globalvireables.name=user!.displayName.toString(),
+
+            Globalvireables.phone=user!.phoneNumber.toString(),
+            Globalvireables.photoURL=user!.photoURL.toString(),
+            Globalvireables.password="Registered with google ",
 
           }else{
           Navigator.pop(context)
@@ -374,7 +380,10 @@ else
       }
       print("errorb"+e.toString());
       //throw e;
-    }/*}else{
+    }
+
+
+    /*}else{
 
     //  displayMessage('لا يوجد اتصال انترنت');
       showAlert(context,"No Internet ...");
@@ -410,10 +419,21 @@ Globalvireables.email=email;
 
         var jsonResponse = jsonDecode(response.body);
         Navigator.pop(context);
+        Users user = Users.fromJson(jsonResponse);
 
-        if (jsonResponse .toString()!= "0") {
+        print(user.getid() + " ussssersss");
+
+ /*       Globalvireables.email=user.getEmail();
+        Globalvireables.phone=user.getMobile();
+        Globalvireables.name=user.getname();
+        Globalvireables.password=user.getPassword();
+        Globalvireables.country=user.getCountry();
+        Globalvireables.photoURL=user.getProfileImage();*/
+        Globalvireables.ID=user.getid();
+        if (Globalvireables.ID!= "0") {
 
           print("succ  "+jsonResponse.toString());
+
 
         }
         else {
@@ -421,10 +441,11 @@ Globalvireables.email=email;
 
        //   displayMessage('exist');
         }
-        if(email.toString().length>5)
-          Navigator.push(
+        if(user.getEmail().length>5)
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Home_Body()),);
+
       });
     }on TimeoutException catch (_) {
    //   displayMessage('out time');
@@ -540,7 +561,7 @@ Globalvireables.email=email;
     return await FirebaseAuth.instance
         .signInWithCredential(facebookAuthCredential);
   }*/
-  Future<String?> signInWithFacebook() async {
+/*  Future<String?> signInWithFacebook() async {
   try {
     print("try  ");
     final _instance = FacebookAuth.instance;
@@ -551,9 +572,9 @@ Globalvireables.email=email;
       final a = await _auth.signInWithCredential(credential);
       await _instance.getUserData().then((userData) async {
         print("auth==" + _auth.currentUser!.email.toString());
-        await _auth.currentUser!.email; /*updateEmail(userData['email']);*/
+        await _auth.currentUser!.email; *//*updateEmail(userData['email']);*//*
       });
-      /* return null;
+      *//* return null;
       } else if (result.status == LoginStatus.cancelled) {
         return 'Login cancelled';
       } else {
@@ -563,14 +584,14 @@ Globalvireables.email=email;
     } catch (e) {
       print("succ"+e.toString());
 
-      return e.toString();*/
+      return e.toString();*//*
     } else {
       print("error;;;;");
     }
   }catch (e) {
     print("succerroooor" + e.toString());
   }
-  }
+  }*/
 
 
 
@@ -598,17 +619,39 @@ Globalvireables.email=email;
 
         var jsonResponse = jsonDecode(response.body);
 
+        Users user = Users.fromJson(jsonResponse);
+
+        print(user.getid() + " ussssersss");
+
+        Globalvireables.email=user.getEmail();
+        Globalvireables.phone=user.getMobile();
+        Globalvireables.name=user.getname();
+        Globalvireables.password=user.getPassword();
+        Globalvireables.country=user.getCountry();
+        Globalvireables.photoURL=user.getProfileImage();
+        Globalvireables.ID=user.getid();
+
 
         if (!jsonResponse.toString().contains("ID: 0")) {
 
           print("succ = "+jsonResponse.toString());
           Navigator.pop(context);
 
-         Navigator.push(context,
-              MaterialPageRoute(builder:
-              (context) =>
-              Home_Body()));
 
+
+
+          Navigator.push(context,
+              MaterialPageRoute(builder:
+                  (context) =>
+                  Home_Body()));
+
+        } else if(user.getid()!="0"){
+
+
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Home_Body()),);
 
         }
         else {

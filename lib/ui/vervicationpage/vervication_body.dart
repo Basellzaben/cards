@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cards/Models/Users.dart';
 import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
@@ -34,8 +35,6 @@ class _verviaction_body extends State<verviaction_body> {
   void initState() {
     super.initState();
     getCurrentNumber();
-    _listOPT();
-
   }
 
   getCurrentNumber() async {
@@ -158,20 +157,7 @@ class _verviaction_body extends State<verviaction_body> {
                           height: 70,
                           width: 45,
                           color: HexColor(Globalvireables.basecolor),
-                            child: PinFieldAutoFill(
-                              decoration: UnderlineDecoration(
-                                textStyle: TextStyle(fontSize: 20, color: Colors.black),
-                                colorBuilder: FixedColorBuilder(Colors.black.withOpacity(0.3)),
-                              ),
-                              codeLength: 4,
-                              onCodeSubmitted: (code) {},
-                              onCodeChanged: (code) {
-                                if (code!.length == 6) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
-                                }
-                              },
-                            )
-          /*                child: TextFormField(
+                          child: TextFormField(
                             maxLength: 1,
                             controller: smsEditingController1,
                             // textAlign: LanguageProvider.TxtAlign(),
@@ -380,7 +366,7 @@ maxLength: 1,
                                   color:Colors.black87,
                                 )
                             ),
-                          ),*/
+                          ),
                         ),
                       ],
                     ),
@@ -456,7 +442,7 @@ maxLength: 1,
 
     PhoneCodeAutoRetrievalTimeout phoneCodeAutoRetrievalTimeout =
         (String verificationId) {
-     // displayMessage("verification code: " + verificationId);
+      displayMessage("verification code: " + verificationId);
       strVerificationId = verificationId;
       setState(() {
         showVerifyNumberWidget = false;
@@ -493,7 +479,7 @@ maxLength: 1,
 
      // displayMessage("Successfully signed in UID: ${user!.uid}");
 
-      Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"","",Globalvireables.password);
+      Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"",Globalvireables.photoURL,Globalvireables.password);
 
 
       setState(() {
@@ -503,10 +489,6 @@ maxLength: 1,
     } catch (e) {
       displayMessage("Failed to sign in: " + e.toString());
     }
-  }
-  _listOPT()
-  async {
-    await SmsAutoFill().listenForCode;
   }
   Regester(String name,String email,String mobile,String country,String profileimage,String password) async {
 
@@ -522,24 +504,42 @@ maxLength: 1,
     http.Response response=await http.post(apiUrl, body: json);
     try {
       response = await http.post(apiUrl, body: json).whenComplete(() {
-
-
+print(response.body.toString() +"respncee");
         var jsonResponse = jsonDecode(response.body);
 
+        Users user = Users.fromJson(jsonResponse);
 
-        if (jsonResponse.toString() != "0") {
+        print(user.getid() + " ussssersss");
 
-          print("succ"+jsonResponse.toString());
+        Globalvireables.email=user.getEmail();
+        Globalvireables.phone=user.getMobile();
+        Globalvireables.name=user.getname();
+        Globalvireables.password=user.getPassword();
+        Globalvireables.country=user.getCountry();
+        Globalvireables.photoURL=user.getProfileImage();
+        Globalvireables.ID=user.getid();
+
+
+
+print("rees"+jsonResponse.toString());
+        if (user.getid()=="0") {
+
+          displayMessage('The number is registered, please log in');
+        }
+        else if(user.getid()!="0"){
+
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Home_Body()),);
+
+        }else{
+          displayMessage('error in logup');
 
         }
-        else {
-          print("error");
-        }
-        if(email.toString().length>5)
+      //  if(email.toString().length>5)
           displayMessage('error');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Home_Body()),);
+
       });
     }on TimeoutException catch (_) {
       displayMessage('out time');
