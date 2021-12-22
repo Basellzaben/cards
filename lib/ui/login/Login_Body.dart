@@ -15,6 +15,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
+
+import '../ScanScreen.dart';
 class Login_Body extends StatefulWidget {
   goBackToPreviousScreen(BuildContext context){
     // Navigator.pop(context);
@@ -44,6 +46,7 @@ class _Login_Body extends State<Login_Body> {
   TextEditingController passwordcontroler = TextEditingController();
   TextEditingController emailcontroler = TextEditingController();
 
+  User? user = FirebaseAuth.instance.currentUser;
 
   //final fbLogin = FacebookLogin();
   TextEditingController timeinput = TextEditingController();
@@ -51,35 +54,36 @@ class _Login_Body extends State<Login_Body> {
   TextEditingController longtimecontroler = TextEditingController();
   String date="";
   String timelong="";
-  User? user = FirebaseAuth.instance.currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-        key: _scaffoldKey,
-       // resizeToAvoidBottomInset : false,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+          key: _scaffoldKey,
+         // resizeToAvoidBottomInset : false,
 
 backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(children: [
-            Container(
+        body: Center(
+          child: SingleChildScrollView(
+            child: Column(children: [
+              Container(
    child: SingleChildScrollView(
 
    /* decoration: BoxDecoration(
 
-        image: DecorationImage(
+          image: DecorationImage(
 
-          image: AssetImage("assets/signincover.png"),
+            image: AssetImage("assets/signincover.png"),
 
-          fit: BoxFit.cover,
+            fit: BoxFit.cover,
 
-        ),
+          ),
 
-    ),*/
+      ),*/
 
 
 
@@ -87,153 +91,153 @@ backgroundColor: Colors.white,
 
 
 
-              child: new Image.asset('assets/signincovernew.jpg')
+                child: new Image.asset('assets/signincovernew.jpg')
 
 
   ),
 ),
-            SingleChildScrollView(
-              child: Row(children: [
-                Column(children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 10,left: 20),
-                    child: Align(
+              SingleChildScrollView(
+                child: Row(children: [
+                  Column(children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 10,left: 20),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Card Keeper ",style: TextStyle(color: HexColor(Globalvireables.basecolor),
+                            fontSize: 27,fontWeight: FontWeight.bold
+                        ),),
+                      ),
+                    ),
+
+
+                    Container(
+                      width: 150,
+                      margin: EdgeInsets.only(top: 10,left: 20),
+                      child: Align
+                      (
                       alignment: Alignment.centerLeft,
-                      child: Text("Card Keeper ",style: TextStyle(color: HexColor(Globalvireables.basecolor),
-                          fontSize: 27,fontWeight: FontWeight.bold
-                      ),),
-                    ),
-                  ),
-
-
-                  Container(
-                    width: 150,
-                    margin: EdgeInsets.only(top: 10,left: 20),
-                    child: Align
-                    (
-                    alignment: Alignment.centerLeft,
-                    child: Text("All your Cards in one place",style: TextStyle(color: HexColor(Globalvireables.secondarycolor),
-                    fontSize: 16,/*fontWeight: FontWeight.bold*/
-                   ),
-                   ),
-                   ),
-                   ),
-                ],),
+                      child: Text("All your Cards in one place",style: TextStyle(color: HexColor(Globalvireables.secondarycolor),
+                      fontSize: 16,/*fontWeight: FontWeight.bold*/
+                     ),
+                     ),
+                     ),
+                     ),
+                  ],),
 
 
 
-            /*    Container (
+              /*    Container (
   margin: EdgeInsets.only(left: 0,top: 20),
-                 child: new Image.asset('assets/logo.png'
-                 , width: 100,height: 100,),
-                          )*/
+                   child: new Image.asset('assets/logo.png'
+                   , width: 100,height: 100,),
+                            )*/
 
-           ] ),
-            ),
-            Container(
-              color: Colors.transparent,
-              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 40.0,bottom: 12.0),
+             ] ),
+              ),
+              Container(
+                color: Colors.transparent,
+                margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 40.0,bottom: 12.0),
 
-              //  color: Colors.white,
-              width: MediaQuery.of(context).size.height,
-              // height: MediaQuery.of(context).size.height,
-              child: TextFormField(
-                controller: emailcontroler,
-               // textAlign: LanguageProvider.TxtAlign(),
-                //controller:passwordE,
-                //obscureText: _isObscure,
-                decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                //  color: Colors.white,
+                width: MediaQuery.of(context).size.height,
+                // height: MediaQuery.of(context).size.height,
+                child: TextFormField(
+                  controller: emailcontroler,
+                 // textAlign: LanguageProvider.TxtAlign(),
+                  //controller:passwordE,
+                  //obscureText: _isObscure,
+                  decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                    ),
-                    border: UnderlineInputBorder(),
-                    labelText:"Email",
-                    labelStyle: TextStyle(
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                      ),
+                      border: UnderlineInputBorder(),
+                      labelText:"Email",
+                      labelStyle: TextStyle(
 
-                      color:Colors.black87,
-                    )
+                        color:Colors.black87,
+                      )
+                  ),
                 ),
               ),
-            ),
-            Container(
-              color: Colors.transparent,
-              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
+              Container(
+                color: Colors.transparent,
+                margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
 
-              //  color: Colors.white,
-              width: MediaQuery.of(context).size.height,
-              // height: MediaQuery.of(context).size.height,
-              child: TextFormField(
-                controller: passwordcontroler,
+                //  color: Colors.white,
+                width: MediaQuery.of(context).size.height,
+                // height: MediaQuery.of(context).size.height,
+                child: TextFormField(
+                  controller: passwordcontroler,
 
-                // textAlign: LanguageProvider.TxtAlign(),
-                //controller:passwordE,
-                //obscureText: _isObscure,
-                decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                  // textAlign: LanguageProvider.TxtAlign(),
+                  //controller:passwordE,
+                  //obscureText: _isObscure,
+                  decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                    ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                      ),
 
-                    border: UnderlineInputBorder(),
+                      border: UnderlineInputBorder(),
 
-                    labelText:"Password",
+                      labelText:"Password",
 
 
-                    labelStyle: TextStyle(
+                      labelStyle: TextStyle(
 
-                      color:Colors.black87,
-                    )
+                        color:Colors.black87,
+                      )
+                  ),
                 ),
               ),
-            ),
 
 
 Row(children: [
   Spacer(),
   ElevatedButton(
-    style: ElevatedButton.styleFrom(
-          shape: CircleBorder(),
-          primary: HexColor("#4267b2")
-    ),
-    child: Container(
-        width: 50,
-        height: 50,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(shape: BoxShape.circle),
-        child: Text(
-          'F',
-          style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold ),
-        ),
-    ),
-    onPressed: () {/*signInWithFacebook();*/},
+      style: ElevatedButton.styleFrom(
+            shape: CircleBorder(),
+            primary: HexColor("#4267b2")
+      ),
+      child: Container(
+          width: 50,
+          height: 50,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(shape: BoxShape.circle),
+          child: Text(
+            'F',
+            style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold ),
+          ),
+      ),
+      onPressed: () {/*signInWithFacebook();*/},
   ),
   ElevatedButton(
-    style: ElevatedButton.styleFrom(
-          shape: CircleBorder(),
-          primary: HexColor("#ff4a3d")
-    ),
-    child: Container(
-        width: 50,
-        height: 50,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(shape: BoxShape.circle),
-        child: Text(
-          'G+',
-          style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold ),
-        ),
-    ),
-    onPressed: () {signInwithGoogle(context,"جار تسجيل الدخول");},
+      style: ElevatedButton.styleFrom(
+            shape: CircleBorder(),
+            primary: HexColor("#ff4a3d")
+      ),
+      child: Container(
+          width: 50,
+          height: 50,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(shape: BoxShape.circle),
+          child: Text(
+            'G+',
+            style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold ),
+          ),
+      ),
+      onPressed: () {signInwithGoogle(context,"جار تسجيل الدخول");},
   ),
   Spacer(),
 
@@ -243,84 +247,92 @@ Row(children: [
 
 
 
-           /* Container(
-                margin: const EdgeInsets.only(left: 30.0,right: 30.0,top: 30.0,bottom: 0.0),
-                color: HexColor(Globalvireables.basecolor),
-                //      color: Colors.deepPurple,
-                width: MediaQuery.of(context).size.height,
-                height:60,
-                child: ElevatedButton(
+             /* Container(
+                  margin: const EdgeInsets.only(left: 30.0,right: 30.0,top: 30.0,bottom: 0.0),
+                  color: HexColor(Globalvireables.basecolor),
+                  //      color: Colors.deepPurple,
+                  width: MediaQuery.of(context).size.height,
+                  height:60,
+                  child: ElevatedButton(
 
-                  onPressed: () async {
+                    onPressed: () async {
 
-                  },
-                  child: Text('login'),
-                )
-            ),
+                    },
+                    child: Text('login'),
+                  )
+              ),
 */
 
-            Container(
-              margin: EdgeInsets.only(top: 30),
-              height: 55,
-              child: ElevatedButton(
-                child: Text('LOGIN'),
+              Container(
+                margin: EdgeInsets.only(top: 30),
+                height: 55,
+                child: ElevatedButton(
+                  child: Text('LOGIN'),
 
-                onPressed: () {  /*signIn_post();*/
+                  onPressed: () {  /*signIn_post();*/
+/*
 if(emailcontroler.text.toString().length>5 && passwordcontroler.text.toString().length>0)
-               Login(emailcontroler.text,passwordcontroler.text,context);
+                 Login(emailcontroler.text,passwordcontroler.text,context);
 else
   displayMessage("Correct information must be entered");
 
 
-
-
-                  },
-                style: ElevatedButton.styleFrom(
-                    primary: HexColor(Globalvireables.basecolor),
-                    padding: EdgeInsets.symmetric(horizontal: 100, vertical: 0),
-                    textStyle: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold)),
-              ),
-            ),
-
-
-
-            Row(children: [
-              Spacer(),
-
-              Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Text("Don't have an account ? ",style: TextStyle(fontWeight: FontWeight.bold,
-                    color: HexColor(Globalvireables.black),fontSize: 13
-                ),),
-              ),
-              new GestureDetector(
-                  onTap: (){
-                       Navigator.push(context,
+*/
+                    Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
-                            Register_Body()
+                                ScanScreen()
                         )
                     );
-                  },
-              child: Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Text("Register now",style: TextStyle(fontWeight: FontWeight.bold,
-                    color: HexColor(Globalvireables.basecolor),fontSize: 14
-                ),),
-              )),
 
-              Spacer(),
+                    },
+                  style: ElevatedButton.styleFrom(
+                      primary: HexColor(Globalvireables.basecolor),
+                      padding: EdgeInsets.symmetric(horizontal: 100, vertical: 0),
+                      textStyle: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)),
+                ),
+              ),
 
-            ],)
 
-          ]
 
-        ),
+              Row(children: [
+                Spacer(),
 
-    ),
-      ));
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Text("Don't have an account ? ",style: TextStyle(fontWeight: FontWeight.bold,
+                      color: HexColor(Globalvireables.black),fontSize: 13
+                  ),),
+                ),
+                new GestureDetector(
+                    onTap: (){
+                         Navigator.push(context,
+                          MaterialPageRoute(builder:
+                              (context) =>
+                              Register_Body()
+                          )
+                      );
+                    },
+                child: Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Text("Register now",style: TextStyle(fontWeight: FontWeight.bold,
+                      color: HexColor(Globalvireables.basecolor),fontSize: 14
+                  ),),
+                )),
+
+                Spacer(),
+
+              ],)
+
+            ]
+
+          ),
+
+      ),
+        )),
+    );
 
   }
   Future<bool> check() async {
@@ -346,27 +358,30 @@ else
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-      await _auth.signInWithCredential(credential).then((value) => {
-          if(user!.email!=null){
-          print(user!.email.toString()+"email"),
-          print(user!.displayName.toString()+"name"),
-          print(user!.phoneNumber.toString()+"phone"),
-          print(user!.photoURL.toString()+"phone"),
-          //print(user!.metadata.toString()+"phone");
-            Globalvireables.email=user!.email.toString(),
-            Globalvireables.name=user!.displayName.toString(),
+      final googleAccount = await FirebaseAuth.instance.signInWithCredential(credential);
 
-            Globalvireables.phone=user!.phoneNumber.toString(),
-            Globalvireables.photoURL=user!.photoURL.toString(),
+      await _auth.signInWithCredential(credential).then((value) => {
+          if(googleAccount.user?.email!=null){
+          print(googleAccount.user!.email.toString()+"email google"),
+          print(googleAccount.user!.displayName.toString()+"name"),
+          print(googleAccount.user!.phoneNumber.toString()+"phone"),
+          print(googleAccount.user!.photoURL.toString()+"phone"),
+          //print(user!.metadata.toString()+"phone");
+            Globalvireables.email=googleAccount.user!.email.toString(),
+            Globalvireables.name=googleAccount.user!.displayName.toString(),
+
+            Globalvireables.phone=googleAccount.user!.phoneNumber.toString(),
+            Globalvireables.photoURL=googleAccount.user!.photoURL.toString(),
             Globalvireables.password="Registered with google ",
 
           }else{
           Navigator.pop(context)
       },
-      if(user!.email.toString().length>5)
-     Regester(user!.displayName.toString(),user!.email.toString(),user!.phoneNumber.toString()
-    ,"",user!.photoURL.toString(),"")
-
+        if(googleAccount.user!.emailVerified==true)
+     Regester(googleAccount.user!.displayName.toString(),googleAccount.user!.email.toString(),googleAccount.user!.phoneNumber.toString()
+    ,"",googleAccount.user!.photoURL.toString(),"")
+else
+      showAlert(context,'خطأ في تسجيل الدخول من خلال جوجل')
 
     });
 
@@ -410,50 +425,51 @@ Globalvireables.email=email;
       "Email": email,
       "Mobile": mobile,
       "Country":country,
-      "ProfileImage": profileimage,
+      "ProfileImage": Globalvireables.imagen,
       "Password": password};
-    http.Response response=await http.post(apiUrl, body: json);
+
+    print("json"+json.toString());
+    print("name + email + pass + image"+name+"-"+email+"-"+profileimage.toString());
+
+
     try {
-      response = await http.post(apiUrl, body: json).whenComplete(() {
+      http.Response response=await http.post(apiUrl, body: json);
+      var jsonResponse = jsonDecode(response.body);
+      Navigator.pop(context);
+      Users user = Users.fromJson(jsonResponse);
 
+      print(response.toString() + " ussssersss");
 
-        var jsonResponse = jsonDecode(response.body);
-        Navigator.pop(context);
-        Users user = Users.fromJson(jsonResponse);
-
-        print(user.getid() + " ussssersss");
-
- /*       Globalvireables.email=user.getEmail();
-        Globalvireables.phone=user.getMobile();
-        Globalvireables.name=user.getname();
-        Globalvireables.password=user.getPassword();
-        Globalvireables.country=user.getCountry();
-        Globalvireables.photoURL=user.getProfileImage();*/
+        Globalvireables.email=email;
+        Globalvireables.phone=mobile;
+        Globalvireables.name=name;
+        Globalvireables.password=password;
+        Globalvireables.country=country;
+        Globalvireables.photoURL=profileimage;
         Globalvireables.ID=user.getid();
-        if (Globalvireables.ID!= "0") {
+      if (Globalvireables.ID!= "0") {
 
-          print("succ  "+jsonResponse.toString());
+        print("succ  "+jsonResponse.toString());
 
 
-        }
-        else {
-          print("exist  "+jsonResponse.toString());
-
-       //   displayMessage('exist');
-        }
-        if(user.getEmail().length>5)
-        Navigator.push(
-          context,
+      }
+      else {
+        print("exist  "+jsonResponse.toString());
+        Login(email,"",context);
+        //   displayMessage('exist');
+      }
+      if(email.length>5 && name != null)
+        Navigator.push(context,
           MaterialPageRoute(builder: (context) => Home_Body()),);
 
-      });
+
     }on TimeoutException catch (_) {
    //   displayMessage('out time');
       Navigator.pop(context);
       if(check()==false){
         showAlert(context,'لا يوجد اتصال انترنت');
       }else{
-        showAlert(context,'يوجد مشكلة في تسجسل الدخول , أعد المحاولة لاحقا');
+        showAlert(context,'يوجد مشكلة في تسجيل الدخول , أعد المحاولة لاحقا');
       }
     }
   }
@@ -628,14 +644,15 @@ Globalvireables.email=email;
         Globalvireables.name=user.getname();
         Globalvireables.password=user.getPassword();
         Globalvireables.country=user.getCountry();
+        if(password.length>2)
         Globalvireables.photoURL=user.getProfileImage();
         Globalvireables.ID=user.getid();
 
 
-        if (!jsonResponse.toString().contains("ID: 0")) {
+      /*  if (!jsonResponse.toString().contains("ID: 0")) {
 
           print("succ = "+jsonResponse.toString());
-          Navigator.pop(context);
+        //  Navigator.pop(context);
 
 
 
@@ -645,10 +662,10 @@ Globalvireables.email=email;
                   (context) =>
                   Home_Body()));
 
-        } else if(user.getid()!="0"){
-
-
-
+        } else*/
+        if(user.getid()!="0"){
+       //   Navigator.pop(context);
+print("loginyess");
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Home_Body()),);
@@ -658,8 +675,6 @@ Globalvireables.email=email;
           Navigator.pop(context);
           displayMessage("Login information error");
          /* displayMessage('out time');*/ print("error");
-
-
         }
         print("esaf = "+jsonResponse.toString());
 
@@ -678,7 +693,50 @@ Globalvireables.email=email;
 
 
     }
+  //  Navigator.pop(context);
+
   }
 
+  Future<bool> _onWillPop() async {
+/*
+    // This dialog will exit your app on saying yes
+    return (await showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('leave'),
+        content: new Text('leave confirm'),
+        actions: <Widget>[
 
+          new TextButton(
+            onPressed: () {Navigator.of(context).pop(false);},
+            style: TextButton.styleFrom(
+              primary: Colors.white10,
+            ),
+            child: Text('cancel'),
+          ),
+          new FlatButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: new Text('cancel'),
+            ),
+          new TextButton(
+            onPressed: () {return;},
+            style: TextButton.styleFrom(
+              primary: Colors.white10,
+            ),
+            child: Text('Yes'),
+          ),
+          new FlatButton(
+              // onPressed: () =>Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(title: '', ))),
+
+              onPressed: () { Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Login_Body()),);} ,
+              child: new Text('Yes'),
+
+            ),
+        ],
+      ),
+    )) ??*/
+    return false;
+  }
 }

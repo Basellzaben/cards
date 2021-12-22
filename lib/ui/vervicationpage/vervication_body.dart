@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:cards/Models/Users.dart';
 import 'package:cards/ui/Home/Home_Body.dart';
+import 'package:cards/ui/login/Login_Body.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/color/HexColor.dart';
@@ -478,9 +479,10 @@ maxLength: 1,
       final User? user = (await firebaseAuth.signInWithCredential(credential)).user;
 
      // displayMessage("Successfully signed in UID: ${user!.uid}");
-
+if(Globalvireables.regorupdate=="0")
       Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"",Globalvireables.photoURL,Globalvireables.password);
-
+else
+  Editprofile(Globalvireables.name,Globalvireables.email,Globalvireables.phone,Globalvireables.country,Globalvireables.password,context);
 
       setState(() {
         showVerificationCodeWidget = false;
@@ -494,6 +496,16 @@ maxLength: 1,
 
     Uri apiUrl = Uri.parse(Globalvireables.regesterapi);
 
+var countrypostion=-1;
+    for (var i = 0; i < 10; i++) {
+print (i.toString()+"  = postion");
+      if(mobile.substring(0,4)==Globalvireables.countryzipcode[i]){
+        print (i.toString()+"  = postion true");
+
+        country=Globalvireables.countryname[i];
+      }
+    }
+
     final json = {
       "Name": name,
       "Email": email,
@@ -503,7 +515,45 @@ maxLength: 1,
       "Password": password};
     http.Response response=await http.post(apiUrl, body: json);
     try {
-      response = await http.post(apiUrl, body: json).whenComplete(() {
+
+      print(response.body.toString() +"respncee");
+      var jsonResponse = jsonDecode(response.body);
+
+      Users user = Users.fromJson(jsonResponse);
+
+      print(user.getid() + " ussssersss");
+
+      Globalvireables.email=user.getEmail();
+      Globalvireables.phone=user.getMobile();
+      Globalvireables.name=user.getname();
+      Globalvireables.password=user.getPassword();
+      Globalvireables.country=user.getCountry();
+      Globalvireables.photoURL=user.getProfileImage();
+      Globalvireables.ID=user.getid();
+
+
+
+      print("rees"+jsonResponse.toString());
+      if (user.getid()=="0") {
+
+        displayMessage('The number is registered, please log in');
+      }
+      else if(user.getid()!="0"){
+
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home_Body()),);
+
+      }else{
+        displayMessage('error in logup');
+
+      }
+      //  if(email.toString().length>5)
+      displayMessage('error');
+
+
+/*      response = await http.post(apiUrl, body: json).whenComplete(() {
 print(response.body.toString() +"respncee");
         var jsonResponse = jsonDecode(response.body);
 
@@ -540,7 +590,7 @@ print("rees"+jsonResponse.toString());
       //  if(email.toString().length>5)
           displayMessage('error');
 
-      });
+      });*/
     }on TimeoutException catch (_) {
       displayMessage('out time');
 
@@ -574,5 +624,91 @@ print("rees"+jsonResponse.toString());
     await _auth.signOut();
   }
 */
+  Editprofile(String name,String email,String mobile,String country,String password,BuildContext context) async {
+    try {
 
+      Uri apiUrl = Uri.parse(Globalvireables.regesterapi+"/"+Globalvireables.ID);
+     // showAlert(context,"Editing ...");
+
+      final json = {
+        "ID":Globalvireables.ID,
+        "Name": name,
+        "Email": email,
+        "Mobile": mobile,
+        "Country":country,
+        "ProfileImage": Globalvireables.imagen,
+        "Password": password};
+
+      print ("card save");
+
+
+      //await http.post(apiUrl,body: jsone);
+
+      http.Response response=await http.put(apiUrl, body: json);
+
+      var jsonResponse = jsonDecode(response.body);
+
+if(!jsonResponse.toString().contains("error")) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => Login_Body()),);
+  Globalvireables.regorupdate="0";
+}
+      print("jsooooon"+jsonResponse.toString());
+
+
+      if (!jsonResponse.toString().contains("ID: 0")) {
+
+        print("succ = "+jsonResponse.toString());
+        Navigator.pop(context);
+
+      }
+      else {
+        Navigator.pop(context);
+        displayMessage("Login information error");
+        /* displayMessage('out time');*/
+        print("error="+jsonResponse.toString());
+      }
+      print("succ = "+jsonResponse.toString());
+
+      //  print("esaf = "+jsonResponse.toString());
+
+      /*   response = await http.post(apiUrl, body: jsone).whenComplete(() {
+
+
+        var jsonResponse = jsonDecode(response.body);
+
+        if (!jsonResponse.toString().contains("ID: 0")) {
+
+          print("succ = "+jsonResponse.toString());
+          Navigator.pop(context);
+
+        }
+        else {
+          Navigator.pop(context);
+          displayMessage("Login information error");
+          *//* displayMessage('out time');*//*
+          print("error="+jsonResponse.toString());
+        }
+        print("succ = "+jsonResponse.toString());
+
+        //  print("esaf = "+jsonResponse.toString());
+
+
+      });*/
+    }on TimeoutException catch (_) {
+      // displayMessage('out time');
+      displayMessage("out time");
+      Navigator.pop(context);
+      // displayMessage("Login information error");
+
+    }on FormatException catch(_){
+
+      Navigator.pop(context);
+      displayMessage("Login information error");
+
+
+    }
+    Navigator.pop(context);
+  }
 }

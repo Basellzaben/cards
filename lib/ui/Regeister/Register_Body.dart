@@ -47,7 +47,7 @@ class _Register_Body extends State<Register_Body> {
   bool showVerificationCodeWidget = false;
   bool showSuccessWidget = false;
   Image? imgs ;
-
+  var imgFile;
   @override
   Widget build(BuildContext context) {
     _controller.text="+962";
@@ -90,7 +90,7 @@ key: globalKey,
               onTap: () async {
 
 
-                var imgFile = await ImagePicker.pickImage(
+                 imgFile = await ImagePicker.pickImage(
                     source: ImageSource.gallery
 
                 );

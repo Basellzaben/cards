@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 
 //work state data
 class Fileofcards {
-  final int CustomerId;
-  final String ProfileName;
-  final String ProfileImage;
-  final int Id;
+   int CustomerId;
+   String ProfileName;
+   String ProfileImage;
+   int Id;
 
   Fileofcards({
     required this.CustomerId,

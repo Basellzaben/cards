@@ -22,7 +22,7 @@ class LogoutOverlayState extends State<FileDialog>
    Image? imgs ;
 String img64="0";
   TextEditingController namecontroler = TextEditingController();
-
+  late http.Response response;
   @override
   void initState() {
     super.initState();
@@ -203,14 +203,34 @@ if(namecontroler.text.length>2) {
         "ProfileName": name,
         "ProfileImage": path,
       };
+print ("file save");
 
 
 
+   http.Response response=await http.post(apiUrl, body: json);
 
-      http.Response response=await http.post(apiUrl, body: json);
+print(json.toString());
+      var jsonResponse = jsonDecode(response.body);
 
-      response = await http.post(apiUrl, body: json).whenComplete(() {
+      if (!jsonResponse.toString().contains("ID: 0")) {
 
+        print("succ = "+jsonResponse.toString());
+        Navigator.pop(context);
+
+      }
+      else {
+        Navigator.pop(context);
+        displayMessage("Login information error");
+        /* displayMessage('out time');*/
+        print("error="+jsonResponse.toString());
+
+
+      }
+      //  print("esaf = "+jsonResponse.toString());
+
+
+
+/*      response = await http.post(apiUrl, body: json).whenComplete(() {
 
         var jsonResponse = jsonDecode(response.body);
 
@@ -219,20 +239,19 @@ if(namecontroler.text.length>2) {
           print("succ = "+jsonResponse.toString());
           Navigator.pop(context);
 
-
         }
         else {
           Navigator.pop(context);
           displayMessage("Login information error");
-          /* displayMessage('out time');*/
+          *//* displayMessage('out time');*//*
           print("error="+jsonResponse.toString());
 
 
         }
-        print("esaf = "+jsonResponse.toString());
+      //  print("esaf = "+jsonResponse.toString());
 
 
-      });
+      });*/
     }on TimeoutException catch (_) {
       // displayMessage('out time');
       displayMessage("out time");
@@ -246,6 +265,7 @@ if(namecontroler.text.length>2) {
 
 
     }
+    Navigator.pop(context);
   }
   void showAlert(BuildContext context,String text) {
     showDialog(

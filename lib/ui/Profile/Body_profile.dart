@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/Models/Users.dart';
 import 'package:cards/color/HexColor.dart';
+import 'package:cards/ui/EditDataPages/EditProfileDialog.dart';
 import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:cards/ui/Regeister/Register_Body.dart';
+import 'package:cards/ui/login/Login_Body.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
@@ -25,6 +27,8 @@ class Body_profile extends StatefulWidget {
 class _Body_profile extends State<Body_profile> {
   String _imageBase64="";
   var bytes;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final globalKey = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -61,9 +65,9 @@ class _Body_profile extends State<Body_profile> {
                Center(
                 child: Container(
                   margin: EdgeInsets.only(top: 18,),
-               //   child: getImagenBase64(Globalvireables.photoURL),),
+                child: getImagenBase64(Globalvireables.photoURL),
 
-            child: ClipRRect(
+       /*     child: ClipRRect(
               borderRadius: BorderRadius.circular(9.0),
               child: Image.network(
                 'https://media-exp1.licdn.com/dms/image/C4E03AQFRm-g6gIqkzg/profile-displayphoto-shrink_800_800/0/1609987052943?e=1645056000&v=beta&t=-xlXbObyLKaUNx5Kpka5l1Pdsv4HsnyiqBDSxyu0FLM',
@@ -71,7 +75,7 @@ class _Body_profile extends State<Body_profile> {
                 height: 130.0,
                 fit: BoxFit.fill,
               ),
-            ),
+            ),*/
                 )
               ),
 
@@ -111,17 +115,14 @@ class _Body_profile extends State<Body_profile> {
                 Card(
                   
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
-
                   child: Container(
                     padding: EdgeInsets.all(10),
-
                     child: Row(
+
                         children: <Widget>[
-
                           Icon(Icons.phone,size: 30,color: HexColor(Globalvireables.bluedark),),
-
                           Container( margin:EdgeInsets.only(left: 8,right: 8),
-                              child: Text("0777546874".toString(),style: TextStyle(fontSize: 18),)),
+                              child: Text(Globalvireables.phone.toString(),style: TextStyle(fontSize: 18),)),
                         ]
                     ),
                   ),
@@ -163,7 +164,7 @@ class _Body_profile extends State<Body_profile> {
 
                 Card(
 
-                  margin: EdgeInsets.only(top:40,left: 12,right: 12,bottom: 30),
+                  margin: EdgeInsets.only(top:40,left: 12,right: 12),
 
                   child: Container(
                     padding: EdgeInsets.all(10),
@@ -179,6 +180,77 @@ class _Body_profile extends State<Body_profile> {
                   ),
                 ),),
 
+                Card(
+                  margin: EdgeInsets.only(top:40,left: 12,right: 12),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                        children: <Widget>[
+                          Icon(Icons.language,size: 30,color: HexColor(Globalvireables.bluedark),),
+
+                          Container( margin:EdgeInsets.only(left: 8,right: 8),
+                              child: Text("Language".toString(),style: TextStyle(fontSize: 18),)),
+                        ]
+                    ),
+                  ),),
+
+
+
+                Card(
+                  margin: EdgeInsets.only(top:40,left: 12,right: 12,bottom: 30),
+                  child: new InkWell(
+                    onTap: () async {
+                     await _googleSignIn.signOut();
+                      await _auth.signOut();
+                      Navigator.push(
+                        context,
+                         MaterialPageRoute(builder: (context) => Login_Body()),);
+                              },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+
+                      child: Row(
+                          children: <Widget>[
+
+                            Icon(Icons.logout,size: 30,color: HexColor(Globalvireables.bluedark),),
+
+                          Container(margin:EdgeInsets.only(left: 8,right: 8),
+                                child: Text("Logout".toString(),style: TextStyle(fontSize: 18),)),
+                          ]
+                      ),
+                    ),
+                  ),),
+
+                new InkWell(
+                  onTap: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EditProfileDialog()),);
+                  },
+                  child: Center(
+                    child: Card(
+color: Colors.black26,
+                      child: Container(
+
+height: 30,
+                        width: 150,
+                          margin: EdgeInsets.only(bottom: 0),
+                          child: Center(child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),))),
+                    ),
+
+                  ),
+                ),
+
+Center(
+  child: Container(
+      margin: EdgeInsets.only(bottom: 10),
+      child: Text("version 1.0 - 2021",style: TextStyle(color: Colors.black26,fontWeight: FontWeight.w300),)),
+
+),
+
+
+
+
               ])),
         )
 
@@ -187,38 +259,58 @@ class _Body_profile extends State<Body_profile> {
 
 
   Widget getImagenBase64(String imagen) {
+    print(imagen+"imagen");
 
-  //  imagen=Globalvireables.imagen;
-    _imageBase64 = imagen;
+    if(Globalvireables.password==null)
+      imagen=imagen;
+      else
+        imagen="http://10.0.1.60:1425"+imagen;
+
+    //  imagen=Globalvireables.imagen;
+  //  _imageBase64 = imagen;
     const Base64Codec base64 = Base64Codec();
-    bytes = base64.decode(_imageBase64);
-    if (_imageBase64 == null)
+
+
+    print(imagen+"imagen");
+    if (imagen == "http://10.0.1.60:1425")
       return
-       Container(
+        Container(
 
-        //child: Image.asset('assets/emptyfile.png'),
-        child: Icon(
-          Icons.person_rounded,
-          size: 100.0,
-          color: HexColor(Globalvireables.basecolor),
-        ),
-      );
-   else
+          //child: Image.asset('assets/emptyfile.png'),
+          child: Icon(
+            Icons.person_rounded,
+            size: 100.0,
+            color: HexColor(Globalvireables.basecolor),
+          ),
+        );
+    else
+    {  //bytes = base64.decode(_imageBase64);
     return new Container(
-          height: 100.0,
-          width: 100.0,
-          decoration: new BoxDecoration(
-            color: const Color(0xff7c94b6),
-            borderRadius: BorderRadius.all(const Radius.circular(50.0)),
-            border: Border.all(color: const Color(0xFF28324E)),
-          ),
-          child: Image.memory(
-            bytes,
-            width: 300,
-            fit: BoxFit.fitWidth,
 
-          ),
-      );
+      height: 150.0,
+      width: 150.0,
+      decoration: new BoxDecoration(
+        //   borderRadius: BorderRadius.all( Radius.circular(100.0)),
 
+
+        color: const Color(0xff7c94b6),
+        //  borderRadius: BorderRadius.all(const Radius.circular(50.0)),
+        border: Border.all(color: const Color(0xFF28324E)),
+      ),
+      child: Image.network(
+        imagen,  width: 130.0,
+      height: 130.0,
+      fit: BoxFit.fill,
+    ),
+
+      /*Image.memory(
+        bytes,
+        width: 300,
+        height: 300,
+        fit: BoxFit.fitWidth,
+
+      ),*/
+    );
+  }
   }
 }
