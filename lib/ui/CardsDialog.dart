@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cards/LanguageProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/color/HexColor.dart';
@@ -24,8 +25,12 @@ class LogoutOverlayStatecard extends State<CardsDialog>
   late http.Response response;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
-   Image? imgs ;
-String img64="0";
+  Image? imgs1 ;
+  Image? imgs2 ;
+  Image? imgs3 ;
+  String img164="";
+  String img264="";
+  String img364="";
   TextEditingController namecontroler = TextEditingController();
   TextEditingController ExpiryDatecontroler = TextEditingController();
   TextEditingController typecontroler = TextEditingController();
@@ -69,11 +74,46 @@ width: 500,
                   children: <Widget>[
 
 Center(
-  child: Text("Add card file",style: TextStyle(
+  child: Text(LanguageProvider.getTexts('addcardfile').toString(),style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w300,
                     color: HexColor(Globalvireables.basecolor)
                 ),)),
+
+              SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                  children: [
+
+                    Container(
+                      margin: EdgeInsets.only(top: 30),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () async {
+
+
+                            var imgFile = await ImagePicker.pickImage(
+                                source: ImageSource.gallery
+                            );
+                            setState((){
+                              // /100dp  imgs.add(Image.file(imgFile));
+                              imgs1=Image.file(imgFile);
+                              final bytes =
+                              imgFile.readAsBytesSync();
+                              img164 = base64Encode(bytes);
+                            });
+
+                          },
+                          child: image(imgs1),
+
+                          /*ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.asset('assets/emptycards.png',
+                                width: 110.0, height: 110.0),
+                          ),*/
+                        ),
+                      ),
+                    ),
 
                     Container(
                       margin: EdgeInsets.only(top: 30),
@@ -88,14 +128,45 @@ Center(
                             );
                             setState((){
                               // /100dp  imgs.add(Image.file(imgFile));
-                              imgs=Image.file(imgFile);
+                              imgs2=Image.file(imgFile);
                               final bytes =
                               imgFile.readAsBytesSync();
-                              img64 = base64Encode(bytes);
+                              img264 = base64Encode(bytes);
                             });
 
                           },
-                            child: image(),
+                          child: image(imgs2),
+
+                          /*ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.asset('assets/emptycards.png',
+                                width: 110.0, height: 110.0),
+                          ),*/
+                        ),
+                      ),
+                    ),
+
+                    Container(
+                      margin: EdgeInsets.only(top: 30),
+                      child: Center(
+                        child: InkWell(
+                          onTap: () async {
+
+
+                            var imgFile = await ImagePicker.pickImage(
+                                source: ImageSource.gallery
+
+                            );
+                            setState((){
+                              // /100dp  imgs.add(Image.file(imgFile));
+                              imgs3=Image.file(imgFile);
+                              final bytes =
+                              imgFile.readAsBytesSync();
+                              img364 = base64Encode(bytes);
+                            });
+
+                          },
+                          child: image(imgs3),
 
                           /*ClipRRect(
                             borderRadius: BorderRadius.circular(20.0),
@@ -106,7 +177,8 @@ Center(
                       ),
                     )
 
-,
+                  ])),
+
                      Container(
 
                         margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
@@ -135,7 +207,7 @@ Center(
                                 top: 18, bottom: 18, right: 20, left: 20),
                             fillColor: Colors.white,
                             filled: true,
-                            hintText:"Name",
+                            hintText:LanguageProvider.getTexts('name').toString(),
 
                           ),
                         )
@@ -170,7 +242,7 @@ Center(
                       top: 18, bottom: 18, right: 20, left: 20),
                   fillColor: Colors.white,
                   filled: true,
-                  hintText: 'dateendvaction'
+                  hintText: LanguageProvider.getTexts('Expirydate').toString()
 
                 ),
                 onTap: () async {
@@ -255,7 +327,7 @@ Center(
                                 top: 18, bottom: 18, right: 20, left: 20),
                             fillColor: Colors.white,
                             filled: true,
-                            hintText:"Card Type",
+                            hintText:LanguageProvider.getTexts('cardtype').toString(),
 
                           ),
                         )
@@ -289,7 +361,8 @@ Center(
                                 top: 18, bottom: 18, right: 20, left: 20),
                             fillColor: Colors.white,
                             filled: true,
-                            hintText:"Card No",
+                            hintText:LanguageProvider.getTexts('cardno').toString(),
+
 
                           ),
                         )
@@ -302,13 +375,13 @@ Center(
                       height: 55,
                       padding: EdgeInsets.only(right: 2,left: 2),
                       child: ElevatedButton(
-                        child: Text('Add'),
+                        child: Text(LanguageProvider.getTexts('add').toString()),
 
                         onPressed: () {
 
 
 if(namecontroler.text.length>2) {
-  SaveFile(namecontroler.text, img64, context);
+  SaveFile(namecontroler.text, img164,img264,img364, context);
 }else{
   displayMessage("Add name to cards");
 }
@@ -334,13 +407,13 @@ if(namecontroler.text.length>2) {
       ),
     );
   }
-  Widget image(){
-    if(imgs !=null)
+  Widget image(Image? img){
+    if(img !=null)
       return SingleChildScrollView(
         child: Container(
             width: 200,
             height: 150,
-          child:imgs
+          child:img
     ),
       );
           else
@@ -357,15 +430,17 @@ if(namecontroler.text.length>2) {
 
 
 
-  SaveFile (String name,String path,BuildContext context) async {
+  SaveFile (String name,String path1,String path2,String path3,BuildContext context) async {
     try {
 
       Uri apiUrl = Uri.parse(Globalvireables.addCards);
-      showAlert(context,"Saving ...");
+      showAlert(context,LanguageProvider.getTexts('saving').toString());
       final json = {
         "ProfileId": Globalvireables.fileindex ,
         "CardName": name,
-        "CardImage": path,
+        "CardImage1": path1,
+        "CardImage2": path2,
+        "CardImage3": path3,
         "CardNo": cardnocontroler.text,
         "Barcode": "null",
         "ExpiryDate": ExpiryDatecontroler.text.replaceAll("-", "/"),

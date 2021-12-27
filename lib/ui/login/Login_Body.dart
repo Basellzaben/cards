@@ -16,6 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
 
+import '../../LanguageProvider.dart';
 import '../ScanScreen.dart';
 class Login_Body extends StatefulWidget {
   goBackToPreviousScreen(BuildContext context){
@@ -45,7 +46,6 @@ class _Login_Body extends State<Login_Body> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController passwordcontroler = TextEditingController();
   TextEditingController emailcontroler = TextEditingController();
-
   User? user = FirebaseAuth.instance.currentUser;
 
   //final fbLogin = FacebookLogin();
@@ -59,6 +59,7 @@ class _Login_Body extends State<Login_Body> {
 
   @override
   Widget build(BuildContext context) {
+    Globalvireables.regorupdate="0";
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -116,7 +117,7 @@ backgroundColor: Colors.white,
                       child: Align
                       (
                       alignment: Alignment.centerLeft,
-                      child: Text("All your Cards in one place",style: TextStyle(color: HexColor(Globalvireables.secondarycolor),
+                      child: Text(LanguageProvider.getTexts('Allyour').toString(),textDirection: LanguageProvider.getDirection(),style: TextStyle(color: HexColor(Globalvireables.secondarycolor),
                       fontSize: 16,/*fontWeight: FontWeight.bold*/
                      ),
                      ),
@@ -157,7 +158,7 @@ backgroundColor: Colors.white,
                         borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
                       ),
                       border: UnderlineInputBorder(),
-                      labelText:"Email",
+                      labelText:LanguageProvider.getTexts('email').toString(),
                       labelStyle: TextStyle(
 
                         color:Colors.black87,
@@ -191,7 +192,8 @@ backgroundColor: Colors.white,
 
                       border: UnderlineInputBorder(),
 
-                      labelText:"Password",
+                      labelText:LanguageProvider.getTexts('password').toString(),
+
 
 
                       labelStyle: TextStyle(
@@ -237,7 +239,7 @@ Row(children: [
             style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold ),
           ),
       ),
-      onPressed: () {signInwithGoogle(context,"جار تسجيل الدخول");},
+      onPressed: () {signInwithGoogle(context,LanguageProvider.getTexts('Signing').toString());},
   ),
   Spacer(),
 
@@ -267,23 +269,23 @@ Row(children: [
                 margin: EdgeInsets.only(top: 30),
                 height: 55,
                 child: ElevatedButton(
-                  child: Text('LOGIN'),
+                  child: Text(LanguageProvider.getTexts('login').toString()),
 
                   onPressed: () {  /*signIn_post();*/
-/*
-if(emailcontroler.text.toString().length>5 && passwordcontroler.text.toString().length>0)
+
+if(emailcontroler.text.toString().length>5 && passwordcontroler.text.toString().length>5)
                  Login(emailcontroler.text,passwordcontroler.text,context);
 else
-  displayMessage("Correct information must be entered");
+  displayMessage(LanguageProvider.getTexts('loginhint').toString());
 
 
-*/
-                    Navigator.push(context,
+
+                  /*  Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
                                 ScanScreen()
                         )
-                    );
+                    );*/
 
                     },
                   style: ElevatedButton.styleFrom(
@@ -296,13 +298,13 @@ else
               ),
 
 
-
+if(Globalvireables.languageCode=="en")
               Row(children: [
                 Spacer(),
 
                 Container(
                   margin: EdgeInsets.only(top: 20),
-                  child: Text("Don't have an account ? ",style: TextStyle(fontWeight: FontWeight.bold,
+                  child: Text(LanguageProvider.getTexts('Donthaveaccount').toString(),style: TextStyle(fontWeight: FontWeight.bold,
                       color: HexColor(Globalvireables.black),fontSize: 13
                   ),),
                 ),
@@ -317,14 +319,48 @@ else
                     },
                 child: Container(
                   margin: EdgeInsets.only(top: 20),
-                  child: Text("Register now",style: TextStyle(fontWeight: FontWeight.bold,
+                  child: Text(LanguageProvider.getTexts('Registernow').toString(),textDirection: LanguageProvider.getDirection(),style: TextStyle(fontWeight: FontWeight.bold,
                       color: HexColor(Globalvireables.basecolor),fontSize: 14
                   ),),
                 )),
 
                 Spacer(),
 
-              ],)
+              ])
+  else
+                  Row(children: [
+                  Spacer(),
+
+
+              new GestureDetector(
+                  onTap: (){
+                    Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            Register_Body()
+                        )
+                    );
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Text(LanguageProvider.getTexts('Registernow').toString(),textDirection: LanguageProvider.getDirection(),style: TextStyle(fontWeight: FontWeight.bold,
+                        color: HexColor(Globalvireables.basecolor),fontSize: 14
+                    ),),
+                  )),
+
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Text(LanguageProvider.getTexts('Donthaveaccount').toString(),style: TextStyle(fontWeight: FontWeight.bold,
+                          color: HexColor(Globalvireables.black),fontSize: 13
+                      ),),
+                    ),
+
+
+              Spacer(),
+
+            ],
+
+              )
 
             ]
 
@@ -361,6 +397,9 @@ else
       final googleAccount = await FirebaseAuth.instance.signInWithCredential(credential);
 
       await _auth.signInWithCredential(credential).then((value) => {
+
+        print("google account email"+googleAccount.user!.email.toString()),
+
           if(googleAccount.user?.email!=null){
           print(googleAccount.user!.email.toString()+"email google"),
           print(googleAccount.user!.displayName.toString()+"name"),
@@ -372,26 +411,41 @@ else
 
             Globalvireables.phone=googleAccount.user!.phoneNumber.toString(),
             Globalvireables.photoURL=googleAccount.user!.photoURL.toString(),
-            Globalvireables.password="Registered with google ",
+            Globalvireables.password="null",
 
           }else{
-          Navigator.pop(context)
+          //Navigator.pop(context)
       },
-        if(googleAccount.user!.emailVerified==true)
-     Regester(googleAccount.user!.displayName.toString(),googleAccount.user!.email.toString(),googleAccount.user!.phoneNumber.toString()
-    ,"",googleAccount.user!.photoURL.toString(),"")
-else
-      showAlert(context,'خطأ في تسجيل الدخول من خلال جوجل')
+     //   print();
 
+        print(googleAccount.user!.emailVerified.toString()+"falid"+
+
+     googleAccount.user!.displayName.toString()+
+      googleAccount.user!.email.toString()+
+      googleAccount.user!.phoneNumber.toString()+
+       ""+ googleAccount.user!.photoURL.toString()+ "null"
+
+
+        ),
+
+        if(googleAccount.user!.emailVerified==true){
+          Regester(googleAccount.user!.displayName.toString(),
+              googleAccount.user!.email.toString(),
+              googleAccount.user!.phoneNumber.toString()
+              , "", googleAccount.user!.photoURL.toString(), "null"),
+        }else
+          {
+            showAlert(context,LanguageProvider.getTexts('problemlogging').toString())
+          }
     });
 
     } on Exception catch (e) {
-      Navigator.pop(context);
+     // Navigator.pop(context);
 
       if(check()==false){
         showAlert(context,'لا يوجد اتصال انترنت');
       }else{
-        showAlert(context,'يوجد مشكلة في تسجيل الدخول , أعد المحاولة لاحقا');
+        showAlert(context,LanguageProvider.getTexts('problemlogging').toString());
       }
       print("errorb"+e.toString());
       //throw e;
@@ -417,19 +471,22 @@ print("no internet ... ");
         ));
   }
   Regester(String name,String email,String mobile,String country,String profileimage,String password) async {
-
+var img;
     Uri apiUrl = Uri.parse(Globalvireables.regesterapi);
 Globalvireables.email=email;
-    final json = {
-      "Name": name,
-      "Email": email,
-      "Mobile": mobile,
+//if(password!="null")
+img=Globalvireables.imagen;
+
+   final json = {
+      "Name":name,
+      "Email":email,
+      "Mobile":mobile,
       "Country":country,
-      "ProfileImage": Globalvireables.imagen,
+      "ProfileImage":img,
       "Password": password};
 
     print("json"+json.toString());
-    print("name + email + pass + image"+name+"-"+email+"-"+profileimage.toString());
+    print("name + email + pass + image"+password.toString());
 
 
     try {
@@ -445,31 +502,43 @@ Globalvireables.email=email;
         Globalvireables.name=name;
         Globalvireables.password=password;
         Globalvireables.country=country;
+      if(password!="null")
         Globalvireables.photoURL=profileimage;
-        Globalvireables.ID=user.getid();
-      if (Globalvireables.ID!= "0") {
+      else
+        Globalvireables.photoURL=user.ProfileImage;
 
-        print("succ  "+jsonResponse.toString());
+      Globalvireables.ID=user.getid();
 
+        print("immmmge"+Globalvireables.photoURL);
+
+      print(email);
+      print("0"+password+"0");
+
+      if (user.getid().toString()!="0") {
+
+        print("id ==== regester  "+jsonResponse.toString());
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => Home_Body()),);
 
       }
       else {
-        print("exist  "+jsonResponse.toString());
-        Login(email,"",context);
-        //   displayMessage('exist');
-      }
-      if(email.length>5 && name != null)
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Home_Body()),);
+        print("id ==== login now  "+jsonResponse.toString());
 
+        Login(email, "null", context);
+
+      }
+      /*if(email.length>5 && name != null)
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => Home_Body()),);
+*/
 
     }on TimeoutException catch (_) {
    //   displayMessage('out time');
-      Navigator.pop(context);
+    //  Navigator.pop(context);
       if(check()==false){
         showAlert(context,'لا يوجد اتصال انترنت');
       }else{
-        showAlert(context,'يوجد مشكلة في تسجيل الدخول , أعد المحاولة لاحقا');
+        showAlert(context,LanguageProvider.getTexts('problemlogging').toString());
       }
     }
   }
@@ -614,7 +683,7 @@ Globalvireables.email=email;
   Login(String emailorphone,String password,BuildContext context) async {
     try {
     Uri apiUrl = Uri.parse(Globalvireables.loginapi);
-    showAlert(context,"Signing in ...");
+    showAlert(context,LanguageProvider.getTexts('Signing').toString());
    final json = {
      "Email": emailorphone,
      "Password": password,
@@ -625,14 +694,14 @@ Globalvireables.email=email;
 
    };
 
-
+print("this password"+password);
 
 
     http.Response response=await http.post(apiUrl, body: json);
 
       response = await http.post(apiUrl, body: json).whenComplete(() {
 
-
+//print("reeees"+response.body.toString());
         var jsonResponse = jsonDecode(response.body);
 
         Users user = Users.fromJson(jsonResponse);
@@ -644,10 +713,11 @@ Globalvireables.email=email;
         Globalvireables.name=user.getname();
         Globalvireables.password=user.getPassword();
         Globalvireables.country=user.getCountry();
-        if(password.length>2)
+        if(password!="null")
         Globalvireables.photoURL=user.getProfileImage();
-        Globalvireables.ID=user.getid();
 
+        Globalvireables.ID=user.getid();
+print("usel login ID ="+user.getid());
 
       /*  if (!jsonResponse.toString().contains("ID: 0")) {
 
@@ -669,11 +739,10 @@ print("loginyess");
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Home_Body()),);
-
         }
         else {
           Navigator.pop(context);
-          displayMessage("Login information error");
+          displayMessage(LanguageProvider.getTexts('problemlogging').toString());
          /* displayMessage('out time');*/ print("error");
         }
         print("esaf = "+jsonResponse.toString());
@@ -687,10 +756,8 @@ print("loginyess");
      // displayMessage("Login information error");
 
     }on FormatException catch(_){
-
       Navigator.pop(context);
-      displayMessage("Login information error");
-
+      displayMessage(LanguageProvider.getTexts('problemlogging').toString());
 
     }
   //  Navigator.pop(context);

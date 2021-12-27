@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cards/LanguageProvider.dart';
 import 'package:cards/ui/vervicationpage/vervication_body.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
@@ -124,7 +125,7 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
 
                           // enabled: false,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
+                            prefixIcon: Icon(Icons.person_rounded),
                             border: OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -189,7 +190,7 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
                           controller: emailcontroler,
                           // enabled: false,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
+                            prefixIcon: Icon(Icons.email),
                             border: OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -223,7 +224,7 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
                           controller: mobilecontroler,
                           // enabled: false,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
+                            prefixIcon: Icon(Icons.phone),
                             border: OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -257,7 +258,7 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
               controller: passwordcontroler,
               // enabled: false,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.drive_file_rename_outline),
+                prefixIcon: Icon(Icons.password_outlined),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -290,7 +291,7 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
               controller: countrycontroler,
               // enabled: false,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.drive_file_rename_outline),
+                prefixIcon: Icon(Icons.account_balance_rounded),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -319,7 +320,7 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
                       height: 55,
                       padding: EdgeInsets.only(right: 2,left: 2),
                       child: ElevatedButton(
-                      child: Text('Add'),
+                      child: Text(LanguageProvider.getTexts('add').toString()),
 
                         onPressed: () {
                           if(namecontroler.text.length>2) {
@@ -398,6 +399,14 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
 
       print ("card save");
 
+
+      Globalvireables.name=namecontroler.text;
+      Globalvireables.email=emailcontroler.text;
+      Globalvireables.phone=mobilecontroler.text;
+      Globalvireables.country=countrycontroler.text;
+      Globalvireables.phone=mobilecontroler.text;
+      Globalvireables.password=passwordcontroler.text;
+      Globalvireables.regorupdate="1";
 
       //await http.post(apiUrl,body: jsone);
 

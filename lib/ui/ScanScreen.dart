@@ -1,3 +1,4 @@
+/*
 
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
@@ -66,4 +67,4 @@ class _ScanState extends State<ScanScreen> {
       setState(() => this.barcode = 'Unknown error: $e');
     }
   }
-}
+}*/

@@ -1,3 +1,4 @@
+import 'package:cards/LanguageProvider.dart';
 import 'package:cards/ui/login/Login_Body.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _MyAppState extends State<Main_profile> {
     return MaterialApp(
       home: Login_Body(),
       debugShowCheckedModeBanner: false,
-      title: 'profile',
+      title: LanguageProvider.getTexts('profile').toString(),
       theme: ThemeData(
 
         primarySwatch: Colors.deepPurple,

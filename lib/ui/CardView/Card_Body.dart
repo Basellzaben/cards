@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:cards/LanguageProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -133,45 +134,106 @@ width: MediaQuery.of(context).size.width,
                     //    mainAxisAlignment: MainAxisAlignment.center,
                       children: [
 
-Container(alignment: Alignment.topLeft ,margin:EdgeInsets.only(top: 46,left: 10),child: Text(data!.CardName,style: TextStyle(color: Colors.white,fontSize: 25),),)
+Container(alignment: LanguageProvider.Align() ,margin:EdgeInsets.only(top: 46,left: 10),child: Text(data!.CardName,style: TextStyle(color: Colors.white,fontSize: 25),),)
 
                       ])),
 
 
  //Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 10,left: 10),child:Text("Card Data",style: TextStyle(fontSize: 15),)),
-
+if(Globalvireables.languageCode=="en")
  Row(
    children: [
 
-       Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text("Card No :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
-       Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+       Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text("Card No :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+       Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
    ],
- ),
+ )
+  else
   Row(
+  children: [
+
+      Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+      Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text("Card No :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+
+      ],
+      ),
+  if(Globalvireables.languageCode=="en")
+    Row(
       children: [
 
         Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Card Type :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
         Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
       ],
-  ),
-  Row(
+  )
+  else
+      Row(
       children: [
+      Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
 
+      Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Card Type :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+      ],
+      ),
+  if(Globalvireables.languageCode=="en")
+    Row(
+      children: [
         Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Expiry Date :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
         Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
       ],
-  ),
+  )else
+    Row(
+      children: [
+        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+
+        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Expiry Date :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+      ],
+    ),
+
+
+  SingleChildScrollView(
+      child: Column(
+          children: <Widget>[
+            SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                    children: [
+                      if(data.CardImage1!=null)
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Image.network(
+                          "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage1,  width: MediaQuery.of(context).size.width,
+                          height: 300,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+if(data.CardImage2!=null)
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Image.network(
+                          "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage2,  width: MediaQuery.of(context).size.width,
+                          height: 300,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+
+                      if(data.CardImage3!=null)
+
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Image.network(
+                          "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage3,  width: MediaQuery.of(context).size.width,
+                          height: 300,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
 
 
 
-  Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Image.network(
-                "http://10.0.1.60:1425"+data.CardImage,  width: MediaQuery.of(context).size.width,
-                height: 300,
-                fit: BoxFit.fill,
-              ),
-            ),
+                    ])),
+
+
+
+          ])),
+
 
 
 
@@ -187,7 +249,11 @@ margin: EdgeInsets.only(top: 55),
             color: Colors.red,
             icon: new Icon(Icons.delete),
             highlightColor: Colors.pink,
-            onPressed: (){},
+            onPressed: (){
+
+              delete();
+
+            },
           ),
           Spacer(),
           IconButton(
@@ -196,7 +262,7 @@ margin: EdgeInsets.only(top: 55),
             icon: new Icon(Icons.share),
             highlightColor: Colors.pink,
             onPressed: (){
-              Share.share( "http://10.0.1.60:1425"+data.CardImage, subject:
+              Share.share( "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage1, subject:
               'Using Cards Keeper app'
                   '\n Card No : '+data.CardNo+""+"\n Card Type :"+data.CardType+""+
                   "\n Expiry Date :"+data.ExpiryDate);
@@ -228,12 +294,13 @@ margin: EdgeInsets.only(top: 55),
 
          ] ),
       );
-    }else return Container(
-margin: EdgeInsets.only(top: 300),
-      child: Center(child: Text("Loading card information ...",style: TextStyle(fontSize: 30,color: Colors.black),)),
+    }else return
 
+     Container(
+         margin: EdgeInsets.only(top: 400),
+         child: Center(child: CircularProgressIndicator()));
 
-    );}))
+    }))
 
 
 
@@ -242,7 +309,7 @@ margin: EdgeInsets.only(top: 300),
 
 /*  _shareImage() async {
     try {
-      final ByteData bytes = await rootBundle.load('http://10.0.1.60:1425'+'/Content/Profiles/36/1.jpg');
+      final ByteData bytes = await rootBundle.load('http://cardskeeper-001-site1.ftempurl.com'+'/Content/Profiles/36/1.jpg');
       final Uint8List list = bytes.buffer.asUint8List();
 
       final tempDir = await getTemporaryDirectory();
@@ -257,7 +324,7 @@ margin: EdgeInsets.only(top: 300),
     }
   }*/
  /* void shareImage() async {
-    Uri url = Uri.parse("http://10.0.1.60:1425/Content/Profiles/36/1.jpg");
+    Uri url = Uri.parse("http://cardskeeper-001-site1.ftempurl.com/Content/Profiles/36/1.jpg");
     Future<Null> saveAndShare() async {
       setState(() {
         isBtn2 = true;
@@ -334,6 +401,97 @@ margin: EdgeInsets.only(top: 300),
       print(e.toString()+"errror in barcode");
     }
   }
+
+
+  delete () async {
+    try {
+
+      Uri apiUrl = Uri.parse(Globalvireables.addCards+"/"+Globalvireables.cardindex);
+      showAlert(context,LanguageProvider.getTexts('saving').toString());
+      final json = {
+        "Id": Globalvireables.fileindex ,
+      };
+      print ("card save");
+
+
+      //await http.post(apiUrl,body: jsone);
+
+      http.Response response=await http.delete(apiUrl, body: json);
+
+      var jsonResponse = jsonDecode(response.body);
+
+      if (!jsonResponse.toString().contains("ID: 0")) {
+
+        print("succ = "+jsonResponse.toString());
+        Navigator.pop(context);
+
+      }
+      else {
+        Navigator.pop(context);
+      //  displayMessage("Login information error");
+        /* displayMessage('out time');*/
+        print("error="+jsonResponse.toString());
+      }
+      print("succ = "+jsonResponse.toString());
+
+      //  print("esaf = "+jsonResponse.toString());
+
+      /*   response = await http.post(apiUrl, body: jsone).whenComplete(() {
+
+
+        var jsonResponse = jsonDecode(response.body);
+
+        if (!jsonResponse.toString().contains("ID: 0")) {
+
+          print("succ = "+jsonResponse.toString());
+          Navigator.pop(context);
+
+        }
+        else {
+          Navigator.pop(context);
+          displayMessage("Login information error");
+          *//* displayMessage('out time');*//*
+          print("error="+jsonResponse.toString());
+        }
+        print("succ = "+jsonResponse.toString());
+
+        //  print("esaf = "+jsonResponse.toString());
+
+
+      });*/
+    }on TimeoutException catch (_) {
+      // displayMessage('out time');
+     // displayMessage("out time");
+      Navigator.pop(context);
+      // displayMessage("Login information error");
+
+    }on FormatException catch(_){
+
+      Navigator.pop(context);
+     // displayMessage("Login information error");
+
+
+    }
+    Navigator.pop(context);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

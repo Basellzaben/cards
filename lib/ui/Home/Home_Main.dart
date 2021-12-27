@@ -26,15 +26,11 @@ class _MyAppState extends State<Home_Main> {
     return MaterialApp(
       home: Home_Body(),
       debugShowCheckedModeBanner: false,
-      title: 'title.en',
+      title: '',
       theme: ThemeData(
 
         primarySwatch: Colors.deepPurple,
       ),
-
-
-
-
       //home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

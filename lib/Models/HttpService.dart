@@ -7,8 +7,8 @@ import 'cards.dart';
 //get work state data
 class HttpService {
 
-  Uri postsURL = Uri.parse("http://10.0.1.60:1425/api/Profiles/"+Globalvireables.ID);
-  Uri cardsURL = Uri.parse("http://10.0.1.60:1425/api/GetCardsByProfId/"+Globalvireables.fileindex);
+  Uri postsURL = Uri.parse("http://cardskeeper-001-site1.ftempurl.com/api/Profiles/"+Globalvireables.ID);
+  Uri cardsURL = Uri.parse("http://cardskeeper-001-site1.ftempurl.com/api/GetCardsByProfId/"+Globalvireables.fileindex);
   // Uri  postsURL = Uri.parse("https://jsonplaceholder.typicode.com/posts");
 
 

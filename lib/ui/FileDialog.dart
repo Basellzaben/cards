@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cards/LanguageProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/color/HexColor.dart';
@@ -61,7 +62,7 @@ width: 500,
                   children: <Widget>[
 
 Center(
-  child: Text("Add card file",style: TextStyle(
+  child: Text(LanguageProvider.getTexts('addcardfile').toString(),style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w300,
                     color: HexColor(Globalvireables.basecolor)
@@ -127,7 +128,7 @@ Center(
                                 top: 18, bottom: 18, right: 20, left: 20),
                             fillColor: Colors.white,
                             filled: true,
-                            hintText:"Name",
+                            hintText:LanguageProvider.getTexts('name').toString(),
 
                           ),
                         )
@@ -139,7 +140,9 @@ Center(
                       height: 55,
                       padding: EdgeInsets.only(right: 2,left: 2),
                       child: ElevatedButton(
-                        child: Text('Add'),
+                        child: Text(                              LanguageProvider.getTexts('add').toString(),
+
+                        ),
 
                         onPressed: () {
 
@@ -197,7 +200,7 @@ if(namecontroler.text.length>2) {
   SaveFile (String name,String path,BuildContext context) async {
     try {
       Uri apiUrl = Uri.parse(Globalvireables.cardfiles);
-      showAlert(context,"Saving ...");
+      showAlert(context,LanguageProvider.getTexts('saving').toString());
       final json = {
         "CustomerId":Globalvireables.ID,
         "ProfileName": name,
@@ -265,6 +268,7 @@ print(json.toString());
 
 
     }
+  // Home_Body.RefreshPage();
     Navigator.pop(context);
   }
   void showAlert(BuildContext context,String text) {

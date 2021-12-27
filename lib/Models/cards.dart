@@ -5,7 +5,9 @@ class cards {
   int Id;
   int ProfileId;
    String CardName;
-   String CardImage;
+  String CardImage1;
+  String CardImage2;
+  String CardImage3;
    String Barcode;
    String ExpiryDate;
    String CardType;
@@ -15,7 +17,9 @@ class cards {
      required this.Id,
      required this.ProfileId,
     required this.CardName,
-    required this.CardImage,
+     required this.CardImage1,
+     required this.CardImage2,
+     required this.CardImage3,
      required this.Barcode,
      required this.CardType,
     required this.ExpiryDate,
@@ -27,7 +31,9 @@ class cards {
      Id: json['Id'] as int,
       ProfileId: json['ProfileId'] as int,
       CardName: json['CardName'] as String,
-      CardImage: json['CardImage'] as String,
+      CardImage1: json['CardImage1'] as String,
+      CardImage2: json['CardImage2'] as String,
+      CardImage3: json['CardImage3'] as String,
 
       Barcode: json['Barcode'] as String,
       CardType: json['CardType'] as String,

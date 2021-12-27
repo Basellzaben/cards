@@ -66,6 +66,7 @@ class _verviaction_body extends State<verviaction_body> {
   child: Icon(Icons.mark_email_read_sharp,color: HexColor(Globalvireables.white),size: 90,),
   /*  child: new Image.asset('assets/vervi.png'
                       , height: 110,width: 110,)*/
+
 ),
                     if(showVerifyNumberWidget)Container(
                       margin: EdgeInsets.only(bottom: 45),
@@ -477,11 +478,11 @@ maxLength: 1,
       );
 
       final User? user = (await firebaseAuth.signInWithCredential(credential)).user;
-
+print(Globalvireables.regorupdate+"regorupdate");
      // displayMessage("Successfully signed in UID: ${user!.uid}");
-if(Globalvireables.regorupdate=="0")
+if(Globalvireables.regorupdate.contains("0"))
       Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"",Globalvireables.photoURL,Globalvireables.password);
-else
+else if(Globalvireables.regorupdate.contains("1"))
   Editprofile(Globalvireables.name,Globalvireables.email,Globalvireables.phone,Globalvireables.country,Globalvireables.password,context);
 
       setState(() {
@@ -537,6 +538,9 @@ print (i.toString()+"  = postion");
       if (user.getid()=="0") {
 
         displayMessage('The number is registered, please log in');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Login_Body()),);
       }
       else if(user.getid()!="0"){
 
@@ -626,7 +630,7 @@ print("rees"+jsonResponse.toString());
 */
   Editprofile(String name,String email,String mobile,String country,String password,BuildContext context) async {
     try {
-
+      Globalvireables.regorupdate="0";
       Uri apiUrl = Uri.parse(Globalvireables.regesterapi+"/"+Globalvireables.ID);
      // showAlert(context,"Editing ...");
 

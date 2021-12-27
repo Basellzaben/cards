@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cards/GlobalVaribales.dart';
+import 'package:cards/LanguageProvider.dart';
 import 'package:cards/Models/HttpService.dart';
 import 'package:cards/Models/cards.dart';
 import 'package:cards/color/HexColor.dart';
@@ -256,7 +257,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
 
 
                                  /* image: DecorationImage(
-                                    image: NetworkImage("http://10.0.1.60:1425"+post.CardImage),
+                                    image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.CardImage),
                                     fit: BoxFit.cover,
                                   ),*/
 
@@ -303,7 +304,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                               decoration: BoxDecoration(
                                                 color: const Color(0xff7c94b6),
                                                 image: DecorationImage(
-                                                  image: NetworkImage("http://10.0.1.60:1425"+post.CardImage),
+                                                  image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.CardImage),
                                                   fit: BoxFit.cover,
                                                 ),
                                                 borderRadius: BorderRadius.all( Radius.circular(100.0)),
@@ -313,13 +314,13 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                                 ),
                                               ),
                                             )))),*/
-                                /*Image.network("http://10.0.1.60:1425"+post.ProfileImage,*//*
+                                /*Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,*//*
             //  height: 200,
             // width: 200,
 
             ),
             ),
-            *//*child: Image.network("http://10.0.1.60:1425"+post.ProfileImage,height: 100,width: 100,) ,) *//*
+            *//*child: Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,height: 100,width: 100,) ,) *//*
             )*/
 
                               ])/* */
@@ -352,7 +353,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                             alignment: Alignment.center,
                             decoration: BoxDecoration(shape: BoxShape.circle),
                             child: Text(
-                              'Add',
+                              LanguageProvider.getTexts('add').toString(),
                               style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w300,),
                             ),
@@ -391,7 +392,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
             Container(
                 alignment: Alignment.topCenter,
                 margin: EdgeInsets.only(top: 100),
-                child: Text("Add your first card now", style: TextStyle(
+                child: Text(LanguageProvider.getTexts('addfirstcard').toString(), style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w300,
                     color: HexColor(Globalvireables.bluedark)
@@ -427,7 +428,8 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                   alignment: Alignment.center,
                   decoration: BoxDecoration(shape: BoxShape.circle),
                   child: Text(
-                    'Add',
+                    LanguageProvider.getTexts('add').toString(),
+
                     style: TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w300,),
                   ),

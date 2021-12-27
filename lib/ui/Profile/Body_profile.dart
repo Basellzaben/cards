@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cards/GlobalVaribales.dart';
+import 'package:cards/LanguageProvider.dart';
 import 'package:cards/Models/Users.dart';
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/EditDataPages/EditProfileDialog.dart';
@@ -48,7 +49,7 @@ class _Body_profile extends State<Body_profile> {
         // resizeToAvoidBottomInset : false,
         appBar: AppBar(
           backgroundColor: HexColor(Globalvireables.bluedark),
-          title: Text('profile'),
+          title: Text(LanguageProvider.getTexts('profile').toString()),
         ),
         backgroundColor: HexColor(Globalvireables.white2),
         body: Container(
@@ -180,19 +181,40 @@ class _Body_profile extends State<Body_profile> {
                   ),
                 ),),
 
-                Card(
-                  margin: EdgeInsets.only(top:40,left: 12,right: 12),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                        children: <Widget>[
-                          Icon(Icons.language,size: 30,color: HexColor(Globalvireables.bluedark),),
+            new InkWell(
+              onTap: () async {
 
-                          Container( margin:EdgeInsets.only(left: 8,right: 8),
-                              child: Text("Language".toString(),style: TextStyle(fontSize: 18),)),
-                        ]
-                    ),
-                  ),),
+                if(Globalvireables.languageCode=="en")
+              {    Globalvireables.languageCode="ar";
+              Globalvireables.lantext="اللغة العربية";
+              }
+                else {
+                  Globalvireables.languageCode = "en";
+                  Globalvireables.lantext="English Language";
+
+                }
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Login_Body()));
+
+
+              },
+                  child: Card(
+                    margin: EdgeInsets.only(top:40,left: 12,right: 12),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                          children: <Widget>[
+                            Icon(Icons.language,size: 30,color: HexColor(Globalvireables.bluedark),),
+
+                            Container( margin:EdgeInsets.only(left: 8,right: 8),
+                                child: Text( Globalvireables.lantext.toString(),style: TextStyle(fontSize: 18),)),
+                          ]
+                      ),
+                    ),),
+                ),
 
 
 
@@ -221,6 +243,7 @@ class _Body_profile extends State<Body_profile> {
                     ),
                   ),),
 
+
                 new InkWell(
                   onTap: () async {
                     Navigator.push(
@@ -229,13 +252,13 @@ class _Body_profile extends State<Body_profile> {
                   },
                   child: Center(
                     child: Card(
-color: Colors.black26,
+color: HexColor(Globalvireables.basecolor),
                       child: Container(
 
 height: 30,
                         width: 150,
                           margin: EdgeInsets.only(bottom: 0),
-                          child: Center(child: Text("Edit",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),))),
+                          child: Center(child: Text(LanguageProvider.getTexts('edit').toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),))),
                     ),
 
                   ),
@@ -261,10 +284,10 @@ Center(
   Widget getImagenBase64(String imagen) {
     print(imagen+"imagen");
 
-    if(Globalvireables.password==null)
+    if(Globalvireables.password=="null")
       imagen=imagen;
       else
-        imagen="http://10.0.1.60:1425"+imagen;
+        imagen="http://cardskeeper-001-site1.ftempurl.com"+imagen;
 
     //  imagen=Globalvireables.imagen;
   //  _imageBase64 = imagen;
@@ -272,7 +295,7 @@ Center(
 
 
     print(imagen+"imagen");
-    if (imagen == "http://10.0.1.60:1425")
+    if (imagen == "http://cardskeeper-001-site1.ftempurl.com")
       return
         Container(
 

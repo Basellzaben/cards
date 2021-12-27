@@ -1,11 +1,13 @@
 
 import 'dart:io';
-
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 
 
 class Globalvireables {
+  static String languageCode = Platform.localeName.split('_')[0];
 
+  static String lantext="";
   //Colors
  // static String basecolor="#1f319d";
   static String basecolor="#273746";
@@ -16,25 +18,26 @@ class Globalvireables {
   static String white2="#E5E5E5";
   static String bluedark="#273746";
   //#
-  static String regesterapi="http://10.0.1.60:1425/api/Registration";
-  static String loginapi="http://10.0.1.60:1425/api/Login";
-  static String cardfiles="http://10.0.1.60:1425/api/Profiles";
-  static String addCards="http://10.0.1.60:1425/api/Cards";
-  static String getCardsBYID="http://10.0.1.60:1425/api/Cards/";
-  static String GetCardsByProfId="http://10.0.1.60:1425/api/GetCardsByProfId/";
+  static String regesterapi="http://cardskeeper-001-site1.ftempurl.com/api/Registration";
+  static String loginapi="http://cardskeeper-001-site1.ftempurl.com/api/Login";
+  static String cardfiles="http://cardskeeper-001-site1.ftempurl.com/api/Profiles";
+  static String addCards="http://cardskeeper-001-site1.ftempurl.com/api/Cards";
+  static String getCardsBYID="http://cardskeeper-001-site1.ftempurl.com/api/Cards/";
+  static String GetCardsByProfId="http://cardskeeper-001-site1.ftempurl.com/api/GetCardsByProfId/";
+  static String regorupdate="0"; //0 regester-- 1 update
 
-  static String regorupdate=""; //0 regester-- 1 update
 
 
   //http://localhost:49521/api/GetCardsByProfId/57
   //http://localhost:49521/api/Cards/57
 
 
-
   // api/Cards
 //Getprofiles/88
   //
 //
+
+  //http://cardskeeper-001-site1.ftempurl.com/api/Profiles
 //users informiation
   static String ID="";
   static String name="";

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cards/GlobalVaribales.dart';
+import 'package:cards/LanguageProvider.dart';
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/login/Login_Body.dart';
 import 'package:cards/ui/vervicationpage/vervication_body.dart';
@@ -143,7 +144,7 @@ key: globalKey,
 
                 border: UnderlineInputBorder(),
 
-                labelText:"Name",
+                labelText:LanguageProvider.getTexts('name').toString(),
 
 
                 labelStyle: TextStyle(

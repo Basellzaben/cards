@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cards/GlobalVaribales.dart';
+import 'package:cards/LanguageProvider.dart';
 import 'package:cards/Models/HttpService.dart';
 import 'package:cards/Models/Fileofcards.dart';
 import 'package:cards/Models/Fileofcards.dart';
@@ -27,25 +28,19 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Home_Body extends StatefulWidget {
-  goBackToPreviousScreen(BuildContext context){
-    // Navigator.pop(context);
-    /* Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Index_Main()),);*/
-  }
+
   @override
   _Home_Body createState() => _Home_Body();
+
 }
 
 class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
 
   final HttpService httpService = HttpService();
- // late AnimationController controller;
-  // late Animation colorAnimation;
- //  late Animation sizeAnimation;
+
    final globalKey = GlobalKey<ScaffoldState>();
-var username;
+   var username;
   late Future<List<Fileofcards>> ListPage=httpService.getPosts(searchController.text);
 
   RefreshPage(){
@@ -55,44 +50,34 @@ var username;
       ListPage=httpService.getPosts(searchController.text);
 
     });
-  }
+  }else{
+      ListPage=httpService.getPosts(searchController.text);
+    }
 
 
   }
 
   @override
   void initState() {
-  //  httpService.getPosts();
+  /*  if(Globalvireables.languageCode=="en")
+    {    Globalvireables.languageCode="ar";
+    Globalvireables.lantext="اللغة العربية";
+    }
+    else {
+      Globalvireables.languageCode = "en";
+      Globalvireables.lantext="English Language";
+
+    }*/
     super.initState();
- //   Future.delayed(Duration.zero, () async {
+  /*  const oneSecond = const Duration(seconds: 25);
+    new Timer.periodic(oneSecond, (Timer t) => setState((){
+
       RefreshPage();
-  //  });
 
-/*    // Defining controller with animation duration of two seconds
-    controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 3));
+    }));
+     */
+    RefreshPage();
 
-    // Defining both color and size animations
-    colorAnimation =
-        ColorTween(end: HexColor(Globalvireables.bluedark), begin: HexColor(Globalvireables.bluedark)).animate(controller);
-    sizeAnimation = Tween<double>(begin: 70.0, end: 75.0).animate(controller);
-
-   *//* colorAnimation = ColorTween(begin: Colors.blue, end: Colors.yellow)
-        .animate(CurvedAnimation(parent: controller, curve: Curves.bounceOut));
-*//*
-    // Rebuilding the screen when animation goes ahead
-    controller.addListener(() {
-      //setState(() {});
-    });
-
-    // Repeat the animation after finish
-    controller.repeat();*/
-
-    //For single time
-    //controller.forward()
-
-    //Reverses the animation instead of starting it again and repeats
-    //controller.repeat(reverse: true);
   }
 
   TextEditingController timeinput = TextEditingController();
@@ -103,124 +88,163 @@ var username;
   User? user = FirebaseAuth.instance.currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+//final GlobalKey<ScaffoldState> scafold=new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    setState(() {
+
+      RefreshPage();
+
+    });
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        key: _scaffoldKey,
+        //endDrawer: ,
         backgroundColor: HexColor(Globalvireables.white2),
-
+        drawerEnableOpenDragGesture: false,
         // resizeToAvoidBottomInset : false,
-          drawer: NavDrawer(),
+        endDrawer: NavDrawer(),
           appBar: PreferredSize(
 
             preferredSize: Size.fromHeight(150), // Set this height
-            child: Container(
+              child: Container(
 
       decoration: new BoxDecoration(
       borderRadius: BorderRadius.vertical(
       bottom: Radius.elliptical(
       MediaQuery.of(context).size.width, 50.0)),
-              color: HexColor(Globalvireables.bluedark)),
-              child: Column(
-                //    mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-              Container(
-                color: HexColor(Globalvireables.bluedark),
-                child: Material(
+                color: HexColor(Globalvireables.bluedark)),
+                child: Column(
+                  //    mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                Container(
                   color: HexColor(Globalvireables.bluedark),
-
-                child: InkWell(
-
-                onTap: () {
-
-                  Navigator.push(context,
-                      MaterialPageRoute(builder:
-                          (context) =>
-                          Body_profile()
-                      )
-                  );
+                  child: Material(
+                    color: HexColor(Globalvireables.bluedark),
 
 
-                },
-                child: ClipRRect(
+                  child: ClipRRect(
 
-                    child: Row(
+                      child: Row(
 
-                        children: <Widget>[
-                          Container(
-                              margin: EdgeInsets.only(right: 5, left: 5, top: 40),
+                          children: <Widget>[
+                            Container(
+                              child: InkWell(
 
-                              child: Icon(
-                                Icons.person_rounded,
-                                size: 40.0,
-                                color: Colors.white,
-                              )),
-                          /* Container(
-                            margin: EdgeInsets.only(top: 10),
-                            child: Image.asset(
-                              'assest/profile.png',
-                              height: 30,
-                              width: 30,
+                                onTap: () {
+
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder:
+                                          (context) =>
+                                          Body_profile()
+                                      )
+                                  );
+
+
+                                },
+                                  child: Row(
+
+                                      children: <Widget>[
+                              Container(
+                                  margin: EdgeInsets.only(right: 5, left: 5, top: 40),
+
+                                  child: Icon(
+                                    Icons.person_rounded,
+                                    size: 40.0,
+                                    color: Colors.white,
+                                  )),
+
+                             Container(
+                              alignment: Alignment.topLeft,
+                              margin: EdgeInsets.only(right: 0, left: 0, top: 45),
+                              child: Text(Globalvireables.name,
+                                style: TextStyle(color: Colors.white, fontSize: 16),),
+                            ),])
+
+
+
+
+                              ),),
+Spacer(),
+                            InkWell(
+
+                              onTap: () {
+                                _scaffoldKey.currentState!.openEndDrawer();
+                               /* Navigator.push(context,
+                                    MaterialPageRoute(builder:
+                                        (context) =>
+                                        Body_profile()
+                                    )
+                                );
+*/
+
+                              },
+                              child: Container(
+                                alignment: Alignment.topRight,
+                                  margin: EdgeInsets.only(right: 5, left: 5, top: 40),
+
+                                  child: Icon(
+                                    Icons.menu,
+                                    size: 40.0,
+                                    color: Colors.white,
+                                  )),
                             ),
 
 
-                          ),*/
-                          Container(
-                            alignment: Alignment.topLeft,
-                            margin: EdgeInsets.only(right: 0, left: 0, top: 45),
-                            child: Text(Globalvireables.name,
-                              style: TextStyle(color: Colors.white, fontSize: 16),),
-                          )
-                        ]),
+                          ]),
+
+
+                  ),
+
+                  ),
+
 
 
                 ),
-                ),
-                ),
-              ),
 
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(right: 0, left: 0, top: 16),
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 0, left: 0, top: 16),
 
-                      width: 290
-                      , height: 55,
-                      child: Center(
+                        width: 290
+                        , height: 55,
+                        child: Center(
 
-                          child: TextField(
-                            autofocus: false,
-                            onChanged: RefreshPage(),
-                            controller: searchController,
-                            autocorrect: true,
-                            decoration: InputDecoration(
-                              hintText: 'Search.',
+                            child: TextField(
+                              autofocus: false,
+                              onChanged: RefreshPage(),
+                              controller: searchController,
+                              autocorrect: true,
+                              decoration: InputDecoration(
+                                hintText: 'Search.',
 
-                              prefixIcon: Icon(Icons.search),
-                              hintStyle: TextStyle(color: Colors.black12),
-                              filled: true,
-                              fillColor: Colors.white,
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0)),
-                                //      borderSide: BorderSide(color: Colors.green, width: 2),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0)),
-                                //   borderSide: BorderSide(color: Colors.green, width: 2),
-                              ),
-                            ),)
+                                prefixIcon: Icon(Icons.search),
+                                hintStyle: TextStyle(color: Colors.black12),
+                                filled: true,
+                                fillColor: Colors.white,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0)),
+                                  //      borderSide: BorderSide(color: Colors.green, width: 2),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0)),
+                                  //   borderSide: BorderSide(color: Colors.green, width: 2),
+                                ),
+                              ),)
 
+                        ),
                       ),
-                    ),
-                  )
+                    )
 
 
-                ],
+                  ],
+                ),
               ),
-            ),
+
           ),
           body: new FutureBuilder<List<Fileofcards>>(
             future: ListPage,
@@ -274,7 +298,7 @@ margin: EdgeInsets.only(top: 40,left: 20,right: 20,bottom: 22),
 
 
                                     image: DecorationImage(
-                                      image: NetworkImage("http://10.0.1.60:1425"+post.ProfileImage),
+                                      image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage),
                                       fit: BoxFit.cover,
                                     ),
 
@@ -318,7 +342,7 @@ alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: const Color(0xff7c94b6),
                   image: DecorationImage(
-                    image: NetworkImage("http://10.0.1.60:1425"+post.ProfileImage),
+                    image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.all( Radius.circular(100.0)),
@@ -328,13 +352,13 @@ alignment: Alignment.center,
                   ),
                 ),
               )))),
-                /*Image.network("http://10.0.1.60:1425"+post.ProfileImage,*//*
+                /*Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,*//*
               //  height: 200,
               // width: 200,
 
               ),
               ),
-              *//*child: Image.network("http://10.0.1.60:1425"+post.ProfileImage,height: 100,width: 100,) ,) *//*
+              *//*child: Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,height: 100,width: 100,) ,) *//*
               )*/
 
               ])/* */
@@ -345,7 +369,7 @@ alignment: Alignment.center,
 
 
               Positioned(
-              top: 250 ,
+              top: 220 ,
                 child:Container(
                 alignment: Alignment.bottomCenter,
                 height: 100,
@@ -358,22 +382,29 @@ alignment: Alignment.center,
                       primary:  HexColor(Globalvireables.basecolor)
                   ),
                   child: Container(
-                    width: 100,
-                    height: 100,
+                    width: 80,
+                    height: 80,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(shape: BoxShape.circle),
                     child: Text(
-                      'Add',
+                      LanguageProvider.getTexts('add').toString(),
                       style: TextStyle(
                         fontSize: 18, fontWeight: FontWeight.w300,),
                     ),
                   ),
                   onPressed: () {
+
+                    setState(() {
+                      RefreshPage();
+                    });
+
                     //  getUser();
                     showDialog(
                       context: context,
                       builder: (_) => FileDialog(),
                     );
+//RefreshPage();
+
 
                   },
                 ),
@@ -405,7 +436,7 @@ return bodyd();
             Container(
               alignment: Alignment.topCenter,
                 margin: EdgeInsets.only(top: 100),
-                child: Text("Add your first card file now", style: TextStyle(
+                child: Text(LanguageProvider.getTexts('addfirstfile').toString(), style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w300,
                     color: HexColor(Globalvireables.bluedark)
@@ -426,10 +457,6 @@ return bodyd();
               width: 100,
             margin: EdgeInsets.only(top: 200),
               child: ElevatedButton(
-
-
-
-
                 style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
                   //  primary: HexColor("#4267b2")
@@ -441,7 +468,8 @@ return bodyd();
                   alignment: Alignment.center,
                   decoration: BoxDecoration(shape: BoxShape.circle),
                   child: Text(
-                    'Add',
+                    LanguageProvider.getTexts('add').toString(),
+
                     style: TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w300,),
                   ),
