@@ -40,7 +40,7 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
 
   final HttpService httpService = HttpService();
 
-   final globalKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState>  globalKey = GlobalKey<ScaffoldState>();
    var username;
   late Future<List<Fileofcards>> ListPage=httpService.getPosts(searchController.text);
 
@@ -89,7 +89,7 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
   User? user = FirebaseAuth.instance.currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 //final GlobalKey<ScaffoldState> scafold=new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -318,8 +318,6 @@ alignment: Alignment.center,
                                               child: Text(post.ProfileName ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
                                           ),
                                         ),
-
-
               Row(
 
               children: [

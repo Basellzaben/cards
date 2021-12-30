@@ -1,13 +1,14 @@
 
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/LanguageProvider.dart';
 import 'package:cards/Models/HttpService.dart';
 import 'package:cards/Models/cards.dart';
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/CardView/Card_Body.dart';
+import 'package:cards/ui/EditDataPages/EditCardDialog.dart';
 import 'package:cards/ui/NavDrawer.dart';
 import 'package:cards/ui/Profile/Body_profile.dart';
 import 'package:cards/ui/Regeister/Register_Body.dart';
@@ -52,7 +53,7 @@ class _Cards_Body extends State<Cards_Body> with SingleTickerProviderStateMixin 
   late AnimationController controller;
   late Animation colorAnimation;
   late Animation sizeAnimation;
-  final globalKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   var username;
   @override
   void initState() {
@@ -224,7 +225,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                   children: <Widget>[
                     new ListView(
                       children: cardss!.map((post) => Container(
-                          margin: EdgeInsets.only(top: 10,left: 10,right: 10,bottom: 5),
+                          margin: EdgeInsets.only(top: 70,left: 10,right: 10,bottom: 5),
                           height: 150,
                           child:Stack(
                               alignment: Alignment.topCenter,
@@ -246,13 +247,20 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                         );
                                         print("Container clicked" +post.CardNo.toString());
                                       },
-                                      child: Card(
-                                          elevation: 7,
+                                      child: Slidable(
+                                        actionPane: SlidableDrawerActionPane(),
+                                        child: Card(
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Container(
-                                            decoration: BoxDecoration(
+                                              side: BorderSide(
+                                                /* color:Colors.white70,height:4.5*/
+                                                  color: HexColor(Globalvireables.basecolor), width: 3),
+                                              borderRadius: BorderRadius.circular(22))
+                                           // elevation: 7,
+                                         /*   shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),*/
+                                            ,child: Container(
+                                              decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
 
 
@@ -262,34 +270,203 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                   ),*/
 
                                 ),
-                                            child: Container(
-                                              child: Column(
-                                                children: [
-                                                    Container(
-                                                        margin: EdgeInsets.only(left: 14,top: 20),
+                                              child: Container(
+                                                child: Column(
+                                                  children: [
+                                                /*      Container(
+                                                          margin: EdgeInsets.only(left: 14,top: 20),
+                                                          alignment: Alignment.topLeft,
+                                                          //margin: EdgeInsets.only(top: 40),
+                                                          child: Text(post.CardName ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+                                                      ),*/
+if(post.CardNo!=null && Globalvireables.languageCode=="en")
+          Row(
+          children: [
+           /* IconButton(
+              iconSize: 35,
+              color: Colors.red,
+              icon: new Icon(Icons.delete),
+              highlightColor: Colors.pink,
+              onPressed: (){
+
+               delete();
+
+              },
+            ),*/
+            Container(
+                margin: EdgeInsets.only(top: 30,left: 10),
+                alignment: Alignment.topLeft,
+                //margin: EdgeInsets.only(top: 40),
+                child: Text("Card No :" ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+            ),
+            Container(
+                margin: EdgeInsets.only(top: 30,left: 10),
+                alignment: Alignment.topLeft,
+                //margin: EdgeInsets.only(top: 40),
+                child: Text(post.CardNo ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+            ),
+
+            ])else if(post.CardNo!=null && Globalvireables.languageCode=="ar")
+                                                    Row(
+                                                        children: [
+                                                          Spacer(),
+
+
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 30,left: 10),
+                                                              alignment: Alignment.topLeft,
+                                                              //margin: EdgeInsets.only(top: 40),
+                                                              child: Text(post.CardNo ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+                                                          ),
+                                                          Container(
+                                                              margin: EdgeInsets.only(top: 30,left: 10,right: 10),
+                                                              alignment: Alignment.topLeft,
+                                                              //margin: EdgeInsets.only(top: 40),
+                                                              child: Text(" : " +"رقم البطاقة",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+                                                          ),
+
+                                                         /* IconButton(
+                                                            iconSize: 35,
+                                                            color: Colors.lightGreen,
+                                                            icon: new Icon(Icons.edit),
+                                                            highlightColor: Colors.pink,
+                                                            onPressed: (){
+
+                                                              edit(post.CardName,post.CardNo,post.ExpiryDate,post.CardType
+                                                                  ,post.CardImage1,post.CardImage2,post.CardImage3);
+
+
+                                                            },
+                                                          ),*/
+                                                        ])
+              ,
+
+              if(post.CardType!=null && Globalvireables.languageCode=="en")
+          Row(
+          children: [
+           /* IconButton(
+              iconSize: 35,
+              color: Colors.lightGreen,
+              icon: new Icon(Icons.edit),
+              highlightColor: Colors.pink,
+              onPressed: (){
+
+                edit(post.CardName,post.CardNo,post.ExpiryDate,post.CardType
+                    ,post.CardImage1,post.CardImage2,post.CardImage3);
+
+
+              },
+            ),*/
+    Container(
+    margin: EdgeInsets.only(top: 10,left: 10),
+    alignment: Alignment.topLeft,
+    //margin: EdgeInsets.only(top: 40),
+    child: Text("Card Type :" ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+    ),
+    Container(
+    margin: EdgeInsets.only(top: 10 ,left: 10),
+    alignment: Alignment.topLeft,
+    //margin: EdgeInsets.only(top: 40),
+    child: Text(post.CardType ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+    ),
+    ])else  if(post.CardNo!=null && Globalvireables.languageCode=="ar")
+      Row(
+
+    children: [
+
+      Spacer(),
+
+      Container(
+    margin: EdgeInsets.only(top: 10 ,left: 10),
+    alignment: Alignment.topLeft,
+    //margin: EdgeInsets.only(top: 40),
+    child: Text(post.CardType ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+    ),
+    Container(
+    margin: EdgeInsets.only(top: 10,left: 10),
+    alignment: Alignment.topLeft,
+    //margin: EdgeInsets.only(top: 40),
+    child: Text( " : " +"نوع البطاقة",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+    ),
+
+   /*   IconButton(
+        iconSize: 35,
+        color: Colors.red,
+        icon: new Icon(Icons.delete),
+        highlightColor: Colors.pink,
+        onPressed: (){
+
+          delete();
+
+        },
+      ),*/
+
+          ]),
+
+                                              /*      if(post.CardType!=null)
+                                                      Container(
+                                                        margin: EdgeInsets.only(top: 30 ,left: 10),
                                                         alignment: Alignment.topLeft,
                                                         //margin: EdgeInsets.only(top: 40),
-                                                        child: Text(post.CardName ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+                                                        child: Text("Card Type: "+post.CardType ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
                                                     ),
-if(post.CardNo!=null)
-                                                  Container(
-                                                      margin: EdgeInsets.only(left: 14,top: 20),
-                                                      alignment: Alignment.topLeft,
-                                                      //margin: EdgeInsets.only(top: 40),
-                                                      child: Text(post.CardNo ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
-                                                  ),
+*/
 
-
-
-                                                ],
+                                                  ],
+                                                ),
                                               ),
+
+
+
+
                                             ),
-
-
-
-
+                                        ),
+/*
+                                        actions: <Widget>[
+                                          IconSlideAction(
+                                            caption: 'Archive',
+                                            color: Colors.blue,
+                                            icon: Icons.archive,
+                                          //  onTap: () => _showSnackBar('Archive'),
                                           ),
-                                      ),
+                                          IconSlideAction(
+                                            caption: 'Share',
+                                            color: Colors.indigo,
+                                            icon: Icons.share,
+                                        //    onTap: () => _showSnackBar('Share'),
+                                          ),
+                                        ],*/
+                                        secondaryActions: <Widget>[
+                                      /*IconSlideAction(
+                                      caption: 'More',
+                                        color: Colors.black45,
+                                        icon: Icons.more_horiz,
+                                      //  onTap: () => _showSnackBar('More'),
+                                      ),*/
+                     /*   IconSlideAction(
+                          foregroundColor:Colors.red,
+                          color:HexColor(Globalvireables.white2),
+                          icon: Icons.delete,
+                         // onTap: () => _showSnackBar('Delete'),
+                        ),
+*/
+                                          IconButton(
+                                            iconSize: 50,
+                                            color: Colors.red,
+                                            icon: new Icon(Icons.delete),
+                                            highlightColor: Colors.pink,
+                                            onPressed: (){
+delete();
+                                             /* edit(data.CardName,data.CardNo,data.ExpiryDate,data.CardType
+                                                  ,data.CardImage1,data.CardImage2,data.CardImage3);
+*/
+                                            },
+                                          ),
+    ]),
+
+
+
+
                                     )
                                 ),
                         /*        Positioned(
@@ -329,6 +506,52 @@ if(post.CardNo!=null)
             ),
             *//*child: Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,height: 100,width: 100,) ,) *//*
             )*/
+
+
+
+                                Positioned(
+                                    top: -40,
+
+                                      child: Container(
+
+                                          decoration: new BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.only(
+                                                 topLeft:Radius.elliptical(
+                                                    MediaQuery.of(context).size.width, 300.0)
+                                            ,
+                                                topRight:Radius.elliptical(
+                                                    MediaQuery.of(context).size.width, 300.0)),
+                                          ),
+
+                                        padding: EdgeInsets.only(top: 5,left: 50,right: 50),
+                                      //  margin: EdgeInsets.only(top: 30),
+                                      //  color: Colors.white,
+                                         // width: MediaQuery.of(context).size.height,
+                                         height: 50,
+
+                                          child: Container(
+                                             // margin: const EdgeInsets.only(top: 33.0,left: 10,right: 10),
+
+                                              alignment: Alignment.center,
+
+                                              child:
+
+                                              Container(
+                                                 // margin: EdgeInsets.only(left: 14,top: 20),
+                                                  alignment: Alignment.center,
+                                                  //margin: EdgeInsets.only(top: 40),
+                                                  child: Text(post.CardName ,style: TextStyle(fontSize: 28,color: Colors.black,fontWeight: FontWeight.w800),)
+                                              ),
+
+
+
+                                          )),
+
+                                ),
+
+
+
 
                               ])/* */
 
@@ -465,6 +688,90 @@ if(post.CardNo!=null)
       });
     }}
 
+  delete () async {
+    try {
+
+      Uri apiUrl = Uri.parse(Globalvireables.addCards+"/"+Globalvireables.cardindex);
+      showAlert(context,LanguageProvider.getTexts('deleting').toString());
+      final json = {
+        "Id": Globalvireables.fileindex ,
+      };
+      print ("card save");
+
+
+      //await http.post(apiUrl,body: jsone);
+
+      http.Response response=await http.delete(apiUrl, body: json);
+
+      var jsonResponse = jsonDecode(response.body);
+
+      if (!jsonResponse.toString().contains("ID: 0")) {
+
+        print("succ = "+jsonResponse.toString());
+        Navigator.pop(context);
+
+      }
+      else {
+        Navigator.pop(context);
+        //  displayMessage("Login information error");
+        /* displayMessage('out time');*/
+        print("error="+jsonResponse.toString());
+      }
+      print("succ = "+jsonResponse.toString());
+
+      //  print("esaf = "+jsonResponse.toString());
+
+      /*   response = await http.post(apiUrl, body: jsone).whenComplete(() {
+
+
+        var jsonResponse = jsonDecode(response.body);
+
+        if (!jsonResponse.toString().contains("ID: 0")) {
+
+          print("succ = "+jsonResponse.toString());
+          Navigator.pop(context);
+
+        }
+        else {
+          Navigator.pop(context);
+          displayMessage("Login information error");
+          *//* displayMessage('out time');*//*
+          print("error="+jsonResponse.toString());
+        }
+        print("succ = "+jsonResponse.toString());
+
+        //  print("esaf = "+jsonResponse.toString());
+
+
+      });*/
+    }on TimeoutException catch (_) {
+      // displayMessage('out time');
+      // displayMessage("out time");
+      Navigator.pop(context);
+      // displayMessage("Login information error");
+
+    }on FormatException catch(_){
+
+      Navigator.pop(context);
+      // displayMessage("Login information error");
+
+
+    }
+    Navigator.pop(context);
+  }
+
+  void showAlert(BuildContext context,String text) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(text),
+        ));
+  }
+  edit(String name,String no,String date,String type,String img1,String img2,String img3) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EditCardDialog(name,no,date,type,img1,img2,img3)),);
+  }
 }
 
 

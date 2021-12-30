@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cards/LanguageProvider.dart';
+import 'package:cards/ui/CardView/Card_Body.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/color/HexColor.dart';
@@ -49,7 +50,7 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
   LogoutOverlayStatecard( this.name, this.no, this.date, this.type,this.img1,this.img2,this.img3){
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   late http.Response response;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
@@ -106,13 +107,20 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-
+if(Globalvireables.languageCode=="en")
                     Center(
-                        child: Text(LanguageProvider.getTexts('addfirstcard').toString(),style: TextStyle(
+                        child: Text("Edit Card",style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.w300,
                             color: HexColor(Globalvireables.basecolor)
-                        ),)),
+                        ),))else
+  Center(
+      child: Text("تعديل البطاقة",style: TextStyle(
+          fontSize: 25,
+          fontWeight: FontWeight.w300,
+          color: HexColor(Globalvireables.basecolor)
+      ),))
+                          ,
 
                     SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -681,11 +689,16 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
     }on FormatException catch(_){
 
       Navigator.pop(context);
-      displayMessage("Login information error");
+      displayMessage("error");
 
 
     }
     Navigator.pop(context);
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Card_Body()),);
+
   }
   void showAlert(BuildContext context,String text) {
     showDialog(

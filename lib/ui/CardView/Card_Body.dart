@@ -60,13 +60,22 @@ class _Card_Body extends State<Card_Body> {
   String _dataString = "Hello from this QR";
   @override
   void initState() {
+
+    //RefreshPage();
+
     Globalvireables.barcodedata="0";
 
     super.initState();
    // shareImage();
 
   }
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  @override
+  void dispose() {
+   // RefreshPage();
+
+    super.dispose();
+  }
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   GlobalKey globalKey = new GlobalKey();
  // String dataString = "Hello from this QR";
@@ -91,7 +100,16 @@ class _Card_Body extends State<Card_Body> {
 
 
   }
+  late Future<Cardinfo> ListPage=getCardData();
 
+ /* RefreshPage(){
+
+      print("refresh ... ");
+      setState(() {
+        ListPage=getCardData();
+      });
+
+  }*/
 
   @override
   Widget build(BuildContext context) {

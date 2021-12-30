@@ -11,12 +11,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
-class verviaction_body extends StatefulWidget {
+class verviaction_body2 extends StatefulWidget {
   @override
-  _verviaction_body createState() => _verviaction_body();
+  _verviaction_body2 createState() => _verviaction_body2();
 }
 
-class _verviaction_body extends State<verviaction_body> {
+class _verviaction_body2 extends State<verviaction_body2> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SmsAutoFill smsAutoFill = SmsAutoFill();
   late String strVerificationId;
@@ -487,9 +487,9 @@ maxLength: 1,
       final User? user = (await firebaseAuth.signInWithCredential(credential)).user;
 print(Globalvireables.regorupdate+"regorupdate");
      // displayMessage("Successfully signed in UID: ${user!.uid}");
-if(Globalvireables.regorupdate.contains("0"))
+/*if(Globalvireables.regorupdate.contains("0"))
   Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"",Globalvireables.photoURL,Globalvireables.password);
-else if(Globalvireables.regorupdate.contains("1"))
+else if(Globalvireables.regorupdate.contains("1"))*/
   Editprofile(Globalvireables.name,Globalvireables.email,Globalvireables.phone,Globalvireables.country,Globalvireables.password,context);
 
       setState(() {

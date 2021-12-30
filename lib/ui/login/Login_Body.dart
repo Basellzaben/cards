@@ -41,8 +41,8 @@ goBackToPreviousScreen(BuildContext context) {
 }
 
 class _Login_Body extends State<Login_Body> {
-  final globalKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController passwordcontroler = TextEditingController();
   TextEditingController emailcontroler = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;

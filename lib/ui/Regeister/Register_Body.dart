@@ -40,7 +40,7 @@ class _Register_Body extends State<Register_Body> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController password2 = TextEditingController();
-  final globalKey = GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   var items = ['+962', '+999', '+565'];
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SmsAutoFill smsAutoFill = SmsAutoFill();

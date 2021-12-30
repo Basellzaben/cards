@@ -31,11 +31,20 @@ class LogoutOverlayStatecard extends State<BarCodePage>
       child: Scaffold(
           body: Center(
               child: Container(
-                margin: EdgeInsets.all(1),
-                height: 120,
+                margin: EdgeInsets.only(top: 150),
+             //   height: 120,
 
-                child: SfBarcodeGenerator(
-                  value: Globalvireables.barcodedata,
+                child: Column(
+                  children: [
+                    SfBarcodeGenerator(
+                      value: Globalvireables.barcodedata,
+                    ),
+
+                    Center(child: Container(
+                        margin: EdgeInsets.only(top: 30),
+                        child: Text(Globalvireables.barcodedata,style: TextStyle(fontWeight: FontWeight.w800,fontSize: 25),)))
+
+                  ],
                 ),
               ))),
       );

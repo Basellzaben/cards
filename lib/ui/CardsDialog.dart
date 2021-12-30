@@ -21,7 +21,7 @@ class CardsDialog extends StatefulWidget {
 
 class LogoutOverlayStatecard extends State<CardsDialog>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   late http.Response response;
   late AnimationController controller;
   late Animation<double> scaleAnimation;

@@ -16,7 +16,7 @@ class FileDialog extends StatefulWidget {
 
 class LogoutOverlayState extends State<FileDialog>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   late AnimationController controller;
   late Animation<double> scaleAnimation;

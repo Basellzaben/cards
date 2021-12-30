@@ -216,6 +216,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.11"
+  flutter_slidable:
+    dependency: "direct dev"
+    description:
+      name: flutter_slidable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.7"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -490,6 +497,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  swipe_cards:
+    dependency: "direct dev"
+    description:
+      name: swipe_cards
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   syncfusion_flutter_barcodes:
     dependency: "direct dev"
     description:

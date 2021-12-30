@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cards/LanguageProvider.dart';
+import 'package:cards/ui/vervicationUpdatePhone/vervication_body2.dart';
 import 'package:cards/ui/vervicationpage/vervication_body.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
@@ -22,7 +23,7 @@ class EditProfileDialog extends StatefulWidget {
 
 class LogoutOverlayStatecard extends State<EditProfileDialog>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   late http.Response response;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
@@ -72,16 +73,19 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
                 child: Column(
                   children: <Widget>[
 
-                    Center(
-
-                        child: Container(
-                          margin: EdgeInsets.only(top: 40),
-                          child: Text("Edit Profile Data",style: TextStyle(
+                    if(Globalvireables.languageCode=="en")
+                      Center(
+                          child: Text("Edit profile data",style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w300,
                               color: HexColor(Globalvireables.basecolor)
-                          ),),
-                        )),
+                          ),))else
+                      Center(
+                          child: Text("تعديل الملف الشخصي",style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w300,
+                              color: HexColor(Globalvireables.basecolor)
+                          ),)),
 
                     Container(
                       margin: EdgeInsets.only(top: 30),
@@ -329,8 +333,11 @@ if(Globalvireables.email!=null)
                               {
                                 Globalvireables.regorupdate="1";
                                 Globalvireables.name=namecontroler.text;
-                                if(emailcontroler.text!=null)
-                                  if(emailcontroler.text.length>5)
+                               /* if(emailcontroler.text!=null)
+                                  if(emailcontroler.text.length>5)*/
+                                if(img64!=null)
+                                  if(img64.length>10)
+                                    Globalvireables.imagen=img64;
                                 Globalvireables.email=emailcontroler.text;
                                 Globalvireables.phone=mobilecontroler.text;
                                 Globalvireables.country=countrycontroler.text;
@@ -339,7 +346,7 @@ if(Globalvireables.email!=null)
 
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => verviaction_body()),
+                                  MaterialPageRoute(builder: (context) => verviaction_body2()),
                                 );
                               }
                               else if(passwordcontroler.text.length>5)
@@ -392,7 +399,10 @@ if(Globalvireables.email!=null)
       Uri apiUrl = Uri.parse(Globalvireables.regesterapi+"/"+Globalvireables.ID);
       showAlert(context,"Editing ...");
 
-      final json = {
+      print (Globalvireables.imagen+"immmmmgh");
+
+      var json;
+       json = {
         "ID":Globalvireables.ID,
         "Name": name,
         "Email": email,
@@ -400,7 +410,14 @@ if(Globalvireables.email!=null)
         "Country":country,
         "ProfileImage": Globalvireables.imagen,
         "Password": password};
-
+if(email==null)
+  json = {
+    "ID":Globalvireables.ID,
+    "Name": name,
+    "Mobile": mobile,
+    "Country":country,
+    "ProfileImage": Globalvireables.imagen,
+    "Password": password};
       print ("card save");
 
 

@@ -38,7 +38,7 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
   LogoutOverlayStatecard( this.name,this.img1){
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   late http.Response response;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
@@ -93,12 +93,19 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
                 child: Column(
                   children: <Widget>[
 
-                    Center(
-                        child: Text(LanguageProvider.getTexts('addfirstcard').toString(),style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w300,
-                            color: HexColor(Globalvireables.basecolor)
-                        ),)),
+                    if(Globalvireables.languageCode=="en")
+                      Center(
+                          child: Text("Edit File",style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w300,
+                              color: HexColor(Globalvireables.basecolor)
+                          ),))else
+                      Center(
+                          child: Text("تعديل ملف البطاقات",style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w300,
+                              color: HexColor(Globalvireables.basecolor)
+                          ),)),
 
                     SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
