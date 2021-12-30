@@ -179,7 +179,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                         onChanged: RefreshPage(),
                         autocorrect: true,
                         decoration: InputDecoration(
-                          hintText: 'Search.',
+                          hintText: LanguageProvider.getTexts('search').toString(),
 
                           prefixIcon: Icon(Icons.search),
                           hintStyle: TextStyle(color: Colors.black12),
@@ -271,7 +271,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                                         //margin: EdgeInsets.only(top: 40),
                                                         child: Text(post.CardName ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
                                                     ),
-
+if(post.CardNo!=null)
                                                   Container(
                                                       margin: EdgeInsets.only(left: 14,top: 20),
                                                       alignment: Alignment.topLeft,
@@ -279,10 +279,17 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                                       child: Text(post.CardNo ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
                                                   ),
 
+
+
                                                 ],
                                               ),
                                             ),
-                                          )),
+
+
+
+
+                                          ),
+                                      ),
                                     )
                                 ),
                         /*        Positioned(
@@ -339,23 +346,20 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                         margin: EdgeInsets.only(top: 200),
                         child: ElevatedButton(
 
-
-
-
                           style: ElevatedButton.styleFrom(
                               shape: CircleBorder(),
                               //  primary: HexColor("#4267b2")
                               primary:  colorAnimation.value
                           ),
                           child: Container(
-                            // width: 100,
-                            //height: 100,
+                            width: 90,
+                           height: 90,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(shape: BoxShape.circle),
                             child: Text(
                               LanguageProvider.getTexts('add').toString(),
                               style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w300,),
+                                fontSize: 15, fontWeight: FontWeight.w300,),
                             ),
                           ),
                           onPressed: () {
@@ -364,6 +368,8 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                               context: context,
                               builder: (_) => CardsDialog(),
                             );
+
+
 
                           },
                         ),
@@ -423,8 +429,8 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                     primary:  colorAnimation.value
                 ),
                 child: Container(
-                  // width: 100,
-                  //height: 100,
+                  width: 90,
+                  height: 90,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(shape: BoxShape.circle),
                   child: Text(

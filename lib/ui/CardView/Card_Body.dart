@@ -7,6 +7,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:cards/LanguageProvider.dart';
+import 'package:cards/ui/BarCodePage.dart';
+import 'package:cards/ui/EditDataPages/EditCardDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -15,7 +17,7 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:syncfusion_flutter_barcodes/barcodes.dart';
 import 'package:http/http.dart';
 import 'package:share/share.dart';
 import 'package:path_provider/path_provider.dart';
@@ -58,9 +60,13 @@ class _Card_Body extends State<Card_Body> {
   String _dataString = "Hello from this QR";
   @override
   void initState() {
+    Globalvireables.barcodedata="0";
+
     super.initState();
    // shareImage();
+
   }
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   GlobalKey globalKey = new GlobalKey();
  // String dataString = "Hello from this QR";
@@ -90,6 +96,7 @@ class _Card_Body extends State<Card_Body> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
    /*     appBar: PreferredSize(
 
             preferredSize: Size.fromHeight(100), // Set this height
@@ -115,8 +122,8 @@ body: SingleChildScrollView(
      // print(snapshot.data!.ExpiryDate.toString()+"dfsfdf");
     if (snapshot.hasData) {
     var data = snapshot.data;
-
-
+if(data?.CardName!=null)
+Globalvireables.barcodedata=data!.CardNo;
     return
        SingleChildScrollView(
         child: Column(
@@ -140,51 +147,57 @@ Container(alignment: LanguageProvider.Align() ,margin:EdgeInsets.only(top: 46,le
 
 
  //Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 10,left: 10),child:Text("Card Data",style: TextStyle(fontSize: 15),)),
-if(Globalvireables.languageCode=="en")
+if(Globalvireables.languageCode=="en" &&data.CardNo!=null )
  Row(
    children: [
 
-       Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text("Card No :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
-       Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+       Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(LanguageProvider.getTexts('cardno').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+       Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
    ],
  )
-  else
+  else if(data.CardNo!=null )
   Row(
   children: [
+    Spacer(),
 
-      Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
-      Container(alignment:LanguageProvider.Align(),margin: EdgeInsets.only(top: 20,left: 20),child:Text("Card No :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+      Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(data.CardNo,textDirection: LanguageProvider.getDirection(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+      Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardno').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
 
       ],
       ),
-  if(Globalvireables.languageCode=="en")
+  if(Globalvireables.languageCode=="en" &&data.CardType!=null )
     Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Card Type :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('cardtype').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
       ],
   )
-  else
-      Row(
-      children: [
-      Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+  else   if(data.CardType!=null)
+    Row(
+       // mainAxisAlignment: MainAxisAlignment.start,
 
-      Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Card Type :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+        children: [
+          Spacer(),
+      Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+
+      Align(alignment: Alignment.topRight,child: Container( margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardtype').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)))),
       ],
       ),
-  if(Globalvireables.languageCode=="en")
+  if(Globalvireables.languageCode=="en"&&data.ExpiryDate!=null)
     Row(
       children: [
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Expiry Date :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('ExpiryDate').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
         Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
       ],
-  )else
+  )else if(data.ExpiryDate!=null)
     Row(
       children: [
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+        Spacer(),
 
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text("Expiry Date :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+
+        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('ExpiryDate').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
       ],
     ),
 
@@ -197,6 +210,7 @@ if(Globalvireables.languageCode=="en")
                 child: Row(
                     children: [
                       if(data.CardImage1!=null)
+                        if(data.CardImage1.length>5)
                       Container(
                         margin: EdgeInsets.only(top: 10),
                         child: Image.network(
@@ -206,7 +220,9 @@ if(Globalvireables.languageCode=="en")
                         ),
                       ),
 if(data.CardImage2!=null)
-                      Container(
+  if(data.CardImage2.length>5)
+
+    Container(
                         margin: EdgeInsets.only(top: 10),
                         child: Image.network(
                           "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage2,  width: MediaQuery.of(context).size.width,
@@ -216,6 +232,7 @@ if(data.CardImage2!=null)
                       ),
 
                       if(data.CardImage3!=null)
+                        if(data.CardImage3.length>5)
 
                       Container(
                         margin: EdgeInsets.only(top: 10),
@@ -244,6 +261,31 @@ margin: EdgeInsets.only(top: 55),
       child: Row(
         children: [
           Spacer(),
+
+          IconButton(
+            iconSize: 35,
+            color: Colors.lightGreen,
+            icon: new Icon(Icons.qr_code),
+            highlightColor: Colors.pink,
+            onPressed: (){
+              print(Globalvireables.barcodedata+"barcodedata");
+if(Globalvireables.barcodedata!="")
+              showDialog(
+                context: context,
+                builder: (_) => BarCodePage(),
+              );
+else if(Globalvireables.languageCode=="en")
+  displayMessage("No data to display");
+else
+  displayMessage("لا يوجد بيانات لعرضها");
+
+
+//RefreshPage();
+
+            },
+          ),
+          Spacer(),
+
           IconButton(
             iconSize: 35,
             color: Colors.red,
@@ -262,17 +304,29 @@ margin: EdgeInsets.only(top: 55),
             icon: new Icon(Icons.share),
             highlightColor: Colors.pink,
             onPressed: (){
-              Share.share( "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage1, subject:
+              Share.share('http://cardskeeper-001-site1.ftempurl.com'+data.CardImage1, subject:
               'Using Cards Keeper app'
                   '\n Card No : '+data.CardNo+""+"\n Card Type :"+data.CardType+""+
                   "\n Expiry Date :"+data.ExpiryDate);
 
             },
           ),
-
           Spacer(),
 
           IconButton(
+            iconSize: 35,
+            color: Colors.black,
+            icon: new Icon(Icons.edit),
+            highlightColor: Colors.pink,
+            onPressed: (){
+
+              edit(data.CardName,data.CardNo,data.ExpiryDate,data.CardType
+              ,data.CardImage1,data.CardImage2,data.CardImage3);
+
+            },
+          ),
+
+        /*  IconButton(
             color: Colors.lightGreen,
             iconSize: 35,
             icon: new Icon(Icons.qr_code),
@@ -282,7 +336,7 @@ margin: EdgeInsets.only(top: 55),
             //_captureAndSharePng();
 
             },
-          ),
+          ),*/
           Spacer(),
 
         ],
@@ -407,7 +461,7 @@ margin: EdgeInsets.only(top: 55),
     try {
 
       Uri apiUrl = Uri.parse(Globalvireables.addCards+"/"+Globalvireables.cardindex);
-      showAlert(context,LanguageProvider.getTexts('saving').toString());
+      showAlert(context,LanguageProvider.getTexts('deleting').toString());
       final json = {
         "Id": Globalvireables.fileindex ,
       };
@@ -475,23 +529,14 @@ margin: EdgeInsets.only(top: 55),
     Navigator.pop(context);
   }
 
+  void displayMessage(String value) {
+    _scaffoldKey.currentState!.showSnackBar(new SnackBar(content: new Text(value)));
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   edit(String name,String no,String date,String type,String img1,String img2,String img3) {
+     Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => EditCardDialog(name,no,date,type,img1,img2,img3)),);
+  }
 
 }

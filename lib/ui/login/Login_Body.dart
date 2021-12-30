@@ -15,7 +15,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
-
 import '../../LanguageProvider.dart';
 import '../ScanScreen.dart';
 class Login_Body extends StatefulWidget {
@@ -427,7 +426,7 @@ if(Globalvireables.languageCode=="en")
 
 
         ),
-
+print ("nulluser"+googleAccount.user!.emailVerified.toString()),
         if(googleAccount.user!.emailVerified==true){
           Regester(googleAccount.user!.displayName.toString(),
               googleAccount.user!.email.toString(),
@@ -435,20 +434,21 @@ if(Globalvireables.languageCode=="en")
               , "", googleAccount.user!.photoURL.toString(), "null"),
         }else
           {
+            print ("nulluser"),
             showAlert(context,LanguageProvider.getTexts('problemlogging').toString())
           }
     });
 
     } on Exception catch (e) {
-     // Navigator.pop(context);
+    print(e.toString()+"errrrrrrror");
 
       if(check()==false){
         showAlert(context,'لا يوجد اتصال انترنت');
       }else{
+        print("prooble "+e.toString());
         showAlert(context,LanguageProvider.getTexts('problemlogging').toString());
       }
       print("errorb"+e.toString());
-      //throw e;
     }
 
 
@@ -460,8 +460,10 @@ print("no internet ... ");
     }*/
   }
   Future<void> signOutFromGoogle() async{
-    await _googleSignIn.signOut();
-    await _auth.signOut();
+    await _googleSignIn.signOut().then((value) => {
+     _auth.signOut()
+
+    });
   }
   void showAlert(BuildContext context,String text) {
     showDialog(
@@ -502,14 +504,14 @@ img=Globalvireables.imagen;
         Globalvireables.name=name;
         Globalvireables.password=password;
         Globalvireables.country=country;
-      if(password!="null")
+      if(password=="null")
         Globalvireables.photoURL=profileimage;
       else
         Globalvireables.photoURL=user.ProfileImage;
 
       Globalvireables.ID=user.getid();
 
-        print("immmmge"+Globalvireables.photoURL);
+       // print("immmmge"+Globalvireables.photoURL);
 
       print(email);
       print("0"+password+"0");
@@ -535,11 +537,9 @@ img=Globalvireables.imagen;
     }on TimeoutException catch (_) {
    //   displayMessage('out time');
     //  Navigator.pop(context);
-      if(check()==false){
-        showAlert(context,'لا يوجد اتصال انترنت');
-      }else{
+print("outoftime");
         showAlert(context,LanguageProvider.getTexts('problemlogging').toString());
-      }
+
     }
   }
  /* void displayMessage(String message) {

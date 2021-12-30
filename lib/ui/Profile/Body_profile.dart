@@ -24,8 +24,28 @@ class Body_profile extends StatefulWidget {
   _Body_profile createState() => _Body_profile();
 }
 
+@override
+void initState() {
 
+  if(Globalvireables.languageCode=="en")
+  {
+    Globalvireables.lantext="اللغة العربية";
+
+  }
+  else {
+
+    Globalvireables.lantext="English Language";
+
+  }
+
+
+}
 class _Body_profile extends State<Body_profile> {
+
+
+
+
+
   String _imageBase64="";
   var bytes;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -55,6 +75,7 @@ class _Body_profile extends State<Body_profile> {
         body: Container(
           margin: EdgeInsets.only(top: 10 ,left: 5,right: 5),
         child: Card(
+
           shadowColor: HexColor(Globalvireables.white2),
           child: SingleChildScrollView(
           child: Column(
@@ -96,7 +117,7 @@ class _Body_profile extends State<Body_profile> {
                 ),
 
 
-
+if(Globalvireables.email!=null)
                 Container(
                   margin: const EdgeInsets.only(top: 0.0),
 
@@ -112,7 +133,7 @@ class _Body_profile extends State<Body_profile> {
                   ,),
 
 
-
+                if(Globalvireables.phone!="null")
                 Card(
                   
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
@@ -128,7 +149,7 @@ class _Body_profile extends State<Body_profile> {
                     ),
                   ),
                 ),
-
+                if(Globalvireables.email!=null)
                 Card(
 
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
@@ -145,7 +166,8 @@ class _Body_profile extends State<Body_profile> {
                       ]
                   ),
                 ),),
-                Card(
+                if(Globalvireables.country!=null)
+                  Card(
 
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
 
@@ -162,7 +184,7 @@ class _Body_profile extends State<Body_profile> {
                       ]
                   ),
                 ),),
-
+                if(Globalvireables.password!="null")
                 Card(
 
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
@@ -186,11 +208,12 @@ class _Body_profile extends State<Body_profile> {
 
                 if(Globalvireables.languageCode=="en")
               {    Globalvireables.languageCode="ar";
-              Globalvireables.lantext="اللغة العربية";
+              Globalvireables.lantext="English Language";
+
               }
                 else {
                   Globalvireables.languageCode = "en";
-                  Globalvireables.lantext="English Language";
+                  Globalvireables.lantext="اللغة العربية";
 
                 }
                 Navigator.pop(context);
@@ -237,13 +260,13 @@ class _Body_profile extends State<Body_profile> {
                             Icon(Icons.logout,size: 30,color: HexColor(Globalvireables.bluedark),),
 
                           Container(margin:EdgeInsets.only(left: 8,right: 8),
-                                child: Text("Logout".toString(),style: TextStyle(fontSize: 18),)),
+                                child: Text(LanguageProvider.getTexts('logout').toString().toString(),style: TextStyle(fontSize: 18),)),
                           ]
                       ),
                     ),
                   ),),
 
-
+if(Globalvireables.password!="null")
                 new InkWell(
                   onTap: () async {
                     Navigator.push(
@@ -282,8 +305,9 @@ Center(
 
 
   Widget getImagenBase64(String imagen) {
-    print(imagen+"imagen");
-
+   // print(imagen+"imagen");
+if(imagen==null)
+  imagen=Globalvireables.imagen;
     if(Globalvireables.password=="null")
       imagen=imagen;
       else
@@ -294,7 +318,7 @@ Center(
     const Base64Codec base64 = Base64Codec();
 
 
-    print(imagen+"imagen");
+    //print(imagen+"imagen");
     if (imagen == "http://cardskeeper-001-site1.ftempurl.com")
       return
         Container(
@@ -306,7 +330,34 @@ Center(
             color: HexColor(Globalvireables.basecolor),
           ),
         );
-    else
+
+    else if(imagen==null)
+     new Container(
+
+        height: 150.0,
+        width: 150.0,
+        decoration: new BoxDecoration(
+          //   borderRadius: BorderRadius.all( Radius.circular(100.0)),
+
+
+          color: const Color(0xff7c94b6),
+          //  borderRadius: BorderRadius.all(const Radius.circular(50.0)),
+          border: Border.all(color: const Color(0xFF28324E)),
+        ),
+        child: Image.network(
+          "https://www.yallanshtry.com/wp-content/uploads/2020/12/Male_Profile_Round_Circle_Users-512.png",  width: 130.0,
+          height: 130.0,
+          fit: BoxFit.fill,
+        ),
+
+        /*Image.memory(
+        bytes,
+        width: 300,
+        height: 300,
+        fit: BoxFit.fitWidth,
+
+      ),*/
+      );
     {  //bytes = base64.decode(_imageBase64);
     return new Container(
 
@@ -335,5 +386,8 @@ Center(
       ),*/
     );
   }
+
+
+
   }
 }

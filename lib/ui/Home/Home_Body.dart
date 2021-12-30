@@ -9,6 +9,7 @@ import 'package:cards/Models/Fileofcards.dart';
 import 'package:cards/Models/Fileofcards.dart';
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/CardsPage/Cards_Body.dart';
+import 'package:cards/ui/EditDataPages/EditFileDialog.dart';
 import 'package:cards/ui/NavDrawer.dart';
 import 'package:cards/ui/Profile/Body_profile.dart';
 import 'package:cards/ui/Regeister/Register_Body.dart';
@@ -59,15 +60,15 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-  /*  if(Globalvireables.languageCode=="en")
-    {    Globalvireables.languageCode="ar";
+    if(Globalvireables.languageCode=="en")
+    {
     Globalvireables.lantext="اللغة العربية";
     }
     else {
-      Globalvireables.languageCode = "en";
+
       Globalvireables.lantext="English Language";
 
-    }*/
+    }
     super.initState();
   /*  const oneSecond = const Duration(seconds: 25);
     new Timer.periodic(oneSecond, (Timer t) => setState((){
@@ -218,7 +219,7 @@ Spacer(),
                               controller: searchController,
                               autocorrect: true,
                               decoration: InputDecoration(
-                                hintText: 'Search.',
+                                hintText: LanguageProvider.getTexts('search').toString(),
 
                                 prefixIcon: Icon(Icons.search),
                                 hintStyle: TextStyle(color: Colors.black12),
@@ -317,6 +318,57 @@ alignment: Alignment.center,
                                               child: Text(post.ProfileName ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
                                           ),
                                         ),
+
+
+              Row(
+
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 10,left: 5,right: 5)
+
+                  ,
+                                          child: new GestureDetector(
+                                            onTap: (){
+
+                                            showAlertDialog(context);
+
+                                            },
+                                            child: Container(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  size: 30.0,
+                                                  color: Colors.red,
+                                                )
+                                            ),
+                                          ),
+                                        ),
+
+
+
+                                        Container(
+                                          margin: EdgeInsets.only(top: 10,left: 10,right: 10)
+                                          ,
+                                          child: new GestureDetector(
+                                            onTap: (){
+
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => EditFileDialog(post.ProfileName,post.ProfileImage)),);
+
+
+                                            },
+                                            child: Container(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Icon(
+                                                  Icons.edit,
+                                                  size: 30.0,
+                                                  color: Colors.lightGreen,
+                                                )
+                                            ),
+                                          ),
+                                        )
+                                        ])
                                       ],
                                     ),
                                   ),
@@ -532,6 +584,125 @@ return bodyd();
       ),
     )) ??*/
        return false;
+  }
+
+  delete () async {
+    try {
+print("tis delete profile link "+Globalvireables.cardfiles);
+      Uri apiUrl = Uri.parse(Globalvireables.cardfiles+"/"+Globalvireables.fileindex);
+showAlert(context,LanguageProvider.getTexts('deleting').toString());
+showAlert(context,LanguageProvider.getTexts('deleting').toString());
+      final json = {
+        "Id": Globalvireables.fileindex ,
+        "CustomerId":Globalvireables.ID
+      };
+      print ("card save");
+
+
+      //await http.post(apiUrl,body: jsone);
+
+      http.Response response=await http.delete(apiUrl, body: json);
+
+      var jsonResponse = jsonDecode(response.body);
+
+      if (!jsonResponse.toString().contains("ID: 0")) {
+
+        print("succ = "+jsonResponse.toString());
+        Navigator.pop(context);
+
+      }
+      else {
+        Navigator.pop(context);
+        //  displayMessage("Login information error");
+        /* displayMessage('out time');*/
+        print("error="+jsonResponse.toString());
+      }
+      print("succ = "+jsonResponse.toString());
+
+      //  print("esaf = "+jsonResponse.toString());
+
+      /*   response = await http.post(apiUrl, body: jsone).whenComplete(() {
+
+
+        var jsonResponse = jsonDecode(response.body);
+
+        if (!jsonResponse.toString().contains("ID: 0")) {
+
+          print("succ = "+jsonResponse.toString());
+          Navigator.pop(context);
+
+        }
+        else {
+          Navigator.pop(context);
+          displayMessage("Login information error");
+          *//* displayMessage('out time');*//*
+          print("error="+jsonResponse.toString());
+        }
+        print("succ = "+jsonResponse.toString());
+
+        //  print("esaf = "+jsonResponse.toString());
+
+
+      });*/
+   RefreshPage();
+
+    }on TimeoutException catch (_) {
+      // displayMessage('out time');
+      // displayMessage("out time");
+   //   Navigator.pop(context);
+      // displayMessage("Login information error");
+
+    }on FormatException catch(_){
+
+     // Navigator.pop(context);
+      // displayMessage("Login information error");
+
+
+    }
+   // Navigator.pop(context);
+  }
+  void showAlert(BuildContext context,String text) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(text),
+        ));
+  }
+  showAlertDialog(BuildContext context) {
+
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text(LanguageProvider.getTexts('Cancel').toString()),
+      onPressed:  () {        Navigator.of(context).pop(); // dismiss dialog
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text(LanguageProvider.getTexts('Continue').toString()),
+      onPressed:  () {
+
+        Navigator.of(context).pop();
+        delete(); // dismiss dialog
+       // launchMissile();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(LanguageProvider.getTexts('delete').toString()),
+      content: Text(LanguageProvider.getTexts('deletetext').toString()),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }
 

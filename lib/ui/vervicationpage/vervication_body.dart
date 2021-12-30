@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cards/LanguageProvider.dart';
 import 'package:cards/Models/Users.dart';
 import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:cards/ui/login/Login_Body.dart';
@@ -37,12 +38,10 @@ class _verviaction_body extends State<verviaction_body> {
     super.initState();
     getCurrentNumber();
   }
-
   getCurrentNumber() async {
     phoneNumEditingController.text = (await smsAutoFill.hint)!;
     //smsAutoFill.hint;
                  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +65,6 @@ class _verviaction_body extends State<verviaction_body> {
   child: Icon(Icons.mark_email_read_sharp,color: HexColor(Globalvireables.white),size: 90,),
   /*  child: new Image.asset('assets/vervi.png'
                       , height: 110,width: 110,)*/
-
 ),
                     if(showVerifyNumberWidget)Container(
                       margin: EdgeInsets.only(bottom: 45),
@@ -74,15 +72,13 @@ class _verviaction_body extends State<verviaction_body> {
                       /*  child: new Image.asset('assets/vervi.png'
                       , height: 110,width: 110,)*/
                     ),
-                    if(showVerifyNumberWidget) Text("ادخل رقم الهاتف",style: TextStyle(color: Colors.white),),
-                    if(showVerificationCodeWidget) Text("ادخل الرمز التاكيد",style: TextStyle(color: Colors.white)),
+                    if(showVerifyNumberWidget) Text(LanguageProvider.getTexts('Enteraphone').toString(),style: TextStyle(color: Colors.white),),
+                    if(showVerificationCodeWidget) Text(LanguageProvider.getTexts('confirmationcode').toString(),style: TextStyle(color: Colors.white)),
 
                     if(showVerifyNumberWidget) Container(
                       color: HexColor(Globalvireables.basecolor),
                       child: TextFormField(
-
                           controller: phoneNumEditingController,
-
                           // textAlign: LanguageProvider.TxtAlign(),
                           //controller:passwordE,
                           //obscureText: _isObscure,
@@ -98,12 +94,8 @@ class _verviaction_body extends State<verviaction_body> {
                                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                 borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
                               ),
-
                               border: UnderlineInputBorder(),
-
                              // labelText:"Name",
-
-
                               labelStyle: TextStyle(
 
                                 color:Colors.black87,
@@ -130,13 +122,13 @@ class _verviaction_body extends State<verviaction_body> {
                             // primary: HexColor("#ff4a3d")
                           ),
                           child: Container(
-                            width: 200,
+                            width: 500,
                             height: 50,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(shape: BoxShape.circle),
                             child: Text(
-                              'أرسال الرمز',
-                              style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold ,color: Colors.black87),
+                              LanguageProvider.getTexts('Sendcode').toString(),
+                              style: TextStyle(fontSize: 17,fontWeight:FontWeight.bold ,color: Colors.black87),
                             ),
                           ),
                           onPressed: () {  phoneNumberVerification();
@@ -391,7 +383,7 @@ maxLength: 1,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(shape: BoxShape.circle),
                           child: Text(
-                            'تأكـيد',
+                            LanguageProvider.getTexts('Continue').toString(),
                             style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold,color: Colors.black87),
                           ),
                         ),
@@ -418,8 +410,12 @@ maxLength: 1,
     PhoneVerificationCompleted phoneVerificationCompleted =
         (PhoneAuthCredential phoneAuthCredential) async {
       await firebaseAuth.signInWithCredential(phoneAuthCredential);
-      displayMessage(
-          "Phone number is automatically verified and user signed in: ${firebaseAuth.currentUser!.uid}");
+
+      if(Globalvireables.languageCode=="en")
+      displayMessage("Phone number is automatically verified and user signed in");
+      else
+       displayMessage("يتم التحقق تلقائيًا من رقم الهاتف وتسجيل دخول المستخدم");
+
       setState(() {
         showVerifyNumberWidget = false;
         showVerificationCodeWidget = false;
@@ -429,12 +425,19 @@ maxLength: 1,
 
     PhoneVerificationFailed phoneVerificationFailed =
         (FirebaseAuthException authException) {
+      if(Globalvireables.languageCode=="en")
       displayMessage('فشل التحقق من رقم الهاتف');
+    else
+      displayMessage("Phone number verification failed");
+
     };
 
     PhoneCodeSent phoneCodeSent =
         (String verificationId, [int? forceResendingToken]) async {
+      if(Globalvireables.languageCode=="ar")
       displayMessage('يرجى التحقق من هاتفك للحصول على رمز التحقق');
+      else
+        displayMessage("Please check your phone for a verification code");
       strVerificationId = verificationId;
       setState(() {
         showVerifyNumberWidget = false;
@@ -444,7 +447,7 @@ maxLength: 1,
 
     PhoneCodeAutoRetrievalTimeout phoneCodeAutoRetrievalTimeout =
         (String verificationId) {
-      displayMessage("verification code: " + verificationId);
+    //  displayMessage("verification code: " + verificationId);
       strVerificationId = verificationId;
       setState(() {
         showVerifyNumberWidget = false;
@@ -461,7 +464,11 @@ maxLength: 1,
           codeSent: phoneCodeSent,
           codeAutoRetrievalTimeout: phoneCodeAutoRetrievalTimeout);
     } catch (e) {
-      displayMessage("فشل التحقق من رقم الهاتف");
+      if(Globalvireables.languageCode=="ar")
+        displayMessage('فشل التحقق من رقم الهاتف');
+      else
+        displayMessage("Phone number verification failed");
+
     }
   }
 
@@ -481,7 +488,7 @@ maxLength: 1,
 print(Globalvireables.regorupdate+"regorupdate");
      // displayMessage("Successfully signed in UID: ${user!.uid}");
 if(Globalvireables.regorupdate.contains("0"))
-      Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"",Globalvireables.photoURL,Globalvireables.password);
+  Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"",Globalvireables.photoURL,Globalvireables.password);
 else if(Globalvireables.regorupdate.contains("1"))
   Editprofile(Globalvireables.name,Globalvireables.email,Globalvireables.phone,Globalvireables.country,Globalvireables.password,context);
 
@@ -536,8 +543,10 @@ print (i.toString()+"  = postion");
 
       print("rees"+jsonResponse.toString());
       if (user.getid()=="0") {
-
+if(Globalvireables.languageCode=="en")
         displayMessage('The number is registered, please log in');
+else
+  displayMessage('الرقم مسجل ، الرجاء تسجيل الدخول');
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Login_Body()),);
@@ -644,7 +653,7 @@ print("rees"+jsonResponse.toString());
         "Password": password};
 
       print ("card save");
-
+      Globalvireables.name=name;
 
       //await http.post(apiUrl,body: jsone);
 
@@ -656,7 +665,7 @@ if(!jsonResponse.toString().contains("error")) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => Login_Body()),);
-  Globalvireables.regorupdate="0";
+//  Globalvireables.regorupdate="0";
 }
       print("jsooooon"+jsonResponse.toString());
 

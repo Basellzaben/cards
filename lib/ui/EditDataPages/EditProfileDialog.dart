@@ -180,7 +180,8 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
 
                           ),
                         )*/
-
+if(Globalvireables.email!=null)
+  if(Globalvireables.email.length>0)
                     Container(
 
                         margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
@@ -323,25 +324,28 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
                       child: Text(LanguageProvider.getTexts('add').toString()),
 
                         onPressed: () {
-                          if(namecontroler.text.length>2) {
-                            if(mobilecontroler.text.length>1)
+                          if(namecontroler.text.length>2 && passwordcontroler.text!=null) {
+                            if(mobilecontroler.text.length>0)
                               {
+                                Globalvireables.regorupdate="1";
                                 Globalvireables.name=namecontroler.text;
+                                if(emailcontroler.text!=null)
+                                  if(emailcontroler.text.length>5)
                                 Globalvireables.email=emailcontroler.text;
                                 Globalvireables.phone=mobilecontroler.text;
                                 Globalvireables.country=countrycontroler.text;
                                 Globalvireables.phone=mobilecontroler.text;
                                 Globalvireables.password=passwordcontroler.text;
-                                Globalvireables.regorupdate="1";
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => verviaction_body()),
                                 );
                               }
-                              else
+                              else if(passwordcontroler.text.length>5)
                             Editprofile(namecontroler.text, emailcontroler.text, mobilecontroler.text,countrycontroler.text,passwordcontroler.text,context);
                           }else{
-                            displayMessage("Add name to cards");
+                            displayMessage("All information must be filled out");
                           }
                         },
                         style: ElevatedButton.styleFrom(

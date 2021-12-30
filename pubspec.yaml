@@ -47,6 +47,8 @@ dev_dependencies:
   share: ^2.0.4
   wc_flutter_share: ^0.4.0
   flutter_cache_manager: ^3.3.0
+  barcode: ^2.2.0
+  syncfusion_flutter_barcodes: ^18.1.42-beta
   #flutter_facebook_auth: ^3.5.6+3
 
 

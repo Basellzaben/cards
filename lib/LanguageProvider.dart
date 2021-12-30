@@ -27,9 +27,23 @@ class LanguageProvider with ChangeNotifier{
     ,"addfirstcard":"اضف البطاقة الاولى لك"
     ,"addfirstfile":"اضف ملف البطاقات الاول لك"
 
-    ,"Expirydate":"تاريخ انتهاء البطاقة"
+    ,"ExpiryDate":"تاريخ انتهاء البطاقة"
     ,"cardtype":"نوع البطاقة"
     ,"cardno":"رقم البطاقة"
+    ,"deleting":"جار الحذف ..."
+    ,"search":"بحث"
+    ,"next":"التالي"
+    ,"Alreadyhaveanaccount":"تمتلك حساب بالفعل ؟"
+    ,"confirmpassword":"تأكيد كلمة المرور"
+    ,"Enteraphone":"ادخل رقم الهاتف"
+    ,"confirmationcode":"أدخل رمز التاكيد"
+    ,"Sendcode":"أرسال رمز التاكيد"
+,"Cancel":"الغاء"
+    ,"Continue":"استمرار"
+
+    ,"deletetext":"سيتم حذف جميع البطاقات داخل الملف"
+    ,"delete":"حــذف"
+
   };
   static Map<String , Object?>  en={
     "Allyour":" All your Cards in one place"
@@ -51,9 +65,22 @@ class LanguageProvider with ChangeNotifier{
     ,"saving":"saving ..."
     ,"addfirstcard":"Add First Card Now "
     ,"addfirstfile":"Add First file Now "
-    ,"Expirydate":"Expirydate"
+    ,"ExpiryDate":"Expirydate"
     ,"cardtype":"Card Type"
     ,"cardno":"Card No"
+    ,"deleting":"deleting ..."
+    ,"search":"Search"
+    ,"Alreadyhaveanaccount":"Already have an account ?"
+    ,"next":"Next"
+,"Enteraphone":"Enter a phone number"
+    ,"confirmpassword":"confirm password"
+    ,"confirmationcode":"Enter the confirmation code"
+    ,"Sendcode":"Send confirmation code"
+    ,"Cancel":"Cancel"
+    ,"Continue":"Continue"
+    ,"deletetext":"All cards inside the file will be deleted"
+    ,"delete":"delete"
+
   };
 
 

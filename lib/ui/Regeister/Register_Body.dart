@@ -34,11 +34,12 @@ goBackToPreviousScreen(BuildContext context) {
 
 class _Register_Body extends State<Register_Body> {
 
-  String img64="0";
+  String img64=Globalvireables.imagen;
   final TextEditingController _controller = new TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController password2 = TextEditingController();
   final globalKey = GlobalKey<ScaffoldState>();
   var items = ['+962', '+999', '+565'];
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -77,7 +78,7 @@ key: globalKey,
       Container(
         margin: EdgeInsets.only(top: 40,left: 15),
         alignment: Alignment.topLeft,
-          child: Text("Register now ",style: TextStyle(
+          child: Text(LanguageProvider.getTexts('Registernow').toString(),style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w900,
               color: HexColor(Globalvireables.basecolor)
@@ -180,7 +181,7 @@ key: globalKey,
 
       border: UnderlineInputBorder(),
 
-      labelText:"Email (optional)",
+      labelText:LanguageProvider.getTexts('email').toString(),
 
 
       labelStyle: TextStyle(
@@ -215,7 +216,7 @@ key: globalKey,
 
       border: UnderlineInputBorder(),
 
-      labelText:"Password",
+      labelText:LanguageProvider.getTexts('password').toString(),
 
 
       labelStyle: TextStyle(
@@ -226,6 +227,42 @@ key: globalKey,
       ),
       ),
       ),
+        Container(
+          color: Colors.transparent,
+          margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
+
+          //  color: Colors.white,
+          width: MediaQuery.of(context).size.height,
+          // height: MediaQuery.of(context).size.height,
+          child: TextFormField(
+            controller: password2,
+            // textAlign: LanguageProvider.TxtAlign(),
+            //controller:passwordE,
+            //obscureText: _isObscure,
+            decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                ),
+
+                border: UnderlineInputBorder(),
+
+                labelText:LanguageProvider.getTexts('confirmpassword').toString(),
+
+
+                labelStyle: TextStyle(
+                  color:Colors.black87,
+
+
+                )
+            ),
+          ),
+        ),
 
 
 /*
@@ -296,15 +333,24 @@ Container(
       margin: EdgeInsets.only(top: 30),
       height: 55,
       child: ElevatedButton(
-      child: Text('NEXT'),
+      child: Text(LanguageProvider.getTexts('next').toString()),
       onPressed: () {/*phoneNumberVerification();*/
 
 if(name.text.isEmpty || password.text.isEmpty ){
+  if(Globalvireables.languageCode=="en")
   displayMessage("Your name and password are information that must be entered");
-}else if(password.text.toString().length<5){
+else
+    displayMessage("اسمك وكلمة مرورك من المعلومات التي يجب إدخالها");
+
+
+}else if(password.text.toString().length<6){
+  if(Globalvireables.languageCode=="en")
   displayMessage("The password must be at least six characters long");
+  else
+  displayMessage("يجب أن تتكون كلمة المرور من ستة أحرف على الأقل");
+
 }
-else {
+else if(password.text!=null && password.text==password2.text){
   Globalvireables.photoURL=img64;
   Globalvireables.name = name.text;
   Globalvireables.email = email.text;
@@ -317,6 +363,11 @@ else {
             verviaction_body()
         )
   );
+}else{
+  if(Globalvireables.languageCode=="ar")
+  displayMessage("أعد كتابة كلمة المرور بشكل صحيح");
+else
+  displayMessage("Retype the password correctly");
 }
 
         },
@@ -330,7 +381,7 @@ else {
       ),
 
 
-
+        if(Globalvireables.languageCode=="en")
       Row(children: [
       Spacer(),
 
@@ -374,6 +425,50 @@ else {
       Spacer(),
 
       ],)
+else
+          Row(children: [
+            Spacer(),
+            new GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder:
+                          (context) =>
+                          Register_Body()
+                      )
+                  );
+                },
+
+
+
+                child: Container(
+                  child: new GestureDetector(
+                      onTap: (){
+                        Navigator.push(context,
+                            MaterialPageRoute(builder:
+                                (context) =>
+                                Login_Body()
+                            )
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(" سجل الدخول ",style: TextStyle(fontWeight: FontWeight.bold,
+                            color: HexColor(Globalvireables.basecolor),fontSize: 14
+                        ),),
+                      )),
+
+                )),
+            Container(
+              margin: EdgeInsets.only(top: 20,left: 5,right: 5),
+              child: Text("هل تمتلك حساب بالفعل ؟   ",style: TextStyle(fontWeight: FontWeight.bold,
+                  color: HexColor(Globalvireables.black),fontSize: 13
+              ),),
+            ),
+
+
+            Spacer(),
+
+          ],)
 
       ]
 
