@@ -16,6 +16,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
 import '../../LanguageProvider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../ScanScreen.dart';
 class Login_Body extends StatefulWidget {
   goBackToPreviousScreen(BuildContext context){
@@ -56,10 +58,44 @@ class _Login_Body extends State<Login_Body> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+
+
+  login () async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getBool('activefingerprint')!=null)
+      if(prefs.getBool('activefingerprint')!){
+
+        passwordcontroler.text=prefs.getString('password')!;
+        emailcontroler.text=prefs.getString('email')!;
+
+
+      }
+
+    print(prefs.getBool('activefingerprint').toString()+"savvvve");
+
+  }
+
+
+  @override
+   initState(){
+   /* SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getBool('activefingerprint')!=null)
+      if(prefs.getBool('activefingerprint')!){
+
+
+        passwordcontroler.text=prefs.getString('password')!;
+        emailcontroler.text=prefs.getString('email')!;
+
+
+      }*/
+    login();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Globalvireables.regorupdate="0";
-
+    login();
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(

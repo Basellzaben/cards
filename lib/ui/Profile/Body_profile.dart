@@ -10,6 +10,7 @@ import 'package:cards/ui/Regeister/Register_Body.dart';
 import 'package:cards/ui/login/Login_Body.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,9 +24,15 @@ class Body_profile extends StatefulWidget {
   @override
   _Body_profile createState() => _Body_profile();
 }
+late bool isSwitched=false;
 
-@override
-void initState() {
+Rememper() async {
+
+  print("activefingerprint"+isSwitched.toString());
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if( prefs.getBool('activefingerprint')!=null);
+  isSwitched=prefs.getBool('activefingerprint')!;
 
   if(Globalvireables.languageCode=="en")
   {
@@ -38,15 +45,20 @@ void initState() {
 
   }
 
+}
+
+@override
+initState()  {
+
+  Rememper();
 
 }
 class _Body_profile extends State<Body_profile> {
 
+  var textValue = 'Switch is OFF';
+  bool hidden=true;
 
-
-
-
-  String _imageBase64="";
+String _imageBase64="";
   var bytes;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -197,8 +209,36 @@ if(Globalvireables.email!=null)
 
                         Icon(Icons.password,size: 30,color: HexColor(Globalvireables.bluedark),),
 
-                        Container( margin:EdgeInsets.only(left: 8,right: 8),
-                            child: Text(Globalvireables.password.toString(),style: TextStyle(fontSize: 18),)),
+                        if(!hidden)
+                          Container( margin:EdgeInsets.only(left: 8,right: 8),
+                            child: Text(Globalvireables.password.toString(),style: TextStyle(fontSize: 18),))
+                        else
+Container( margin:EdgeInsets.only(left: 8,right: 8),
+    child: Text("******",style: TextStyle(fontSize: 18),)),
+
+
+
+
+    Spacer(),
+if(hidden)
+                        new InkWell(
+                            onTap: () async {
+setState(() {
+  hidden=!hidden;
+
+});
+                            },child: Icon(Icons.lock,size: 30,color: HexColor(Globalvireables.bluedark),)
+                        )else
+  new InkWell(
+      onTap: () async {
+        setState(() {
+          hidden=!hidden;
+
+        });
+      },child: Icon(Icons.remove_red_eye,size: 30,color: HexColor(Globalvireables.bluedark),)
+  )
+                        ,
+
                       ]
                   ),
                 ),),
@@ -238,7 +278,34 @@ if(Globalvireables.email!=null)
                       ),
                     ),),
                 ),
+                Card(
+                  margin: EdgeInsets.only(top:40,left: 12,right: 12),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                        children: <Widget>[
+                          Icon(Icons.fingerprint,size: 30,color: HexColor(Globalvireables.bluedark),),
 
+                          Container( margin:EdgeInsets.only(left: 8,right: 8),
+                              child: Text( Globalvireables.lantext.toString(),style: TextStyle(fontSize: 18),)),
+Spacer(),
+
+                          Transform.scale(
+                              scale: 1.5,
+                              child: Switch(
+                                onChanged: toggleSwitch,
+                                value: isSwitched,
+                                activeColor: HexColor(Globalvireables.white2),
+                                activeTrackColor: HexColor(Globalvireables.basecolor),
+                                inactiveThumbColor:HexColor(Globalvireables.basecolor),
+                                inactiveTrackColor: HexColor(Globalvireables.white3) ,
+                              )
+                          ),
+
+
+                        ]
+                    ),
+                  ),),
 
 
                 Card(
@@ -340,9 +407,9 @@ if(imagen==null)
           //   borderRadius: BorderRadius.all( Radius.circular(100.0)),
 
 
-          color: const Color(0xff7c94b6),
+          color: Colors.white,
           //  borderRadius: BorderRadius.all(const Radius.circular(50.0)),
-          border: Border.all(color: const Color(0xFF28324E)),
+         // border: Border.all(color: const Color(0xFF28324E)),
         ),
         child: Image.network(
           "https://www.yallanshtry.com/wp-content/uploads/2020/12/Male_Profile_Round_Circle_Users-512.png",  width: 130.0,
@@ -366,10 +433,10 @@ if(imagen==null)
       decoration: new BoxDecoration(
         //   borderRadius: BorderRadius.all( Radius.circular(100.0)),
 
+        color: Colors.white,
 
-        color: const Color(0xff7c94b6),
         //  borderRadius: BorderRadius.all(const Radius.circular(50.0)),
-        border: Border.all(color: const Color(0xFF28324E)),
+     //   border: Border.all(color: const Color(0xFF28324E)),
       ),
       child: Image.network(
         imagen,  width: 130.0,
@@ -390,4 +457,39 @@ if(imagen==null)
 
 
   }
+
+
+  savelogindata(bool x) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (Globalvireables.email != null)
+    {   if (Globalvireables.email.length > 5)
+      prefs.setString('email', Globalvireables.email);
+    else
+      prefs.setString('email', Globalvireables.phone);
+    }  else {
+      prefs.setString('email', Globalvireables.phone);}
+
+    prefs.setString('password', Globalvireables.password);
+    prefs.setBool('activefingerprint', x);
+
+  }
+  deletelogindata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove("password");
+    prefs.remove("email");
+    prefs.setBool('activefingerprint', isSwitched);
+
+  }
+ toggleSwitch(bool value)  {
+    setState(() {
+      isSwitched = !isSwitched;
+      textValue = 'Switch Button is ON';
+    });
+
+  savelogindata(isSwitched);
+
+print('Switch Button is'+isSwitched.toString());
+}
 }

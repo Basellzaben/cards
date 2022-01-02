@@ -17,6 +17,10 @@ class verviaction_body extends StatefulWidget {
 }
 
 class _verviaction_body extends State<verviaction_body> {
+  String selected="cxA";
+
+  //List<String> country = ["+9620", "+62", "+96v2", "+9g62"];
+   List<String> country=["+973","+964","+962","+961","+970","+966","+965","+968","+963","+974"];
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SmsAutoFill smsAutoFill = SmsAutoFill();
   late String strVerificationId;
@@ -31,7 +35,7 @@ class _verviaction_body extends State<verviaction_body> {
   bool showVerifyNumberWidget = true;
   bool showVerificationCodeWidget = false;
   bool showSuccessWidget = false;
-
+String? _selectedCountry;
 
   @override
   void initState() {
@@ -54,8 +58,7 @@ class _verviaction_body extends State<verviaction_body> {
         body: Center(
           child: SingleChildScrollView(
 
-            child: Padding(
-                padding: EdgeInsets.all(45),
+
                 child: Column(
 
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -77,31 +80,102 @@ class _verviaction_body extends State<verviaction_body> {
 
                     if(showVerifyNumberWidget) Container(
                       color: HexColor(Globalvireables.basecolor),
-                      child: TextFormField(
-                          controller: phoneNumEditingController,
-                          // textAlign: LanguageProvider.TxtAlign(),
-                          //controller:passwordE,
-                          //obscureText: _isObscure,
-                          decoration: InputDecoration(
-                              fillColor: Colors.white,filled: true,
 
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                              ),
-                              border: UnderlineInputBorder(),
-                             // labelText:"Name",
-                              labelStyle: TextStyle(
 
-                                color:Colors.black87,
-                              )
-                          ),
+                      child: SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                          Align(
+
+                            child: Container(
+height: 55,
+
+                            width: 75,
+                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                            decoration: BoxDecoration(
+                             //   color: Theme.of(context).primaryColor,
+                                color: Colors.white,  borderRadius: BorderRadius.circular(10)),
+                            child: DropdownButton<String>(
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedCountry = value;
+                                });
+                              },
+                              value: _selectedCountry,
+
+                              // Hide the default underline
+                              underline: Container(),
+                              hint: Center(
+                                  child: Text(
+                                    'Select the aniaml you love',
+                                    style: TextStyle(color: Colors.white),
+                                  )),
+
+                              isExpanded: true,
+
+                              // The list of options
+                              items: country
+                                  .map((e) => DropdownMenuItem(
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    e,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                value: e,
+                              ))
+                                  .toList(),
+
+                              // Customize the selected item
+                              selectedItemBuilder: (BuildContext context) => country
+                                  .map((e) => Center(
+                                child: Text(
+                                  e,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ))
+                                  .toList(),
+                            ),
                         ),
+                          ),
+                            Container(
+                              width: 220,
+                              child: TextFormField(
+                                  controller: phoneNumEditingController,
+                                  // textAlign: LanguageProvider.TxtAlign(),
+                                  //controller:passwordE,
+                                  //obscureText: _isObscure,
+                                  decoration: InputDecoration(
+                                      fillColor: Colors.white,filled: true,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                                      ),
+                                      border: UnderlineInputBorder(),
+                                     // labelText:"Name",
+                                      labelStyle: TextStyle(
+
+                                        color:Colors.black87,
+                                      )
+                                  ),
+                                ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
 
 
@@ -115,24 +189,40 @@ class _verviaction_body extends State<verviaction_body> {
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         alignment: Alignment.center,
 
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            //  shape: CircleBorder(),
-                              primary: Colors.white
-                            // primary: HexColor("#ff4a3d")
-                          ),
-                          child: Container(
-                            width: 500,
-                            height: 50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(shape: BoxShape.circle),
-                            child: Text(
-                              LanguageProvider.getTexts('Sendcode').toString(),
-                              style: TextStyle(fontSize: 17,fontWeight:FontWeight.bold ,color: Colors.black87),
+                        child: Container(
+                          margin: EdgeInsets.only(left: 50,right: 50),
+
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              //  shape: CircleBorder(),
+                                primary: Colors.white
+                              // primary: HexColor("#ff4a3d")
                             ),
+                            child: Container(
+                              width: 500,
+                              height: 50,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              child: Text(
+                                LanguageProvider.getTexts('Sendcode').toString(),
+                                style: TextStyle(fontSize: 17,fontWeight:FontWeight.bold ,color: Colors.black87),
+                              ),
+                            ),
+                            onPressed: () {
+                            phoneNumberVerification();
+                            if(phoneNumEditingController.text!=null)
+                              if(phoneNumEditingController.text.startsWith("07"))
+                            {
+                          //    phoneNumEditingController.text= phoneNumEditingController.text.replaceRange(0, 1, _selectedCountry!);
+
+                              Globalvireables.phone= phoneNumEditingController.text.replaceRange(0, 1, _selectedCountry!);
+                            }else{
+                                Globalvireables.phone= phoneNumEditingController.text;
+                              }
+
+
+                       },
                           ),
-                          onPressed: () {  phoneNumberVerification();
-                          Globalvireables.phone=phoneNumEditingController.text;},
                         ),
                       /*  child: RaisedButton(
                           padding: EdgeInsets.symmetric(vertical: 5, horizontal: 90),
@@ -145,226 +235,230 @@ class _verviaction_body extends State<verviaction_body> {
                         ),*/
                       ),
                     ),
-                    if(showVerificationCodeWidget)  Row(
-                      children: [
-                        Container(
-                          height: 70,
-                          width: 45,
-                          color: HexColor(Globalvireables.basecolor),
-                          child: TextFormField(
-                            maxLength: 1,
-                            controller: smsEditingController1,
-                            // textAlign: LanguageProvider.TxtAlign(),
-                            //controller:passwordE,
-                            //obscureText: _isObscure,
-                            decoration: InputDecoration(
-                                fillColor: Colors.white,filled: true,
+                    if(showVerificationCodeWidget)  Center(
+                          child: Center(
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: 100,
+                              width: 300,
 
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                              color: HexColor(Globalvireables.basecolor),
+                              child: TextFormField(
+                                maxLength: 6,
+                                keyboardType: TextInputType.number,
+                                controller: smsEditingController1,
+                                // textAlign: LanguageProvider.TxtAlign(),
+                                //controller:passwordE,
+                                //obscureText: _isObscure,
+                                decoration: InputDecoration(
+                                    fillColor: Colors.white,filled: true,
 
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                                    ),
+
+                                    border: UnderlineInputBorder(),
+
+                                 //   labelText:"Name",
+
+
+                                    labelStyle: TextStyle(
+
+                                      color:Colors.black87,
+                                    )
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                                ),
-
-                                border: UnderlineInputBorder(),
-
-                             //   labelText:"Name",
-
-
-                                labelStyle: TextStyle(
-
-                                  color:Colors.black87,
-                                )
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          height: 70,
-                          width: 45,
-                          color: HexColor(Globalvireables.basecolor),
-                          child: TextFormField(
+                          /*Container(
+                            height: 70,
+                            width: 45,
+                            color: HexColor(Globalvireables.basecolor),
+                            child: TextFormField(
 maxLength: 1,
 
-                            controller: smsEditingController2,
-                            // textAlign: LanguageProvider.TxtAlign(),
-                            //controller:passwordE,
-                            //obscureText: _isObscure,
-                            decoration: InputDecoration(
-                                fillColor: Colors.white,filled: true,
+                              controller: smsEditingController2,
+                              // textAlign: LanguageProvider.TxtAlign(),
+                              //controller:passwordE,
+                              //obscureText: _isObscure,
+                              decoration: InputDecoration(
+                                  fillColor: Colors.white,filled: true,
 
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                                ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                                  ),
 
-                                border: UnderlineInputBorder(),
+                                  border: UnderlineInputBorder(),
 
-                                //   labelText:"Name",
+                                  //   labelText:"Name",
 
 
-                                labelStyle: TextStyle(
+                                  labelStyle: TextStyle(
 
-                                  color:Colors.black87,
-                                )
+                                    color:Colors.black87,
+                                  )
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          height: 70,
-                          width: 45,
-                          color: HexColor(Globalvireables.basecolor),
-                          child: TextFormField(
-                            maxLength: 1,
+                          Container(
+                            height: 70,
+                            width: 45,
+                            color: HexColor(Globalvireables.basecolor),
+                            child: TextFormField(
+                              maxLength: 1,
 
-                            controller: smsEditingController3,
-                            // textAlign: LanguageProvider.TxtAlign(),
-                            //controller:passwordE,
-                            //obscureText: _isObscure,
-                            decoration: InputDecoration(
-                                fillColor: Colors.white,filled: true,
+                              controller: smsEditingController3,
+                              // textAlign: LanguageProvider.TxtAlign(),
+                              //controller:passwordE,
+                              //obscureText: _isObscure,
+                              decoration: InputDecoration(
+                                  fillColor: Colors.white,filled: true,
 
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                                ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                                  ),
 
-                                border: UnderlineInputBorder(),
+                                  border: UnderlineInputBorder(),
 
-                                //   labelText:"Name",
+                                  //   labelText:"Name",
 
 
-                                labelStyle: TextStyle(
+                                  labelStyle: TextStyle(
 
-                                  color:Colors.black87,
-                                )
+                                    color:Colors.black87,
+                                  )
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          height: 70,
-                          width: 45,
-                          color: HexColor(Globalvireables.basecolor),
-                          child: TextFormField(
-                            maxLength: 1,
+                          Container(
+                            height: 70,
+                            width: 45,
+                            color: HexColor(Globalvireables.basecolor),
+                            child: TextFormField(
+                              maxLength: 1,
 
-                            controller: smsEditingController4,
-                            // textAlign: LanguageProvider.TxtAlign(),
-                            //controller:passwordE,
-                            //obscureText: _isObscure,
-                            decoration: InputDecoration(
-                                fillColor: Colors.white,filled: true,
+                              controller: smsEditingController4,
+                              // textAlign: LanguageProvider.TxtAlign(),
+                              //controller:passwordE,
+                              //obscureText: _isObscure,
+                              decoration: InputDecoration(
+                                  fillColor: Colors.white,filled: true,
 
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                                ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                                  ),
 
-                                border: UnderlineInputBorder(),
+                                  border: UnderlineInputBorder(),
 
-                                //   labelText:"Name",
+                                  //   labelText:"Name",
 
 
-                                labelStyle: TextStyle(
+                                  labelStyle: TextStyle(
 
-                                  color:Colors.black87,
-                                )
+                                    color:Colors.black87,
+                                  )
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          height: 70,
-                          width: 45,
-                          color: HexColor(Globalvireables.basecolor),
-                          child: TextFormField(
-                            maxLength: 1,
+                          Container(
+                            height: 70,
+                            width: 45,
+                            color: HexColor(Globalvireables.basecolor),
+                            child: TextFormField(
+                              maxLength: 1,
 
-                            controller: smsEditingController5,
-                            // textAlign: LanguageProvider.TxtAlign(),
-                            //controller:passwordE,
-                            //obscureText: _isObscure,
-                            decoration: InputDecoration(
-                                fillColor: Colors.white,filled: true,
+                              controller: smsEditingController5,
+                              // textAlign: LanguageProvider.TxtAlign(),
+                              //controller:passwordE,
+                              //obscureText: _isObscure,
+                              decoration: InputDecoration(
+                                  fillColor: Colors.white,filled: true,
 
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                                ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                                  ),
 
-                                border: UnderlineInputBorder(),
+                                  border: UnderlineInputBorder(),
 
-                                //   labelText:"Name",
+                                  //   labelText:"Name",
 
 
-                                labelStyle: TextStyle(
+                                  labelStyle: TextStyle(
 
-                                  color:Colors.black87,
-                                )
+                                    color:Colors.black87,
+                                  )
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          height: 70,
-                          width: 45,
-                          color: HexColor(Globalvireables.basecolor),
-                          child: TextFormField(
-                            maxLength: 1,
+                          Container(
+                            height: 70,
+                            width: 45,
+                            color: HexColor(Globalvireables.basecolor),
+                            child: TextFormField(
+                              maxLength: 1,
 
-                            controller: smsEditingController6,
-                            // textAlign: LanguageProvider.TxtAlign(),
-                            //controller:passwordE,
-                            //obscureText: _isObscure,
-                            decoration: InputDecoration(
-                                fillColor: Colors.white,filled: true,
+                              controller: smsEditingController6,
+                              // textAlign: LanguageProvider.TxtAlign(),
+                              //controller:passwordE,
+                              //obscureText: _isObscure,
+                              decoration: InputDecoration(
+                                  fillColor: Colors.white,filled: true,
 
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                                ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                                  ),
 
-                                border: UnderlineInputBorder(),
+                                  border: UnderlineInputBorder(),
 
-                                //   labelText:"Name",
+                                  //   labelText:"Name",
 
 
-                                labelStyle: TextStyle(
+                                  labelStyle: TextStyle(
 
-                                  color:Colors.black87,
-                                )
+                                    color:Colors.black87,
+                                  )
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
+                         ),*/
 
+
+),
 
                     SizedBox(
                       height: 25,
@@ -400,7 +494,7 @@ maxLength: 1,
                     ),
                     //if(showSuccessWidget) Text('You are successfully logged in!', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold))
                   ],
-                )),
+                ),
           ),
         ));
   }
@@ -456,8 +550,18 @@ maxLength: 1,
     };
 
     try {
+var x="";
+      if(phoneNumEditingController.text!=null)
+        if(phoneNumEditingController.text.startsWith("07"))
+        {
+        x= phoneNumEditingController.text.replaceRange(0, 1, _selectedCountry!);
+        }else{
+         x= phoneNumEditingController.text;
+        }
+
+
       await firebaseAuth.verifyPhoneNumber(
-          phoneNumber: phoneNumEditingController.text,
+          phoneNumber: x,
           timeout: const Duration(seconds: 5),
           verificationCompleted: phoneVerificationCompleted,
           verificationFailed: phoneVerificationFailed,
@@ -480,9 +584,9 @@ maxLength: 1,
     try {
       final AuthCredential credential = PhoneAuthProvider.credential(
         verificationId: strVerificationId,
-        smsCode: smsEditingController1.text+smsEditingController2.text+smsEditingController3.text
+        smsCode: smsEditingController1.text/*+smsEditingController2.text+smsEditingController3.text
         +smsEditingController4.text+smsEditingController5.text+smsEditingController6.text,
-      );
+*/      );
 
       final User? user = (await firebaseAuth.signInWithCredential(credential)).user;
 print(Globalvireables.regorupdate+"regorupdate");

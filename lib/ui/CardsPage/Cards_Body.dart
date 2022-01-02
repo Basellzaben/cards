@@ -225,7 +225,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                   children: <Widget>[
                     new ListView(
                       children: cardss!.map((post) => Container(
-                          margin: EdgeInsets.only(top: 70,left: 10,right: 10,bottom: 5),
+                          margin: EdgeInsets.only(top: 30,left: 10,right: 10,bottom: 5),
                           height: 150,
                           child:Stack(
                               alignment: Alignment.topCenter,
@@ -250,29 +250,50 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                       child: Slidable(
                                         actionPane: SlidableDrawerActionPane(),
                                         child: Card(
-                                          shape: RoundedRectangleBorder(
+
+
+
+
+/* shape: RoundedRectangleBorder(
                                               side: BorderSide(
-                                                /* color:Colors.white70,height:4.5*/
+                                                *//* color:Colors.white70,height:4.5*//*
                                                   color: HexColor(Globalvireables.basecolor), width: 3),
                                               borderRadius: BorderRadius.circular(22))
-                                           // elevation: 7,
+                                   */        // elevation: 7,
                                          /*   shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10),
                                             ),*/
-                                            ,child: Container(
+                                            child: Container(
+
+
                                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
-
-
-                                 /* image: DecorationImage(
-                                    image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.CardImage),
+                                 image: DecorationImage(
+                                    image: AssetImage('assets/cardback.jpg'),
                                     fit: BoxFit.cover,
-                                  ),*/
+                                  )
 
                                 ),
                                               child: Container(
                                                 child: Column(
                                                   children: [
+                                                  Container(
+                                                      // margin: const EdgeInsets.only(top: 33.0,left: 10,right: 10),
+
+                                                      alignment: Alignment.center,
+
+                                                      child:
+
+                                                      Container(
+                                                        // margin: EdgeInsets.only(left: 14,top: 20),
+                                                          alignment: Alignment.center,
+                                                          //margin: EdgeInsets.only(top: 40),
+                                                          child: Text(post.CardName ,style: TextStyle(fontSize: 28,color: Colors.white,fontWeight: FontWeight.w800),)
+                                                      ),
+
+
+
+                                                    ),
                                                 /*      Container(
                                                           margin: EdgeInsets.only(left: 14,top: 20),
                                                           alignment: Alignment.topLeft,
@@ -293,17 +314,18 @@ if(post.CardNo!=null && Globalvireables.languageCode=="en")
 
               },
             ),*/
+
             Container(
-                margin: EdgeInsets.only(top: 30,left: 10),
+                margin: EdgeInsets.only(top: 20,left: 10),
                 alignment: Alignment.topLeft,
                 //margin: EdgeInsets.only(top: 40),
-                child: Text("Card No :" ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+                child: Text("Card No :" ,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w800),)
             ),
             Container(
-                margin: EdgeInsets.only(top: 30,left: 10),
+                margin: EdgeInsets.only(top: 20,left: 10),
                 alignment: Alignment.topLeft,
                 //margin: EdgeInsets.only(top: 40),
-                child: Text(post.CardNo ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+                child: Text(post.CardNo ,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w300),)
             ),
 
             ])else if(post.CardNo!=null && Globalvireables.languageCode=="ar")
@@ -313,16 +335,16 @@ if(post.CardNo!=null && Globalvireables.languageCode=="en")
 
 
                                                           Container(
-                                                              margin: EdgeInsets.only(top: 30,left: 10),
+                                                              margin: EdgeInsets.only(top: 20,left: 10),
                                                               alignment: Alignment.topLeft,
                                                               //margin: EdgeInsets.only(top: 40),
-                                                              child: Text(post.CardNo ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+                                                              child: Text(post.CardNo ,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w300),)
                                                           ),
                                                           Container(
-                                                              margin: EdgeInsets.only(top: 30,left: 10,right: 10),
+                                                              margin: EdgeInsets.only(top: 20,left: 10,right: 10),
                                                               alignment: Alignment.topLeft,
                                                               //margin: EdgeInsets.only(top: 40),
-                                                              child: Text(" : " +"رقم البطاقة",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+                                                              child: Text(" : " +"رقم البطاقة",style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w800),)
                                                           ),
 
                                                          /* IconButton(
@@ -357,17 +379,18 @@ if(post.CardNo!=null && Globalvireables.languageCode=="en")
 
               },
             ),*/
+
     Container(
     margin: EdgeInsets.only(top: 10,left: 10),
     alignment: Alignment.topLeft,
     //margin: EdgeInsets.only(top: 40),
-    child: Text("Card Type :" ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+    child: Text("Card Type :" ,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w800),)
     ),
     Container(
     margin: EdgeInsets.only(top: 10 ,left: 10),
     alignment: Alignment.topLeft,
     //margin: EdgeInsets.only(top: 40),
-    child: Text(post.CardType ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+    child: Text(post.CardType ,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w300),)
     ),
     ])else  if(post.CardNo!=null && Globalvireables.languageCode=="ar")
       Row(
@@ -380,13 +403,13 @@ if(post.CardNo!=null && Globalvireables.languageCode=="en")
     margin: EdgeInsets.only(top: 10 ,left: 10),
     alignment: Alignment.topLeft,
     //margin: EdgeInsets.only(top: 40),
-    child: Text(post.CardType ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w300),)
+    child: Text(post.CardType ,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w300),)
     ),
     Container(
     margin: EdgeInsets.only(top: 10,left: 10),
     alignment: Alignment.topLeft,
     //margin: EdgeInsets.only(top: 40),
-    child: Text( " : " +"نوع البطاقة",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+    child: Text( " : " +"نوع البطاقة",style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w800),)
     ),
 
    /*   IconButton(
@@ -509,12 +532,12 @@ delete();
 
 
 
-                                Positioned(
-                                    top: -40,
+          /*                      Positioned(
+                                    top: -5,
 
                                       child: Container(
 
-                                          decoration: new BoxDecoration(
+                                        *//*  decoration: new BoxDecoration(
                                             color: Colors.white,
                                             borderRadius: BorderRadius.only(
                                                  topLeft:Radius.elliptical(
@@ -523,8 +546,8 @@ delete();
                                                 topRight:Radius.elliptical(
                                                     MediaQuery.of(context).size.width, 300.0)),
                                           ),
-
-                                        padding: EdgeInsets.only(top: 5,left: 50,right: 50),
+*//*
+                                        padding: EdgeInsets.only(top: 5,left: 20,right: 20),
                                       //  margin: EdgeInsets.only(top: 30),
                                       //  color: Colors.white,
                                          // width: MediaQuery.of(context).size.height,
@@ -541,7 +564,7 @@ delete();
                                                  // margin: EdgeInsets.only(left: 14,top: 20),
                                                   alignment: Alignment.center,
                                                   //margin: EdgeInsets.only(top: 40),
-                                                  child: Text(post.CardName ,style: TextStyle(fontSize: 28,color: Colors.black,fontWeight: FontWeight.w800),)
+                                                  child: Text(post.CardName ,style: TextStyle(fontSize: 28,color: Colors.white,fontWeight: FontWeight.w800),)
                                               ),
 
 
@@ -550,7 +573,7 @@ delete();
 
                                 ),
 
-
+*/
 
 
                               ])/* */
