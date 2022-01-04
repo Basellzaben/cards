@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/Models/Users.dart';
 import 'package:cards/color/HexColor.dart';
+import 'package:cards/ui/FingerAuth/FingerPrintAuth.dart';
 import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:cards/ui/Regeister/Register_Body.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +19,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import '../../LanguageProvider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../LocalAuthApi.dart';
 
 import '../ScanScreen.dart';
 class Login_Body extends StatefulWidget {
@@ -62,12 +65,30 @@ class _Login_Body extends State<Login_Body> {
 
   login () async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(prefs.getBool('activefingerprint')!=null)
-      if(prefs.getBool('activefingerprint')!){
+
+
+    if(prefs.getBool('activefingerprint')!=null &&   prefs.getString("Login")!=null)
+      if(prefs.getBool('activefingerprint')! &&   prefs.getString("Login")=="0"){
 
         passwordcontroler.text=prefs.getString('password')!;
         emailcontroler.text=prefs.getString('email')!;
+        try {
+        final isAuthenticated = await LocalAuthApi.authenticate();
+          print(isAuthenticated.toString() + " state");
+          if (isAuthenticated) {
 
+            Login(prefs.getString('email')!,prefs.getString('password')!,context);
+           /* Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => Login_Body()),
+            );*/
+          }
+        }on PlatformException catch(e){
+          print(e.message.toString()+"  error");
+        }
+       /* Navigator.pushReplacement(context,
+            MaterialPageRoute(builder:
+                (context) =>
+                FingerPrintAuth()));*/
 
       }
 
@@ -88,13 +109,14 @@ class _Login_Body extends State<Login_Body> {
 
 
       }*/
-    login();
+   // login();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     Globalvireables.regorupdate="0";
+    SharedPreferences   prefs;
     login();
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -210,7 +232,7 @@ backgroundColor: Colors.white,
                 // height: MediaQuery.of(context).size.height,
                 child: TextFormField(
                   controller: passwordcontroler,
-
+                  obscureText: true,
                   // textAlign: LanguageProvider.TxtAlign(),
                   //controller:passwordE,
                   //obscureText: _isObscure,
@@ -368,7 +390,11 @@ if(Globalvireables.languageCode=="en")
 
 
               new GestureDetector(
-                  onTap: (){
+                  onTap: () async {
+
+                       prefs = await SharedPreferences.getInstance();
+                    prefs.setString("Login","1");
+
                     Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>

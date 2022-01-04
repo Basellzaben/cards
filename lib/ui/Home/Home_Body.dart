@@ -7,6 +7,8 @@ import 'package:cards/LanguageProvider.dart';
 import 'package:cards/Models/HttpService.dart';
 import 'package:cards/Models/Fileofcards.dart';
 import 'package:cards/Models/Fileofcards.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/CardsPage/Cards_Body.dart';
 import 'package:cards/ui/EditDataPages/EditFileDialog.dart';
@@ -58,8 +60,16 @@ class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
 
   }
 
+
+  setloginstate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString("Login","1");
+  }
+
   @override
   void initState() {
+    setloginstate();
     if(Globalvireables.languageCode=="en")
     {
     Globalvireables.lantext="اللغة العربية";
@@ -336,7 +346,8 @@ alignment: Alignment.center,
                                                 child: Icon(
                                                   Icons.delete,
                                                   size: 30.0,
-                                                  color: Colors.red,
+                                                  color:HexColor(Globalvireables.basecolor),
+
                                                 )
                                             ),
                                           ),
@@ -361,7 +372,7 @@ alignment: Alignment.center,
                                                 child: Icon(
                                                   Icons.edit,
                                                   size: 30.0,
-                                                  color: Colors.lightGreen,
+                                                  color:HexColor(Globalvireables.basecolor),
                                                 )
                                             ),
                                           ),

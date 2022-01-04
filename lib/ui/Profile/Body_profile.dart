@@ -75,6 +75,7 @@ String _imageBase64="";
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData=MediaQuery.of(context);
+    Rememper();
 
     return Scaffold(
         key: _scaffoldKey,
@@ -256,6 +257,12 @@ setState(() {
                   Globalvireables.lantext="اللغة العربية";
 
                 }
+
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                prefs.setString("Login","0");
+
+
                 Navigator.pop(context);
                 Navigator.push(
                     context,
@@ -282,28 +289,30 @@ setState(() {
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
                   child: Container(
                     padding: EdgeInsets.all(10),
-                    child: Row(
-                        children: <Widget>[
-                          Icon(Icons.fingerprint,size: 30,color: HexColor(Globalvireables.bluedark),),
+                    child: SingleChildScrollView(
+                      child: Row(
+                          children: <Widget>[
+                            Icon(Icons.fingerprint,size: 30,color: HexColor(Globalvireables.bluedark),),
 
-                          Container( margin:EdgeInsets.only(left: 8,right: 8),
-                              child: Text( Globalvireables.lantext.toString(),style: TextStyle(fontSize: 18),)),
+                            Container( margin:EdgeInsets.only(left: 8,right: 8),
+                                child: Text( LanguageProvider.getTexts('finger').toString(),style: TextStyle(fontSize: 14),)),
 Spacer(),
 
-                          Transform.scale(
-                              scale: 1.5,
-                              child: Switch(
-                                onChanged: toggleSwitch,
-                                value: isSwitched,
-                                activeColor: HexColor(Globalvireables.white2),
-                                activeTrackColor: HexColor(Globalvireables.basecolor),
-                                inactiveThumbColor:HexColor(Globalvireables.basecolor),
-                                inactiveTrackColor: HexColor(Globalvireables.white3) ,
-                              )
-                          ),
+                            Transform.scale(
+                                scale: 1.5,
+                                child: Switch(
+                                  onChanged: toggleSwitch,
+                                  value: isSwitched,
+                                  activeColor: HexColor(Globalvireables.white2),
+                                  activeTrackColor: HexColor(Globalvireables.basecolor),
+                                  inactiveThumbColor:HexColor(Globalvireables.basecolor),
+                                  inactiveTrackColor: HexColor(Globalvireables.white3) ,
+                                )
+                            ),
 
 
-                        ]
+                          ]
+                      ),
                     ),
                   ),),
 
@@ -317,6 +326,11 @@ Spacer(),
                       Navigator.push(
                         context,
                          MaterialPageRoute(builder: (context) => Login_Body()),);
+
+                     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                     prefs.setString("Login","0");
+
                               },
                     child: Container(
                       padding: EdgeInsets.all(10),

@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Profile/Body_profile.dart';
 import 'login/Login_Body.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NavDrawer extends StatelessWidget {
 
@@ -17,6 +18,7 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SharedPreferences prefs;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -67,6 +69,11 @@ class NavDrawer extends StatelessWidget {
             title: Container(alignment:LanguageProvider.Align(),child: Text(LanguageProvider.getTexts('logout').toString())),
 
             onTap: () async => {
+
+     prefs = await SharedPreferences.getInstance(),
+
+    prefs.setString("Login","0"),
+
 
     await _googleSignIn.signOut(),
     await _auth.signOut(),

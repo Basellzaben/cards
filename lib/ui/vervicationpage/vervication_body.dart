@@ -35,7 +35,7 @@ class _verviaction_body extends State<verviaction_body> {
   bool showVerifyNumberWidget = true;
   bool showVerificationCodeWidget = false;
   bool showSuccessWidget = false;
-String? _selectedCountry;
+String? _selectedCountry="+962";
 
   @override
   void initState() {

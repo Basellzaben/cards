@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cards/LanguageProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
@@ -32,6 +33,7 @@ class EditFileDialog extends StatefulWidget {
 
 class LogoutOverlayStatecard extends State<EditFileDialog>
     with SingleTickerProviderStateMixin {
+  final picker = ImagePicker();
 
   final String name;
    String img1;
@@ -95,13 +97,13 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
 
                     if(Globalvireables.languageCode=="en")
                       Center(
-                          child: Text("Edit File",style: TextStyle(
+                          child: Text("Edit Profile",style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w300,
                               color: HexColor(Globalvireables.basecolor)
                           ),))else
                       Center(
-                          child: Text("تعديل ملف البطاقات",style: TextStyle(
+                          child: Text("تعديل الملف",style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w300,
                               color: HexColor(Globalvireables.basecolor)
@@ -390,14 +392,16 @@ print("api used "+apiUrl.toString());
                       onTap: () async {
                         Navigator.of(context).pop();
 
-                        imgFile = await ImagePicker.pickImage(
+                        imgFile = await picker.getImage(
                             source: ImageSource.gallery
 
                         );
+                        File selected = File(imgFile.path);
+
                         setState(() {
                           if(x==1){
-                            imgs1=Image.file(imgFile);
-                            img1 = base64Encode(imgFile.readAsBytesSync());
+                            imgs1=Image.file(selected);
+                            img1 = base64Encode(selected.readAsBytesSync());
 
                           }
 
@@ -412,24 +416,26 @@ print("api used "+apiUrl.toString());
                     onTap: () async {
                       Navigator.of(context).pop();
 
-                      imgFile = await ImagePicker.pickImage(
+                      imgFile = await picker.getImage(
                           source: ImageSource.camera
 
                       );
+                      File selected = File(imgFile.path);
+
                       setState(() {
 
                         if(x==1){
-                          imgs1=Image.file(imgFile);
-                          img164 = base64Encode(imgFile.readAsBytesSync());
+                          imgs1=Image.file(selected);
+                          img164 = base64Encode(selected.readAsBytesSync());
 
                         }
                         else if(x==2){
-                          imgs2=Image.file(imgFile);
-                          img264 = base64Encode(imgFile.readAsBytesSync());
+                          imgs2=Image.file(selected);
+                          img264 = base64Encode(selected.readAsBytesSync());
                         }
                         else{
-                          imgs3=Image.file(imgFile);
-                          img364 = base64Encode(imgFile.readAsBytesSync());
+                          imgs3=Image.file(selected);
+                          img364 = base64Encode(selected.readAsBytesSync());
 
                         }
 

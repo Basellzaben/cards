@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cards/LanguageProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
@@ -27,8 +28,9 @@ class LogoutOverlayStatecard extends State<CardsDialog>
   late Animation<double> scaleAnimation;
   Image? imgs1 ;
   Image? imgs2 ;
-  Image? imgs3 ;
- String img164="";
+  Image? imgs3 ;  final picker = ImagePicker();
+
+   String img164="";
   String img264="";
   String img364="";
   TextEditingController namecontroler = TextEditingController();
@@ -670,23 +672,24 @@ if(namecontroler.text.length>2) {
                       onTap: () async {
                         Navigator.of(context).pop();
 
-                         imgFile = await ImagePicker.pickImage(
+                         imgFile = await picker.getImage(
                             source: ImageSource.gallery
-
                         );
-setState(() {
-if(x==1){
-  imgs1=Image.file(imgFile);
-  img164 = base64Encode(imgFile.readAsBytesSync());
+                        File selected = File(imgFile.path);
 
-}
+                        setState(() {
+if(x==1){
+  imgs1=Image.file(selected);
+  img164 = base64Encode(selected.readAsBytesSync());
+
+   }
 else if(x==2){
-  imgs2=Image.file(imgFile);
-  img264 = base64Encode(imgFile.readAsBytesSync());
+  imgs2=Image.file(selected);
+  img264 = base64Encode(selected.readAsBytesSync());
 }
 else{
-  imgs3=Image.file(imgFile);
-  img364 = base64Encode(imgFile.readAsBytesSync());
+  imgs3=Image.file(selected);
+  img364 = base64Encode(selected.readAsBytesSync());
 
 }
 
@@ -701,24 +704,25 @@ else{
                     onTap: () async {
                       Navigator.of(context).pop();
 
-                      imgFile = await ImagePicker.pickImage(
+                      imgFile = await picker.getImage(
                           source: ImageSource.camera
 
                       );
+                      File selected = File(imgFile.path);
                       setState(() {
 
                         if(x==1){
-                          imgs1=Image.file(imgFile);
-                          img164 = base64Encode(imgFile.readAsBytesSync());
+                          imgs1=Image.file(selected);
+                          img164 = base64Encode(selected.readAsBytesSync());
 
                         }
                         else if(x==2){
-                          imgs2=Image.file(imgFile);
-                          img264 = base64Encode(imgFile.readAsBytesSync());
+                          imgs2=Image.file(selected);
+                          img264 = base64Encode(selected.readAsBytesSync());
                         }
                         else{
-                          imgs3=Image.file(imgFile);
-                          img364 = base64Encode(imgFile.readAsBytesSync());
+                          imgs3=Image.file(selected);
+                          img364 = base64Encode(selected.readAsBytesSync());
 
                         }
 

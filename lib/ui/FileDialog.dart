@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cards/LanguageProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
@@ -17,11 +18,12 @@ class FileDialog extends StatefulWidget {
 class LogoutOverlayState extends State<FileDialog>
     with SingleTickerProviderStateMixin {
    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+   var imgFile;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
    Image? imgs ;
 String img64="0";
+   final picker = ImagePicker();
   TextEditingController namecontroler = TextEditingController();
   late http.Response response;
   @override
@@ -75,15 +77,16 @@ Center(
                           onTap: () async {
 
 
-                            var imgFile = await ImagePicker.pickImage(
+                             imgFile = await picker.getImage(
                                 source: ImageSource.gallery
 
                             );
+                             File selected = File(imgFile.path);
                             setState((){
                               // /100dp  imgs.add(Image.file(imgFile));
-                              imgs=Image.file(imgFile);
+                              imgs=Image.file(selected);
                               final bytes =
-                              imgFile.readAsBytesSync();
+                              selected.readAsBytesSync();
                               img64 = base64Encode(bytes);
                             });
 

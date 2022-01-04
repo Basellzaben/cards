@@ -1,3 +1,4 @@
+<?xml version="1.1"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.galaxyinternational.cards">
@@ -7,15 +8,17 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
-
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
 
    <application
         android:label="cards"
         android:icon="@mipmap/ic_launcher">
         <activity
+
+            android:extractNativeLibs="true"
             android:name=".MainActivity"
             android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
+            android:theme="@style/Theme.AppCompat.Light"
        android:hardwareAccelerated="true"
         android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

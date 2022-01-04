@@ -222,8 +222,8 @@ if(data.CardImage2!=null)
         child: Row(
           children: [
 
-            Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(LanguageProvider.getTexts('cardno').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
-            Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+            Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(LanguageProvider.getTexts('cardno').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
+            Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
           ],
         ),
       ),
@@ -236,7 +236,7 @@ if(data.CardImage2!=null)
         Spacer(),
 
         Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(data.CardNo,textDirection: LanguageProvider.getDirection(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardno').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardno').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600))),
 
       ],
     ))),
@@ -245,8 +245,8 @@ if(data.CardImage2!=null)
         padding: EdgeInsets.all(5), child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('cardtype').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
-        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('cardtype').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
+        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
       ],
     )))
   else   if(data.CardType!=null)
@@ -256,17 +256,17 @@ if(data.CardImage2!=null)
 
       children: [
         Spacer(),
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
 
-        Align(alignment: Alignment.topRight,child: Container( margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardtype').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)))),
+        Align(alignment: Alignment.topRight,child: Container( margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardtype').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800)))),
       ],
     ))),
   if(Globalvireables.languageCode=="en"&&data.ExpiryDate!=null)
     Card( child:Container (
         padding: EdgeInsets.all(5),child: Row(
       children: [
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('ExpiryDate').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('ExpiryDate').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
+        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
       ],
     )))else if(data.ExpiryDate!=null)
     Card( child:Container (
@@ -274,9 +274,9 @@ if(data.CardImage2!=null)
       children: [
         Spacer(),
 
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
 
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('ExpiryDate').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('ExpiryDate').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
       ],
     ))),
 
@@ -335,8 +335,7 @@ else
             onPressed: (){
               Share.share('http://cardskeeper-001-site1.ftempurl.com'+data.CardImage1, subject:
               'Using Cards Keeper app'
-                  '\n Card No : '+data.CardNo+""+"\n Card Type :"+data.CardType+""+
-                  "\n Expiry Date :"+data.ExpiryDate);
+               '\n Card No : '+data.CardNo+"");
 
             },
           ),

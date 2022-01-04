@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cards/LanguageProvider.dart';
 import 'package:cards/ui/vervicationUpdatePhone/vervication_body2.dart';
 import 'package:cards/ui/vervicationpage/vervication_body.dart';
@@ -28,7 +29,9 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
   late AnimationController controller;
   late Animation<double> scaleAnimation;
   Image? imgs ;
-  var imgFile;
+   final picker = ImagePicker();
+
+   var imgFile;
   String img64="0";
   TextEditingController namecontroler = TextEditingController();
   TextEditingController emailcontroler = TextEditingController();
@@ -94,15 +97,17 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
                           onTap: () async {
 
 
-                             imgFile = await ImagePicker.pickImage(
+                             imgFile = await picker.getImage(
                                 source: ImageSource.gallery
 
                             );
-                            setState((){
+                             File selected = File(imgFile.path);
+
+                             setState((){
                               // /100dp  imgs.add(Image.file(imgFile));
-                              imgs=Image.file(imgFile);
+                              imgs=Image.file(selected);
                               final bytes =
-                              imgFile.readAsBytesSync();
+                              selected.readAsBytesSync();
                               img64 = base64Encode(bytes);
                             });
 

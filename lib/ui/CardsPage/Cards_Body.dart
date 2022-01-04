@@ -1,6 +1,7 @@
-
+import 'dart:math' as math;
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/LanguageProvider.dart';
@@ -44,17 +45,75 @@ goBackToPreviousScreen(BuildContext context) {
 
 
 }
-
 class _Cards_Body extends State<Cards_Body> with SingleTickerProviderStateMixin {
   final HttpService httpService = HttpService();
   TextEditingController searchController = TextEditingController();
   late Future<List<cards>> ListPage=httpService.getcards(searchController.text);
-
+  Random random = new Random();
   late AnimationController controller;
   late Animation colorAnimation;
   late Animation sizeAnimation;
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   var username;
+  List<Color> co= [
+    HexColor("#546E7A"),
+    HexColor("#455A64"),
+    HexColor("#37474F"),
+    HexColor("#263238"),
+    HexColor("#757575"),
+    HexColor("#3E2723"),
+    HexColor("#FF6D00"),
+    HexColor("#FFA000"),
+    HexColor("#558B2F"),
+    HexColor("#004D40"),
+    HexColor("#00796B"),
+    HexColor("#006064"),
+    HexColor("#01579B"),
+    HexColor("#1565C0"),
+    HexColor("#283593"),
+    HexColor("#3F51B5"),
+    HexColor("#4527A0"),
+    HexColor("#880E4F"),
+    HexColor("#E57373"),
+    HexColor("#546E7A"),
+    HexColor("#455A64"),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+    HexColor("#37474F"),
+    HexColor("#263238"),
+    HexColor("#757575"),
+    HexColor("#3E2723"),
+    HexColor("#FF6D00"),
+    HexColor("#FFA000"),
+    HexColor("#558B2F"),
+    HexColor("#004D40"),
+    HexColor("#00796B"),
+    HexColor("#006064"),
+    HexColor("#01579B"),
+    HexColor("#1565C0"),
+    HexColor("#283593"),
+    HexColor("#3F51B5"),
+    HexColor("#4527A0"),
+    HexColor("#880E4F"),
+    HexColor("#E57373"),
+    HexColor(Globalvireables.basecolor),
+
+    HexColor(Globalvireables.basecolor),
+    HexColor(Globalvireables.basecolor),
+
+
+
+
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -64,7 +123,7 @@ RefreshPage();  // Defining controller with animation duration of two seconds
 
     // Defining both color and size animations
     colorAnimation =
-        ColorTween(end: HexColor(Globalvireables.bluedark), begin: HexColor(Globalvireables.bluedark)).animate(controller);
+        ColorTween(end: HexColor(Globalvireables.white3), begin: HexColor(Globalvireables.white3)).animate(controller);
     sizeAnimation = Tween<double>(begin: 70.0, end: 75.0).animate(controller);
 
     /* colorAnimation = ColorTween(begin: Colors.blue, end: Colors.yellow)
@@ -264,8 +323,26 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                               borderRadius: BorderRadius.circular(10),
                                             ),*/
                                             child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+          gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          stops: [
+            0.44,
+           0.1,
+            0.4,
+            0.1,
+          ],
+          colors: [
+            HexColor("#37474F"),
+            HexColor(Globalvireables.basecolor),
+            HexColor("#455A64"),
+            HexColor(Globalvireables.basecolor),
 
-
+          ],
+          ))
+/*
                                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
                                  image: DecorationImage(
@@ -273,8 +350,8 @@ RefreshPage();  // Defining controller with animation duration of two seconds
                                     fit: BoxFit.cover,
                                   )
 
-                                ),
-                                              child: Container(
+                                ),*/
+                                           ,   child: Container(
                                                 child: Column(
                                                   children: [
                                                   Container(
@@ -392,7 +469,7 @@ if(post.CardNo!=null && Globalvireables.languageCode=="en")
     //margin: EdgeInsets.only(top: 40),
     child: Text(post.CardType ,style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.w300),)
     ),
-    ])else  if(post.CardNo!=null && Globalvireables.languageCode=="ar")
+    ])else  if(post.CardType!=null && Globalvireables.languageCode=="ar")
       Row(
 
     children: [
@@ -594,8 +671,8 @@ delete();
 
                           style: ElevatedButton.styleFrom(
                               shape: CircleBorder(),
-                              //  primary: HexColor("#4267b2")
-                              primary:  colorAnimation.value
+                               primary: HexColor("#ffffff")
+                            //  primary:  colorAnimation.value
                           ),
                           child: Container(
                             width: 90,
@@ -605,7 +682,7 @@ delete();
                             child: Text(
                               LanguageProvider.getTexts('add').toString(),
                               style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w300,),
+                                fontSize: 15, fontWeight: FontWeight.w300,color: Colors.black),
                             ),
                           ),
                           onPressed: () {
@@ -683,7 +760,7 @@ delete();
                     LanguageProvider.getTexts('add').toString(),
 
                     style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w300,),
+                      fontSize: 15, fontWeight: FontWeight.w300,),
                   ),
                 ),
                 onPressed: () {

@@ -43,7 +43,7 @@ class LanguageProvider with ChangeNotifier{
 
     ,"deletetext":"سيتم حذف جميع البطاقات داخل الملف"
     ,"delete":"حــذف"
-
+,"finger":"تسجيل الدخول من خلال البصمة"
   };
   static Map<String , Object?>  en={
     "Allyour":" All your Cards in one place"
@@ -61,7 +61,7 @@ class LanguageProvider with ChangeNotifier{
     ,"profile":"profile"
     ,"edit":"Edit"
     ,"name":"Name"
-    ,"addcardfile":"Add Cards File"
+    ,"addcardfile":"Add New Profiles"
     ,"saving":"saving ..."
     ,"addfirstcard":"Add First Card Now "
     ,"addfirstfile":"Add First file Now "
@@ -80,6 +80,7 @@ class LanguageProvider with ChangeNotifier{
     ,"Continue":"Continue"
     ,"deletetext":"All cards inside the file will be deleted"
     ,"delete":"delete"
+    ,"finger":"Sign in with fingerprint"
 
   };
 

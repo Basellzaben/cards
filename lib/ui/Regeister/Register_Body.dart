@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cards/GlobalVaribales.dart';
@@ -13,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Register_Body extends StatefulWidget {
   goBackToPreviousScreen(BuildContext context){
@@ -33,7 +35,11 @@ goBackToPreviousScreen(BuildContext context) {
 }
 
 class _Register_Body extends State<Register_Body> {
-
+  Future<bool> _onWillPop() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("Login","0");
+    return true;
+  }
   String img64=Globalvireables.imagen;
   final TextEditingController _controller = new TextEditingController();
   TextEditingController name = TextEditingController();
@@ -49,298 +55,304 @@ class _Register_Body extends State<Register_Body> {
   bool showVerificationCodeWidget = false;
   bool showSuccessWidget = false;
   Image? imgs ;
+  final picker = ImagePicker();
+
   var imgFile;
   @override
   Widget build(BuildContext context) {
     _controller.text="+962";
-    return Scaffold(
-    resizeToAvoidBottomInset : false,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+      resizeToAvoidBottomInset : false,
 key: globalKey,
-    backgroundColor: Colors.white,
-    body: Container(
+      backgroundColor: Colors.white,
+      body: Container(
 
-    child: SingleChildScrollView(
-      child: Column(children: [
+      child: SingleChildScrollView(
+        child: Column(children: [
 
-     /* Container(
-      *//* decoration: BoxDecoration(
-      image: DecorationImage(
-        image: AssetImage("assets/signincover.png"),
-        fit: BoxFit.cover,
-      ),
+       /* Container(
+        *//* decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/signincover.png"),
+          fit: BoxFit.cover,
+        ),
   ),*//*
 
-      // margin: EdgeInsets.only(top: 80),
+        // margin: EdgeInsets.only(top: 80),
 
-      child: new Image.asset('assets/signupcovernew.jpg'
-      , ),
-      ),*/
-      Container(
-        margin: EdgeInsets.only(top: 40,left: 15),
-        alignment: Alignment.topLeft,
-          child: Text(LanguageProvider.getTexts('Registernow').toString(),style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w900,
-              color: HexColor(Globalvireables.basecolor)
-          ),)
-      ),
-
-         Container(
-          margin: EdgeInsets.only(top: 30),
-          child: Center(
-            child: InkWell(
-              onTap: () async {
-
-
-                 imgFile = await ImagePicker.pickImage(
-                    source: ImageSource.gallery
-
-                );
-                setState((){
-                  // /100dp  imgs.add(Image.file(imgFile));
-                  imgs=Image.file(imgFile);
-                  final bytes =
-                  imgFile.readAsBytesSync();
-                  img64 = base64Encode(bytes);
-                });
-
-              },
-              child: image(),
-
-              /*ClipRRect(
-                              borderRadius: BorderRadius.circular(20.0),
-                              child: Image.asset('assets/emptycards.png',
-                                  width: 110.0, height: 110.0),
-                            ),*/
-            ),
-          ),
-        ),
-
-
+        child: new Image.asset('assets/signupcovernew.jpg'
+        , ),
+        ),*/
         Container(
-          color: Colors.transparent,
-          margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 40.0,bottom: 12.0),
+          margin: EdgeInsets.only(top: 40,left: 15),
+          alignment: Alignment.topLeft,
+            child: Text(LanguageProvider.getTexts('Registernow').toString(),style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.w900,
+                color: HexColor(Globalvireables.basecolor)
+            ),)
+        ),
 
-          //  color: Colors.white,
-          width: MediaQuery.of(context).size.height,
-          // height: MediaQuery.of(context).size.height,
-
-
-
-          child: TextFormField(
-            controller: name,
-            // textAlign: LanguageProvider.TxtAlign(),
-            //controller:passwordE,
-            //obscureText: _isObscure,
-            decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
-
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                ),
-
-                border: UnderlineInputBorder(),
-
-                labelText:LanguageProvider.getTexts('name').toString(),
+           Container(
+            margin: EdgeInsets.only(top: 30),
+            child: Center(
+              child: InkWell(
+                onTap: () async {
 
 
-                labelStyle: TextStyle(
+                   imgFile = await picker.getImage(
+                      source: ImageSource.gallery
 
-                  color:Colors.black87,
-                )
+                  );
+                   File selected = File(imgFile.path);
+
+                   setState((){
+                    // /100dp  imgs.add(Image.file(imgFile));
+                    imgs=Image.file(selected);
+                    final bytes =
+                    selected.readAsBytesSync();
+                    img64 = base64Encode(bytes);
+                  });
+
+                },
+                child: image(),
+
+                /*ClipRRect(
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: Image.asset('assets/emptycards.png',
+                                    width: 110.0, height: 110.0),
+                              ),*/
+              ),
             ),
           ),
+
+
+          Container(
+            color: Colors.transparent,
+            margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 40.0,bottom: 12.0),
+
+            //  color: Colors.white,
+            width: MediaQuery.of(context).size.height,
+            // height: MediaQuery.of(context).size.height,
+
+
+
+            child: TextFormField(
+              controller: name,
+              // textAlign: LanguageProvider.TxtAlign(),
+              //controller:passwordE,
+              //obscureText: _isObscure,
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                  ),
+
+                  border: UnderlineInputBorder(),
+
+                  labelText:LanguageProvider.getTexts('name').toString(),
+
+
+                  labelStyle: TextStyle(
+
+                    color:Colors.black87,
+                  )
+              ),
+            ),
+          ),
+        Container(
+        color: Colors.transparent,
+        margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
+
+        //  color: Colors.white,
+        width: MediaQuery.of(context).size.height,
+        // height: MediaQuery.of(context).size.height,
+        child: TextFormField(
+          controller: email,
+
+          // textAlign: LanguageProvider.TxtAlign(),
+        //controller:passwordE,
+        //obscureText: _isObscure,
+        decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+
         ),
-      Container(
-      color: Colors.transparent,
-      margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
+        focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+        ),
 
-      //  color: Colors.white,
-      width: MediaQuery.of(context).size.height,
-      // height: MediaQuery.of(context).size.height,
-      child: TextFormField(
-        controller: email,
+        border: UnderlineInputBorder(),
 
+        labelText:LanguageProvider.getTexts('email').toString(),
+
+
+        labelStyle: TextStyle(
+
+        color:Colors.black87,
+        )
+        ),
+        ),
+        ),
+        Container(
+        color: Colors.transparent,
+        margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
+
+        //  color: Colors.white,
+        width: MediaQuery.of(context).size.height,
+        // height: MediaQuery.of(context).size.height,
+        child: TextFormField(
+          controller: password,
         // textAlign: LanguageProvider.TxtAlign(),
-      //controller:passwordE,
-      //obscureText: _isObscure,
-      decoration: InputDecoration(
-      enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+        //controller:passwordE,
+        //obscureText: _isObscure,
+        decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-      ),
-      focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-      ),
+        ),
+        focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+        ),
 
-      border: UnderlineInputBorder(),
+        border: UnderlineInputBorder(),
 
-      labelText:LanguageProvider.getTexts('email').toString(),
-
-
-      labelStyle: TextStyle(
-
-      color:Colors.black87,
-      )
-      ),
-      ),
-      ),
-      Container(
-      color: Colors.transparent,
-      margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
-
-      //  color: Colors.white,
-      width: MediaQuery.of(context).size.height,
-      // height: MediaQuery.of(context).size.height,
-      child: TextFormField(
-        controller: password,
-      // textAlign: LanguageProvider.TxtAlign(),
-      //controller:passwordE,
-      //obscureText: _isObscure,
-      decoration: InputDecoration(
-      enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
-
-      ),
-      focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-      ),
-
-      border: UnderlineInputBorder(),
-
-      labelText:LanguageProvider.getTexts('password').toString(),
+        labelText:LanguageProvider.getTexts('password').toString(),
 
 
-      labelStyle: TextStyle(
-      color:Colors.black87,
+        labelStyle: TextStyle(
+        color:Colors.black87,
 
 
-      )
-      ),
-      ),
-      ),
-        Container(
-          color: Colors.transparent,
-          margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
+        )
+        ),
+        ),
+        ),
+          Container(
+            color: Colors.transparent,
+            margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0,bottom: 12.0),
 
-          //  color: Colors.white,
-          width: MediaQuery.of(context).size.height,
-          // height: MediaQuery.of(context).size.height,
-          child: TextFormField(
-            controller: password2,
-            // textAlign: LanguageProvider.TxtAlign(),
-            //controller:passwordE,
-            //obscureText: _isObscure,
-            decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+            //  color: Colors.white,
+            width: MediaQuery.of(context).size.height,
+            // height: MediaQuery.of(context).size.height,
+            child: TextFormField(
+              controller: password2,
+              // textAlign: LanguageProvider.TxtAlign(),
+              //controller:passwordE,
+              //obscureText: _isObscure,
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
 
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-                ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                  ),
 
-                border: UnderlineInputBorder(),
+                  border: UnderlineInputBorder(),
 
-                labelText:LanguageProvider.getTexts('confirmpassword').toString(),
-
-
-                labelStyle: TextStyle(
-                  color:Colors.black87,
+                  labelText:LanguageProvider.getTexts('confirmpassword').toString(),
 
 
-                )
+                  labelStyle: TextStyle(
+                    color:Colors.black87,
+
+
+                  )
+              ),
             ),
           ),
-        ),
 
 
 /*
 Container(
   margin: EdgeInsets.only(top: 10,left: 20,right: 20),
   child:Row(children: [
-      Container(
-        width:90 ,
-        child: TextField(
-          controller: _controller,
-          decoration: InputDecoration(
-            suffixIcon: PopupMenuButton<String>(
-              icon: const Icon(Icons.arrow_drop_down),
-              onSelected: (String value) {
-                _controller.text = value;
-              },
-              itemBuilder: (BuildContext context) {
-                return items
-                    .map<PopupMenuItem<String>>((String value) {
-                  return new PopupMenuItem(
-                      child: new Text(value), value: value);
-                }).toList();
-              },
+        Container(
+          width:90 ,
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              suffixIcon: PopupMenuButton<String>(
+                icon: const Icon(Icons.arrow_drop_down),
+                onSelected: (String value) {
+                  _controller.text = value;
+                },
+                itemBuilder: (BuildContext context) {
+                  return items
+                      .map<PopupMenuItem<String>>((String value) {
+                    return new PopupMenuItem(
+                        child: new Text(value), value: value);
+                  }).toList();
+                },
+              ),
             ),
           ),
         ),
-      ),
 
-      Container(
+        Container(
 
-        color: Colors.transparent,
-        margin: const EdgeInsets.all(10),
+          color: Colors.transparent,
+          margin: const EdgeInsets.all(10),
 
-        //  color: Colors.white,
-        width: MediaQuery.of(context).size.height/3.43,
-        // height: MediaQuery.of(context).size.height,
-        child: TextFormField(
+          //  color: Colors.white,
+          width: MediaQuery.of(context).size.height/3.43,
+          // height: MediaQuery.of(context).size.height,
+          child: TextFormField(
 
-          controller: phoneNumEditingController,//  phoneNumEditingController
-            // textAlign: LanguageProvider.TxtAlign(),
-          //controller:passwordE,
-          //obscureText: _isObscure,
-          decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
-              ),
-              border: UnderlineInputBorder(),
-              labelText:"Phone Number",
-              labelStyle: TextStyle(
-                color:Colors.black87,
-              )
+            controller: phoneNumEditingController,//  phoneNumEditingController
+              // textAlign: LanguageProvider.TxtAlign(),
+            //controller:passwordE,
+            //obscureText: _isObscure,
+            decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor), width: 2),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(color: HexColor(Globalvireables.basecolor)),
+                ),
+                border: UnderlineInputBorder(),
+                labelText:"Phone Number",
+                labelStyle: TextStyle(
+                  color:Colors.black87,
+                )
+            ),
           ),
         ),
-      ),
 
-  
+
   ],),
 ),*/
 
 
 
-      Container(
-      margin: EdgeInsets.only(top: 30),
-      height: 55,
-      child: ElevatedButton(
-      child: Text(LanguageProvider.getTexts('next').toString()),
-      onPressed: () {/*phoneNumberVerification();*/
+        Container(
+        margin: EdgeInsets.only(top: 30),
+        height: 55,
+        child: ElevatedButton(
+        child: Text(LanguageProvider.getTexts('next').toString()),
+        onPressed: () {/*phoneNumberVerification();*/
 
 if(name.text.isEmpty || password.text.isEmpty ){
   if(Globalvireables.languageCode=="en")
   displayMessage("Your name and password are information that must be entered");
 else
-    displayMessage("اسمك وكلمة مرورك من المعلومات التي يجب إدخالها");
+      displayMessage("اسمك وكلمة مرورك من المعلومات التي يجب إدخالها");
 
 
 }else if(password.text.toString().length<6){
@@ -358,10 +370,10 @@ else if(password.text!=null && password.text==password2.text){
 
 
   Navigator.push(context,
-        MaterialPageRoute(builder:
-            (context) =>
-            verviaction_body()
-        )
+          MaterialPageRoute(builder:
+              (context) =>
+              verviaction_body()
+          )
   );
 }else{
   if(Globalvireables.languageCode=="ar")
@@ -370,112 +382,113 @@ else
   displayMessage("Retype the password correctly");
 }
 
+          },
+        style: ElevatedButton.styleFrom(
+        primary: HexColor(Globalvireables.basecolor),
+        padding: EdgeInsets.symmetric(horizontal: 100, vertical: 0),
+        textStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold)),
+        ),
+        ),
+
+
+          if(Globalvireables.languageCode=="en")
+        Row(children: [
+        Spacer(),
+
+        Container(
+        margin: EdgeInsets.only(top: 20),
+        child: Text("Already have an account ? ",style: TextStyle(fontWeight: FontWeight.bold,
+        color: HexColor(Globalvireables.black),fontSize: 13
+        ),),
+        ),
+        new GestureDetector(
+        onTap: (){
+        Navigator.push(context,
+        MaterialPageRoute(builder:
+        (context) =>
+        Register_Body()
+        )
+        );
         },
-      style: ElevatedButton.styleFrom(
-      primary: HexColor(Globalvireables.basecolor),
-      padding: EdgeInsets.symmetric(horizontal: 100, vertical: 0),
-      textStyle: TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.bold)),
-      ),
-      ),
-
-
-        if(Globalvireables.languageCode=="en")
-      Row(children: [
-      Spacer(),
-
-      Container(
-      margin: EdgeInsets.only(top: 20),
-      child: Text("Already have an account ? ",style: TextStyle(fontWeight: FontWeight.bold,
-      color: HexColor(Globalvireables.black),fontSize: 13
-      ),),
-      ),
-      new GestureDetector(
-      onTap: (){
-      Navigator.push(context,
-      MaterialPageRoute(builder:
-      (context) =>
-      Register_Body()
-      )
-      );
-      },
 
 
 
    child: Container(
-       child: new GestureDetector(
-           onTap: (){
-             Navigator.push(context,
-                 MaterialPageRoute(builder:
-                     (context) =>
-                     Login_Body()
-                 )
-             );
-           },
-           child: Container(
-             margin: EdgeInsets.only(top: 20),
-             child: Text("Login now",style: TextStyle(fontWeight: FontWeight.bold,
-                 color: HexColor(Globalvireables.basecolor),fontSize: 14
-             ),),
-           )),
+         child: new GestureDetector(
+             onTap: (){
+               Navigator.push(context,
+                   MaterialPageRoute(builder:
+                       (context) =>
+                       Login_Body()
+                   )
+               );
+             },
+             child: Container(
+               margin: EdgeInsets.only(top: 20),
+               child: Text("Login now",style: TextStyle(fontWeight: FontWeight.bold,
+                   color: HexColor(Globalvireables.basecolor),fontSize: 14
+               ),),
+             )),
+
+        )),
+
+        Spacer(),
+
+        ],)
+else
+            Row(children: [
+              Spacer(),
+              new GestureDetector(
+                  onTap: (){
+                    Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            Register_Body()
+                        )
+                    );
+                  },
+
+
+
+                  child: Container(
+                    child: new GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,
+                              MaterialPageRoute(builder:
+                                  (context) =>
+                                  Login_Body()
+                              )
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: Text(" سجل الدخول ",style: TextStyle(fontWeight: FontWeight.bold,
+                              color: HexColor(Globalvireables.basecolor),fontSize: 14
+                          ),),
+                        )),
+
+                  )),
+              Container(
+                margin: EdgeInsets.only(top: 20,left: 5,right: 5),
+                child: Text("هل تمتلك حساب بالفعل ؟   ",style: TextStyle(fontWeight: FontWeight.bold,
+                    color: HexColor(Globalvireables.black),fontSize: 13
+                ),),
+              ),
+
+
+              Spacer(),
+
+            ],)
+
+        ]
+
+        ),
+      ),
 
       )),
-
-      Spacer(),
-
-      ],)
-else
-          Row(children: [
-            Spacer(),
-            new GestureDetector(
-                onTap: (){
-                  Navigator.push(context,
-                      MaterialPageRoute(builder:
-                          (context) =>
-                          Register_Body()
-                      )
-                  );
-                },
-
-
-
-                child: Container(
-                  child: new GestureDetector(
-                      onTap: (){
-                        Navigator.push(context,
-                            MaterialPageRoute(builder:
-                                (context) =>
-                                Login_Body()
-                            )
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: Text(" سجل الدخول ",style: TextStyle(fontWeight: FontWeight.bold,
-                            color: HexColor(Globalvireables.basecolor),fontSize: 14
-                        ),),
-                      )),
-
-                )),
-            Container(
-              margin: EdgeInsets.only(top: 20,left: 5,right: 5),
-              child: Text("هل تمتلك حساب بالفعل ؟   ",style: TextStyle(fontWeight: FontWeight.bold,
-                  color: HexColor(Globalvireables.black),fontSize: 13
-              ),),
-            ),
-
-
-            Spacer(),
-
-          ],)
-
-      ]
-
-      ),
-    ),
-
-    ));
+    );
 
   }
   void displayMessage(String message) {

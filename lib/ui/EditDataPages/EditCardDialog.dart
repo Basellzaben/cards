@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cards/LanguageProvider.dart';
 import 'package:cards/ui/CardView/Card_Body.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,7 @@ class EditCardDialog extends StatefulWidget {
 
 class LogoutOverlayStatecard extends State<EditCardDialog>
     with SingleTickerProviderStateMixin {
-
+  final picker = ImagePicker();
   final String name;
   final String no;
   final String date;
@@ -729,23 +730,25 @@ if(Globalvireables.languageCode=="en")
                       onTap: () async {
                         Navigator.of(context).pop();
 
-                        imgFile = await ImagePicker.pickImage(
+                        imgFile = await picker.getImage(
                             source: ImageSource.gallery
 
                         );
+                        File selected = File(imgFile.path);
+
                         setState(() {
                           if(x==1){
-                            imgs1=Image.file(imgFile);
-                            img1 = base64Encode(imgFile.readAsBytesSync());
+                            imgs1=Image.file(selected);
+                            img1 = base64Encode(selected.readAsBytesSync());
 
                           }
                           else if(x==2){
-                            imgs2=Image.file(imgFile);
-                            img2 = base64Encode(imgFile.readAsBytesSync());
+                            imgs2=Image.file(selected);
+                            img2 = base64Encode(selected.readAsBytesSync());
                           }
                           else{
-                            imgs3=Image.file(imgFile);
-                            img3 = base64Encode(imgFile.readAsBytesSync());
+                            imgs3=Image.file(selected);
+                            img3 = base64Encode(selected.readAsBytesSync());
 
                           }
 
@@ -760,24 +763,26 @@ if(Globalvireables.languageCode=="en")
                     onTap: () async {
                       Navigator.of(context).pop();
 
-                      imgFile = await ImagePicker.pickImage(
+                      imgFile = await picker.getImage(
                           source: ImageSource.camera
 
                       );
+                      File selected = File(imgFile.path);
+
                       setState(() {
 
                         if(x==1){
-                          imgs1=Image.file(imgFile);
-                          img164 = base64Encode(imgFile.readAsBytesSync());
+                          imgs1=Image.file(selected);
+                          img164 = base64Encode(selected.readAsBytesSync());
 
                         }
                         else if(x==2){
-                          imgs2=Image.file(imgFile);
-                          img264 = base64Encode(imgFile.readAsBytesSync());
+                          imgs2=Image.file(selected);
+                          img264 = base64Encode(selected.readAsBytesSync());
                         }
                         else{
-                          imgs3=Image.file(imgFile);
-                          img364 = base64Encode(imgFile.readAsBytesSync());
+                          imgs3=Image.file(selected);
+                          img364 = base64Encode(selected.readAsBytesSync());
 
                         }
 
