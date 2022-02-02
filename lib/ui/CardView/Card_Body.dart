@@ -6,9 +6,12 @@ import 'dart:typed_data';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:cards/DataBase/SQLHelper.dart';
 import 'package:cards/LanguageProvider.dart';
 import 'package:cards/ui/BarCodePage.dart';
+import 'package:cards/ui/CardsPage/Cards_Body.dart';
 import 'package:cards/ui/EditDataPages/EditCardDialog.dart';
+import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -37,8 +40,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../CardsDialog.dart';
 import '../FileDialog.dart';
@@ -46,6 +47,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:wc_flutter_share/wc_flutter_share.dart';
+
+import '../Showimage.dart';
 class Card_Body extends StatefulWidget {
 
   @override
@@ -55,12 +58,24 @@ class Card_Body extends StatefulWidget {
 
 class _Card_Body extends State<Card_Body> {
   final HttpService httpService = HttpService();
+  List<Map<String, dynamic>> _journals = [];
+
+
+  void _refreshJournals() async {
+    final data = await SQLHelper.getcarddata(Globalvireables.fileindex,Globalvireables.cardindex);
+    setState(() {
+      _journals = data;
+      print(data.toString());
+      //  _isLoading = false;
+    });
+    print(data.toString()+"data");
+                                }
 
   var data;
   String _dataString = "Hello from this QR";
   @override
   void initState() {
-
+    _refreshJournals();
     //RefreshPage();
 
     Globalvireables.barcodedata="0";
@@ -70,11 +85,11 @@ class _Card_Body extends State<Card_Body> {
 
   }
   @override
-  void dispose() {
+ /* void dispose() {
    // RefreshPage();
 
     super.dispose();
-  }
+  }*/
    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   GlobalKey globalKey = new GlobalKey();
@@ -113,196 +128,232 @@ class _Card_Body extends State<Card_Body> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-   /*     appBar: PreferredSize(
-
-            preferredSize: Size.fromHeight(100), // Set this height
-            child: Container(
-
-                decoration: new BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                        bottom: Radius.elliptical(
-                            MediaQuery.of(context).size.width, 50.0)),
-                    color: HexColor(Globalvireables.bluedark)),
-                child: Column(
-                  //    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+    return new WillPopScope(
+      onWillPop: () async {
 
 
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => Cards_Body()),);
 
-                      ]))),*/
+        return true;
+
+        },
+      child: Scaffold(
+        key: _scaffoldKey,
+
 body: SingleChildScrollView(
 
-    child: FutureBuilder<Cardinfo>(
-    future: getCardData(),
-    builder: (context, snapshot) {
-     // print(snapshot.data!.ExpiryDate.toString()+"dfsfdf");
-    if (snapshot.hasData) {
-    var data = snapshot.data;
-if(data?.CardName!=null)
-Globalvireables.barcodedata=data!.CardNo;
-    return
-       SingleChildScrollView(
-        child: Column(
+      child: FutureBuilder<Cardinfo>(
+      future: getCardData(),
+      builder: (context, snapshot) {
+       // print(snapshot.data!.ExpiryDate.toString()+"dfsfdf");
+      if (!_journals.isEmpty) {
+      var data = snapshot.data;
+if(_journals[0]['id'].toString()!=null)
+Globalvireables.barcodedata=_journals[0]['cardno'].toString();
+      return
+         SingleChildScrollView(
+          child: Column(
 children: [
 
  Container(
 width: MediaQuery.of(context).size.width,
-                  height: 100,
-                  decoration: new BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                          bottom: Radius.elliptical(
-                              MediaQuery.of(context).size.width, 10.0)),
-                      color: HexColor(Globalvireables.bluedark)),
-                  child: Column(
-                    //    mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                    height: 100,
+                    decoration: new BoxDecoration(
+                        borderRadius: BorderRadius.vertical(
+                            bottom: Radius.elliptical(
+                                MediaQuery.of(context).size.width, 10.0)),
+                        color: HexColor(Globalvireables.bluedark)),
+                    child: Column(
+                      //    mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
 
-Container(alignment: LanguageProvider.Align() ,margin:EdgeInsets.only(top: 46,left: 10),child: Text(data!.CardName,style: TextStyle(color: Colors.white,fontSize: 25),),)
+Container(alignment: LanguageProvider.Align() ,margin:EdgeInsets.only(top: 46,left: 10),child: Text(_journals[0]['title'].toString(),style: TextStyle(color: Colors.white,fontSize: 25),),)
 
-                      ])),
+                        ])),
 
 
  //Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 10,left: 10),child:Text("Card Data",style: TextStyle(fontSize: 15),)),
 
 
   SingleChildScrollView(
-      child: Column(
-          children: <Widget>[
-            SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                    children: [
-                      if(data.CardImage1!=null)
-                        if(data.CardImage1.length>5)
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Image.network(
-                          "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage1,  width: MediaQuery.of(context).size.width,
-                          height: 300,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-if(data.CardImage2!=null)
-  if(data.CardImage2.length>5)
+        child: Column(
+            children: <Widget>[
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                      children: [
+                        if(_journals[0]['path1']!=null)
+                          if(_journals[0]['path1'].length>5)
+                            GestureDetector(
+                              onTap: () {
 
-    Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Image.network(
-                          "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage2,  width: MediaQuery.of(context).size.width,
-                          height: 300,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
+                                Globalvireables.imagen=_journals[0]['path1'];
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => Showimage(),
+                                );
+                              },
+                              child: Container(
+                            margin: EdgeInsets.all( 20),
+        child: Image.file(
 
-                      if(data.CardImage3!=null)
-                        if(data.CardImage3.length>5)
+        File(_journals[0]['path1']),
+          height: MediaQuery.of(context).size.width/4,
+          width: MediaQuery.of(context).size.width/4,
 
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Image.network(
-                          "http://cardskeeper-001-site1.ftempurl.com"+data.CardImage3,  width: MediaQuery.of(context).size.width,
-                          height: 300,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
+          gaplessPlayback: true,
+        fit: BoxFit.fill,
 
-
-
-                    ])),
-
-
-
-          ])),
-  if(Globalvireables.languageCode=="en" &&data.CardNo!=null )
-    Card(
-      child: Container(
-        padding: EdgeInsets.all(5),
-        child: Row(
-          children: [
-
-            Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(LanguageProvider.getTexts('cardno').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
-            Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(data.CardNo,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
-          ],
         ),
+                          ),
+                        ),
+
+if(_journals[0]['path2']!=null)
+  if(_journals[0]['path2'].length>5)
+
+      GestureDetector(
+        onTap: () {   Globalvireables.imagen=_journals[0]['path2'];
+        showDialog(
+          context: context,
+          builder: (_) => Showimage(),
+        );},
+        child: Container(
+         margin: EdgeInsets.all( 10),
+
+          child: Image.file(
+            File(_journals[0]['path2']),
+            height: MediaQuery.of(context).size.width/4,
+            width: MediaQuery.of(context).size.width/4,
+
+
+            gaplessPlayback: true,
+              fit: BoxFit.fill,
+
+            ),
+                          ),
       ),
-    )
-  else if(data.CardNo!=null )
-    Card( child:Container (
-        padding: EdgeInsets.all(5),
+
+                        if(_journals[0]['path3']!=null)
+                          if(_journals[0]['path3'].length>5)
+
+                            GestureDetector(
+                              onTap: () {   Globalvireables.imagen=_journals[0]['path3'];
+                              showDialog(
+                                context: context,
+                                builder: (_) => Showimage(),
+                              );},
+                              child: Container(
+                          margin: EdgeInsets.all( 10),
+
+                            child: Image.file(
+                              File(_journals[0]['path3']),
+                              height: MediaQuery.of(context).size.width/4,
+                              width: MediaQuery.of(context).size.width/4,
+
+
+                              gaplessPlayback: true,
+                              fit: BoxFit.fill,
+
+                            ),
+                          ),
+                        ),
+
+
+
+                      ])),
+
+
+
+            ])),
+  if(Globalvireables.languageCode=="en" &&_journals[0]['id'].toString()!=null )
+      Card(
+        child: Container(
+          padding: EdgeInsets.all(5),
+          child: Row(
+            children: [
+
+              Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(LanguageProvider.getTexts('cardno').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
+              Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(_journals[0]['cardno'].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
+            ],
+          ),
+        ),
+      )
+  else if(_journals[0]['id'].toString()!=null )
+      Card( child:Container (
+          padding: EdgeInsets.all(5),
   child: Row(
-      children: [
-        Spacer(),
+        children: [
+          Spacer(),
 
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(data.CardNo,textDirection: LanguageProvider.getDirection(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardno').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600))),
+          Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(_journals[0]['cardno'].toString(),textDirection: LanguageProvider.getDirection(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+          Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardno').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600))),
 
-      ],
-    ))),
-  if(Globalvireables.languageCode=="en" &&data.CardType!=null )
-    Card( child:Container (
-        padding: EdgeInsets.all(5), child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('cardtype').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
-        Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
-      ],
-    )))
-  else   if(data.CardType!=null)
-    Card( child:Container (
-        padding: EdgeInsets.all(5), child: Row(
-      // mainAxisAlignment: MainAxisAlignment.start,
+        ],
+      ))),
+  if(Globalvireables.languageCode=="en" &&_journals[0]['cardtype'].toString()!=null )
+      Card( child:Container (
+          padding: EdgeInsets.all(5), child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('cardtype').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
+          Container(margin: EdgeInsets.only(top: 15,left: 20),child:Text(_journals[0]['cardtype'].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
+        ],
+      )))
+  else   if(_journals[0]['cardtype'].toString()!=null)
+      Card( child:Container (
+          padding: EdgeInsets.all(5), child: Row(
+        // mainAxisAlignment: MainAxisAlignment.start,
 
-      children: [
-        Spacer(),
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.CardType,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
+        children: [
+          Spacer(),
+          Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(_journals[0]['cardtype'].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
 
-        Align(alignment: Alignment.topRight,child: Container( margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardtype').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800)))),
-      ],
-    ))),
-  if(Globalvireables.languageCode=="en"&&data.ExpiryDate!=null)
-    Card( child:Container (
-        padding: EdgeInsets.all(5),child: Row(
-      children: [
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('ExpiryDate').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
-        Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
-      ],
-    )))else if(data.ExpiryDate!=null)
-    Card( child:Container (
-        padding: EdgeInsets.all(5), child: Row(
-      children: [
-        Spacer(),
+          Align(alignment: Alignment.topRight,child: Container( margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardtype').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800)))),
+        ],
+      ))),
+  if(Globalvireables.languageCode=="en"&&_journals[0]['EXPIRYDATE'].toString()!=null)
+      Card( child:Container (
+          padding: EdgeInsets.all(5),child: Row(
+        children: [
+          Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(LanguageProvider.getTexts('ExpiryDate').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
+          Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 15,left: 20),child:Text(_journals[0]['EXPIRYDATE'].toString().replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
+        ],
+      )))else if(_journals[0]['EXPIRYDATE'].toString()!=null)
+      Card( child:Container (
+          padding: EdgeInsets.all(5), child: Row(
+        children: [
+          Spacer(),
 
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(data.ExpiryDate.replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
+          Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(_journals[0]['EXPIRYDATE'].toString().replaceAll("T00:00:00", ""),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
 
-        Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('ExpiryDate').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
-      ],
-    ))),
+          Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 15,right: 20),child:Text(" :"+LanguageProvider.getTexts('ExpiryDate').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
+        ],
+      ))),
 
 
 
 
   Container(
-    width: MediaQuery.of(context).size.width,
+      width: MediaQuery.of(context).size.width,
 margin: EdgeInsets.only(top: 55),
-      alignment: Alignment.center,
-      child: Row(
-        children: [
-          Spacer(),
+        alignment: Alignment.center,
+        child: Row(
+          children: [
+            Spacer(),
 
-          IconButton(
-            iconSize: 35,
-            color: Colors.lightGreen,
-            icon: new Icon(Icons.qr_code),
-            highlightColor: Colors.pink,
-            onPressed: (){
-              print(Globalvireables.barcodedata+"barcodedata");
+            IconButton(
+              iconSize: 35,
+              color: Colors.lightGreen,
+              icon: new Icon(Icons.qr_code),
+              highlightColor: Colors.pink,
+              onPressed: (){
+                print(Globalvireables.barcodedata+"barcodedata");
 if(Globalvireables.barcodedata!="")
-              showDialog(
-                context: context,
-                builder: (_) => BarCodePage(),
-              );
+                showDialog(
+                  context: context,
+                  builder: (_) => BarCodePage(),
+                );
 else if(Globalvireables.languageCode=="en")
   displayMessage("No data to display");
 else
@@ -311,81 +362,97 @@ else
 
 //RefreshPage();
 
-            },
-          ),
-          Spacer(),
+              },
+            ),
+            Spacer(),
 
-          IconButton(
-            iconSize: 35,
-            color: Colors.red,
-            icon: new Icon(Icons.delete),
-            highlightColor: Colors.pink,
-            onPressed: (){
+            IconButton(
+              iconSize: 35,
+              color: Colors.red,
+              icon: new Icon(Icons.delete),
+              highlightColor: Colors.pink,
+              onPressed: (){
 
-              delete();
+                showAlertDialog(context,_journals[0]['id']);
 
-            },
-          ),
-          Spacer(),
-          IconButton(
-            iconSize: 35,
-            color: Colors.black87,
-            icon: new Icon(Icons.share),
-            highlightColor: Colors.pink,
-            onPressed: (){
-              Share.share('http://cardskeeper-001-site1.ftempurl.com'+data.CardImage1, subject:
-              'Using Cards Keeper app'
-               '\n Card No : '+data.CardNo+"");
+              },
+            ),
+            Spacer(),
+         IconButton(
+              iconSize: 35,
+              color: Colors.black87,
+              icon: new Icon(Icons.share),
+              highlightColor: Colors.pink,
+              onPressed: (){
+              //  if(_journals[0]['path1']!=null)
+                 // if(_journals[0]['path1'].toString().length>5)
 
-            },
-          ),
-          Spacer(),
+ if(_journals[0]['path1']!=null && _journals[0]['path2']!=null&& _journals[0]['path3']!=null)
+   if(_journals[0]['path1'].toString().length>5 && _journals[0]['path2'].toString().length>5&& _journals[0]['path3'].toString().length>5)
+     Share.shareFiles([_journals[0]['path1'],_journals[0]['path2'],_journals[0]['path3']], text: "Images");
 
-          IconButton(
-            iconSize: 35,
-            color: Colors.black,
-            icon: new Icon(Icons.edit),
-            highlightColor: Colors.pink,
-            onPressed: (){
+ else if(_journals[0]['path2']!=null && _journals[0]['path1']!=null)
+     if(_journals[0]['path2'].toString().length>5 && _journals[0]['path1'].toString().length>5)
+   Share.shareFiles([_journals[0]['path1'],_journals[0]['path2']], text: "Images");
 
-              edit(data.CardName,data.CardNo,data.ExpiryDate,data.CardType
-              ,data.CardImage1,data.CardImage2,data.CardImage3);
+ else if(_journals[0]['path2']!=null&& _journals[0]['path3']!=null)
+       if(_journals[0]['path2'].toString().length>5&& _journals[0]['path3'].toString().length>5)
+   Share.shareFiles([_journals[0]['path2'],_journals[0]['path3']], text: "Images");
+else if(_journals[0]['path1']!=null)
+         if(_journals[0]['path1'].toString().length>5)
+   Share.shareFiles([_journals[0]['path1']], text: "Images");
 
-            },
-          ),
+              },
+            ),
+            Spacer(),
 
-        /*  IconButton(
-            color: Colors.lightGreen,
-            iconSize: 35,
-            icon: new Icon(Icons.qr_code),
-            highlightColor: Colors.pink,
-            onPressed: (){
-              print("ffffff");
-            //_captureAndSharePng();
+            IconButton(
+              iconSize: 35,
+              color: Colors.black,
+              icon: new Icon(Icons.edit),
+              highlightColor: Colors.pink,
+              onPressed: (){
 
-            },
-          ),*/
-          Spacer(),
+                edit(_journals[0]['title'].toString(),_journals[0]['cardno'].toString()
+                    ,_journals[0]['EXPIRYDATE'].toString(),_journals[0]['cardtype'].toString()
+            ,_journals[0]['path1'].toString(),_journals[0]['path2'].toString(),_journals[0]['path3'].toString());
 
-        ],
-      ),
+              },
+            ),
+
+          /*  IconButton(
+              color: Colors.lightGreen,
+              iconSize: 35,
+              icon: new Icon(Icons.qr_code),
+              highlightColor: Colors.pink,
+              onPressed: (){
+                print("ffffff");
+              //_captureAndSharePng();
+
+              },
+            ),*/
+            Spacer(),
+
+          ],
+        ),
   ),
 
 
 
 
-         ] ),
-      );
-    }else return
+           ] ),
+        );
+      }else return
 
-     Container(
-         margin: EdgeInsets.only(top: 400),
-         child: Center(child: CircularProgressIndicator()));
+       Container(
+           margin: EdgeInsets.only(top: 400),
+           child: Center(child: CircularProgressIndicator()));
 
-    }))
+      }))
 
 
 
+      ),
     );}
 
 
@@ -562,9 +629,65 @@ else
   }
 
    edit(String name,String no,String date,String type,String img1,String img2,String img3) {
-     Navigator.push(
+     Navigator.pushReplacement(
        context,
        MaterialPageRoute(builder: (context) => EditCardDialog(name,no,date,type,img1,img2,img3)),);
   }
+  showAlertDialog(BuildContext context,var ID) {
 
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text(LanguageProvider.getTexts('Cancel').toString()),
+      onPressed:  () {
+        setState(() {
+
+          Navigator.of(context).pop();
+
+
+          /* ListPage=httpService.getPosts("x");
+          ListPage=httpService.getPosts("");
+          RefreshPage*/
+          /*  Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Home_Body()),);
+*/
+
+        });
+
+        // dismiss dialog
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text(LanguageProvider.getTexts('Continue').toString()),
+      onPressed:  () {
+
+        setState(() {
+          Navigator.of(context).pop();
+          SQLHelper.deleteCard(ID); // dismiss dialog
+          Navigator.of(context).pop();
+        });
+
+
+        // launchMissile();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(LanguageProvider.getTexts('delete').toString()),
+      content: Text(LanguageProvider.getTexts('deletecard').toString()),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+
+  }
 }

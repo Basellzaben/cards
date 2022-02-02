@@ -9,6 +9,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'Home/Home_Body.dart';
 
 class FileDialog extends StatefulWidget {
   @override
@@ -17,7 +19,14 @@ class FileDialog extends StatefulWidget {
 
 class LogoutOverlayState extends State<FileDialog>
     with SingleTickerProviderStateMixin {
-   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  Image? imgs1 ;
+  Image? imgs2 ;
+  Image? imgs3 ;
+  String img1="";
+
+
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
    var imgFile;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
@@ -76,8 +85,8 @@ Center(
                         child: InkWell(
                           onTap: () async {
 
-
-                             imgFile = await picker.getImage(
+                            _showPicker(context,1);
+                   /*          imgFile = await picker.getImage(
                                 source: ImageSource.gallery
 
                             );
@@ -88,7 +97,7 @@ Center(
                               final bytes =
                               selected.readAsBytesSync();
                               img64 = base64Encode(bytes);
-                            });
+                            })*/;
 
                           },
                             child: image(),
@@ -151,7 +160,7 @@ Center(
 
 
 if(namecontroler.text.length>2) {
-  SaveFile(namecontroler.text, img64, context);
+  SaveFile(namecontroler.text, img1, context);
 }else{
   displayMessage("Add name to cards file");
 }
@@ -178,12 +187,12 @@ if(namecontroler.text.length>2) {
     );
   }
   Widget image(){
-    if(imgs !=null)
+    if(imgs1 !=null)
       return SingleChildScrollView(
         child: Container(
             width: 200,
             height: 150,
-          child:imgs
+          child:imgs1
     ),
       );
           else
@@ -201,14 +210,27 @@ if(namecontroler.text.length>2) {
 
 
   SaveFile (String name,String path,BuildContext context) async {
+
+
+    print("(H   "+path+"     H)");
+
     try {
       Uri apiUrl = Uri.parse(Globalvireables.cardfiles);
       showAlert(context,LanguageProvider.getTexts('saving').toString());
-      final json = {
+      final json;
+      if(path.length>5)
+      json= {
         "CustomerId":Globalvireables.ID,
         "ProfileName": name,
         "ProfileImage": path,
       };
+      else
+        json= {
+          "CustomerId":Globalvireables.ID,
+          "ProfileName": name,
+          "ProfileImage": Globalvireables.uploadimage,
+
+        };
 print ("file save");
 
 
@@ -273,6 +295,13 @@ print(json.toString());
     }
   // Home_Body.RefreshPage();
     Navigator.pop(context);
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder:
+            (context) =>
+            Home_Body()
+        )
+    );
+
   }
   void showAlert(BuildContext context,String text) {
     showDialog(
@@ -284,4 +313,86 @@ print(json.toString());
   void displayMessage(String value) {
     _scaffoldKey.currentState!.showSnackBar(new SnackBar(content: new Text(value)));
   }
+
+   _showPicker(context,var x) {
+     var imgFile;
+     var bytes;
+     showModalBottomSheet(
+         context: context,
+         builder: (BuildContext bc) {
+           return SafeArea(
+             child: Container(
+               child: new Wrap(
+                 children: <Widget>[
+                   new ListTile(
+                       leading: new Icon(Icons.photo_library),
+                       title: new Text('Photo Library'),
+                       onTap: () async {
+                         Navigator.of(context).pop();
+
+                         imgFile = await picker.getImage(
+                             source: ImageSource.gallery
+
+                         );
+                         File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                           quality: 50,);
+                        // File selected = File(imgFile.path);
+
+                         setState(() {
+                           if(x==1){
+                             imgs1=Image.file(selected);
+                             img1 = base64Encode(selected.readAsBytesSync());
+
+                           }
+
+
+
+                         });
+                         //_imgFromGallery();
+                       }),
+                   new ListTile(
+                     leading: new Icon(Icons.photo_camera),
+                     title: new Text('Camera'),
+                     onTap: () async {
+                       Navigator.of(context).pop();
+
+                       imgFile = await picker.getImage(
+                           source: ImageSource.camera
+
+                       );
+                     //  File selected = File(imgFile.path);
+                       File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                         quality: 50,);
+                       setState(() {
+
+                         if(x==1){
+                           imgs1=Image.file(selected);
+                           img1 = base64Encode(selected.readAsBytesSync());
+
+                         }
+                         else if(x==2){
+                           imgs2=Image.file(selected);
+                           img1 = base64Encode(selected.readAsBytesSync());
+                         }
+                         else{
+                           imgs3=Image.file(selected);
+                           img1 = base64Encode(selected.readAsBytesSync());
+
+                         }
+
+                       });
+
+                       //_imgFromCamera();
+                     },
+                   ),
+                 ],
+               ),
+             ),
+           );
+         }
+     );
+
+
+
+   }
 }

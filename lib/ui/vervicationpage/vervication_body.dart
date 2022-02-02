@@ -7,7 +7,6 @@ import 'package:cards/ui/login/Login_Body.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/color/HexColor.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
@@ -21,7 +20,6 @@ class _verviaction_body extends State<verviaction_body> {
 
   //List<String> country = ["+9620", "+62", "+96v2", "+9g62"];
    List<String> country=["+973","+964","+962","+961","+970","+966","+965","+968","+963","+974"];
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SmsAutoFill smsAutoFill = SmsAutoFill();
   late String strVerificationId;
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
@@ -209,13 +207,17 @@ height: 55,
                               ),
                             ),
                             onPressed: () {
-                            phoneNumberVerification();
                             if(phoneNumEditingController.text!=null)
                               if(phoneNumEditingController.text.startsWith("07"))
                             {
-                          //    phoneNumEditingController.text= phoneNumEditingController.text.replaceRange(0, 1, _selectedCountry!);
+                             phoneNumEditingController.text= phoneNumEditingController.text.replaceRange(0, 1, _selectedCountry!);
 
                               Globalvireables.phone= phoneNumEditingController.text.replaceRange(0, 1, _selectedCountry!);
+                            }else if(phoneNumEditingController.text.startsWith("7")) {
+                                Globalvireables.phone=(_selectedCountry!+phoneNumEditingController.text);
+                                phoneNumEditingController.text=  (_selectedCountry!+phoneNumEditingController.text);
+                                print("nnnnn"+Globalvireables.phone);
+
                             }else{
                                 Globalvireables.phone= phoneNumEditingController.text;
                               }
@@ -481,7 +483,7 @@ maxLength: 1,
                             style: TextStyle(fontSize: 24,fontWeight:FontWeight.bold,color: Colors.black87),
                           ),
                         ),
-                        onPressed: () {  signInWithPhoneNumber();},
+                        onPressed: () { },
                       ),
 
                     /*  child: RaisedButton(
@@ -499,113 +501,15 @@ maxLength: 1,
         ));
   }
 
-  Future<void> phoneNumberVerification() async {
 
-    PhoneVerificationCompleted phoneVerificationCompleted =
-        (PhoneAuthCredential phoneAuthCredential) async {
-      await firebaseAuth.signInWithCredential(phoneAuthCredential);
-
-      if(Globalvireables.languageCode=="en")
-      displayMessage("Phone number is automatically verified and user signed in");
-      else
-       displayMessage("يتم التحقق تلقائيًا من رقم الهاتف وتسجيل دخول المستخدم");
-
-      setState(() {
-        showVerifyNumberWidget = false;
-        showVerificationCodeWidget = false;
-        showSuccessWidget = true;
-      });
-    };
-
-    PhoneVerificationFailed phoneVerificationFailed =
-        (FirebaseAuthException authException) {
-      if(Globalvireables.languageCode=="en")
-      displayMessage('فشل التحقق من رقم الهاتف');
-    else
-      displayMessage("Phone number verification failed");
-
-    };
-
-    PhoneCodeSent phoneCodeSent =
-        (String verificationId, [int? forceResendingToken]) async {
-      if(Globalvireables.languageCode=="ar")
-      displayMessage('يرجى التحقق من هاتفك للحصول على رمز التحقق');
-      else
-        displayMessage("Please check your phone for a verification code");
-      strVerificationId = verificationId;
-      setState(() {
-        showVerifyNumberWidget = false;
-        showVerificationCodeWidget = true;
-      });
-    };
-
-    PhoneCodeAutoRetrievalTimeout phoneCodeAutoRetrievalTimeout =
-        (String verificationId) {
-    //  displayMessage("verification code: " + verificationId);
-      strVerificationId = verificationId;
-      setState(() {
-        showVerifyNumberWidget = false;
-        showVerificationCodeWidget = true;
-      });
-    };
-
-    try {
-var x="";
-      if(phoneNumEditingController.text!=null)
-        if(phoneNumEditingController.text.startsWith("07"))
-        {
-        x= phoneNumEditingController.text.replaceRange(0, 1, _selectedCountry!);
-        }else{
-         x= phoneNumEditingController.text;
-        }
-
-
-      await firebaseAuth.verifyPhoneNumber(
-          phoneNumber: x,
-          timeout: const Duration(seconds: 5),
-          verificationCompleted: phoneVerificationCompleted,
-          verificationFailed: phoneVerificationFailed,
-          codeSent: phoneCodeSent,
-          codeAutoRetrievalTimeout: phoneCodeAutoRetrievalTimeout);
-    } catch (e) {
-      if(Globalvireables.languageCode=="ar")
-        displayMessage('فشل التحقق من رقم الهاتف');
-      else
-        displayMessage("Phone number verification failed");
-
-    }
-  }
 
   void displayMessage(String message) {
     globalKey.currentState!.showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void signInWithPhoneNumber() async {
-    try {
-      final AuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: strVerificationId,
-        smsCode: smsEditingController1.text/*+smsEditingController2.text+smsEditingController3.text
-        +smsEditingController4.text+smsEditingController5.text+smsEditingController6.text,
-*/      );
 
-      final User? user = (await firebaseAuth.signInWithCredential(credential)).user;
-print(Globalvireables.regorupdate+"regorupdate");
-     // displayMessage("Successfully signed in UID: ${user!.uid}");
-if(Globalvireables.regorupdate.contains("0"))
-  Regester(Globalvireables.name,Globalvireables.email,Globalvireables.phone,"",Globalvireables.photoURL,Globalvireables.password);
-else if(Globalvireables.regorupdate.contains("1"))
-  Editprofile(Globalvireables.name,Globalvireables.email,Globalvireables.phone,Globalvireables.country,Globalvireables.password,context);
-
-      setState(() {
-        showVerificationCodeWidget = false;
-        showSuccessWidget = true;
-      });
-    } catch (e) {
-      displayMessage("Failed to sign in: " + e.toString());
-    }
-  }
   Regester(String name,String email,String mobile,String country,String profileimage,String password) async {
-
+var x=1;
     Uri apiUrl = Uri.parse(Globalvireables.regesterapi);
 
 var countrypostion=-1;
@@ -647,13 +551,14 @@ print (i.toString()+"  = postion");
 
       print("rees"+jsonResponse.toString());
       if (user.getid()=="0") {
+        x=0;
 if(Globalvireables.languageCode=="en")
         displayMessage('The number is registered, please log in');
 else
   displayMessage('الرقم مسجل ، الرجاء تسجيل الدخول');
-        Navigator.push(
+       /* Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Login_Body()),);
+          MaterialPageRoute(builder: (context) => Login_Body()),);*/
       }
       else if(user.getid()!="0"){
 
@@ -666,6 +571,9 @@ else
         displayMessage('error in logup');
 
       }
+
+
+
       //  if(email.toString().length>5)
       displayMessage('error');
 
@@ -712,6 +620,15 @@ print("rees"+jsonResponse.toString());
       displayMessage('out time');
 
     }
+
+    if(x==0){
+      Navigator.pop(context);
+
+      /* Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Login_Body()),);*/
+    }
+
   }
 
 

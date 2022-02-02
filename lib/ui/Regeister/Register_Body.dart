@@ -10,8 +10,6 @@ import 'package:cards/ui/login/Login_Body.dart';
 import 'package:cards/ui/vervicationpage/vervication_body.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,7 +46,6 @@ class _Register_Body extends State<Register_Body> {
   TextEditingController password2 = TextEditingController();
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   var items = ['+962', '+999', '+565'];
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SmsAutoFill smsAutoFill = SmsAutoFill();
   late String strVerificationId;
   bool showVerifyNumberWidget = true;

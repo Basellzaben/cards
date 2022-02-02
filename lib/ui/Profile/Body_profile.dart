@@ -13,10 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
 class Body_profile extends StatefulWidget {
@@ -60,8 +56,6 @@ class _Body_profile extends State<Body_profile> {
 
 String _imageBase64="";
   var bytes;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -131,6 +125,7 @@ String _imageBase64="";
 
 
 if(Globalvireables.email!=null)
+  if(Globalvireables.email.length>5)
                 Container(
                   margin: const EdgeInsets.only(top: 0.0),
 
@@ -147,7 +142,9 @@ if(Globalvireables.email!=null)
 
 
                 if(Globalvireables.phone!="null")
-                Card(
+                  if(Globalvireables.phone.length>5)
+
+                    Card(
                   
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
                   child: Container(
@@ -180,7 +177,9 @@ if(Globalvireables.email!=null)
                   ),
                 ),),
                 if(Globalvireables.country!=null)
-                  Card(
+                  if(Globalvireables.country.length>5)
+
+                    Card(
 
                   margin: EdgeInsets.only(top:40,left: 12,right: 12),
 
@@ -269,7 +268,6 @@ setState(() {
                     MaterialPageRoute(
                         builder: (context) => Login_Body()));
 
-
               },
                   child: Card(
                     margin: EdgeInsets.only(top:40,left: 12,right: 12),
@@ -304,8 +302,8 @@ Spacer(),
                                   onChanged: toggleSwitch,
                                   value: isSwitched,
                                   activeColor: HexColor(Globalvireables.white2),
-                                  activeTrackColor: HexColor(Globalvireables.basecolor),
-                                  inactiveThumbColor:HexColor(Globalvireables.basecolor),
+                                  activeTrackColor: Colors.lightGreen,
+                                  inactiveThumbColor:HexColor(Globalvireables.white3),
                                   inactiveTrackColor: HexColor(Globalvireables.white3) ,
                                 )
                             ),
@@ -321,8 +319,6 @@ Spacer(),
                   margin: EdgeInsets.only(top:40,left: 12,right: 12,bottom: 30),
                   child: new InkWell(
                     onTap: () async {
-                     await _googleSignIn.signOut();
-                      await _auth.signOut();
                       Navigator.push(
                         context,
                          MaterialPageRoute(builder: (context) => Login_Body()),);

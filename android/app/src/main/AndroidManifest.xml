@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.galaxyinternational.cards">
 
-
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
@@ -11,8 +13,11 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
 
    <application
+       android:usesCleartextTraffic="true"
         android:label="cards"
+       android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher">
+
         <activity
 
             android:extractNativeLibs="true"
@@ -23,8 +28,9 @@
         android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             >
-       <!--  android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation">
-       -->
+
+            <!--  android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation">
+            -->
 
 
 
@@ -64,6 +70,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+       <activity
+           android:name="com.yalantis.ucrop.UCropActivity"
+           android:screenOrientation="portrait"
+           android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

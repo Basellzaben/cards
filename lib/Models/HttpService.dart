@@ -36,6 +36,12 @@ class HttpService {
           ).toList()[i].ProfileName.contains(txt))
             posts.add(body.map((dynamic item) => Fileofcards.fromJson(item),
             ).toList()[i]);
+      }else{
+        posts.clear();
+        for (var i = 0; i < body
+            .map((dynamic item) => Fileofcards.fromJson(item),).length; i++)
+            posts.add(body.map((dynamic item) => Fileofcards.fromJson(item),
+            ).toList()[i]);
       }
 print(posts.toString()+"posssss");
       return posts;

@@ -3,17 +3,14 @@ import 'package:cards/LanguageProvider.dart';
 import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:share/share.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'Profile/Body_profile.dart';
 import 'login/Login_Body.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NavDrawer extends StatelessWidget {
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 
   @override
@@ -38,7 +35,7 @@ class NavDrawer extends StatelessWidget {
         //https://play.google.com/store/apps/details?id=com.baselalzaben99.myapplicationmaps&hl=ar&gl=US
           ListTile(
 
-            leading: Icon(Icons.share),
+            leading: Icon(Icons.share,color: Colors.lightGreen,),
             title: Container(alignment:LanguageProvider.Align(),child: Text(LanguageProvider.getTexts('ShareApp').toString())),
             onTap: () => {
 
@@ -47,7 +44,7 @@ class NavDrawer extends StatelessWidget {
 
             },
           ),
-          ListTile(
+  /*        ListTile(
             leading: Icon(Icons.verified_user),
             title: Container(alignment:LanguageProvider.Align(),child: Text(LanguageProvider.getTexts('profile').toString())),
 
@@ -62,24 +59,25 @@ class NavDrawer extends StatelessWidget {
 
 
           },
-          ),
+          )*/
 
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Container(alignment:LanguageProvider.Align(),child: Text(LanguageProvider.getTexts('logout').toString())),
 
             onTap: () async => {
+            SystemChannels.platform.invokeMethod('SystemNavigator.pop')
 
+/*
      prefs = await SharedPreferences.getInstance(),
 
     prefs.setString("Login","0"),
 
 
-    await _googleSignIn.signOut(),
-    await _auth.signOut(),
     Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => Login_Body()),)
+*/
 
             },
           ),
@@ -108,7 +106,7 @@ class NavDrawer extends StatelessWidget {
             ],
           ),*/
           Container(
-            height: 400,
+            height: 350,
             alignment: Alignment.bottomCenter,
             child: Container(
                 margin: EdgeInsets.only(bottom: 10),

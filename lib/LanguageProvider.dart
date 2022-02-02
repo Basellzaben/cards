@@ -40,10 +40,14 @@ class LanguageProvider with ChangeNotifier{
     ,"Sendcode":"أرسال رمز التاكيد"
 ,"Cancel":"الغاء"
     ,"Continue":"استمرار"
+    ,"save":"حفظ"
 
     ,"deletetext":"سيتم حذف جميع البطاقات داخل الملف"
     ,"delete":"حــذف"
 ,"finger":"تسجيل الدخول من خلال البصمة"
+    ,"deletecard":"هل انت متاكد من حذف البطاقة"
+    ,"emailorphone":"البريد الالكتروني او رقم الهاتف"
+
   };
   static Map<String , Object?>  en={
     "Allyour":" All your Cards in one place"
@@ -81,7 +85,9 @@ class LanguageProvider with ChangeNotifier{
     ,"deletetext":"All cards inside the file will be deleted"
     ,"delete":"delete"
     ,"finger":"Sign in with fingerprint"
-
+    ,"save":"save"
+    ,"deletecard":"Are you sure to delete the card?"
+,"emailorphone":"email or phone number"
   };
 
 

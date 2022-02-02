@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:cards/DataBase/SQLHelper.dart';
 import 'package:cards/LanguageProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
+//nbnbnbnmbnn
 import 'package:cards/color/HexColor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +17,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:image_cropper/image_cropper.dart';
+
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:io' as io;
+
 class CardsDialog extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => LogoutOverlayStatecard();
@@ -29,7 +38,20 @@ class LogoutOverlayStatecard extends State<CardsDialog>
   Image? imgs1 ;
   Image? imgs2 ;
   Image? imgs3 ;  final picker = ImagePicker();
+   List<Map<String, dynamic>> _journals = [];
 
+   void _refreshkeys() async {
+     var data = await SQLHelper.getKeys();
+     /*  setState(() {
+
+    //  _isLoading = false;
+    });*/
+
+     setState(() {
+       _journals = data;
+     });
+
+   }
    String img164="";
   String img264="";
   String img364="";
@@ -37,9 +59,20 @@ class LogoutOverlayStatecard extends State<CardsDialog>
   TextEditingController ExpiryDatecontroler = TextEditingController();
   TextEditingController typecontroler = TextEditingController();
   TextEditingController cardnocontroler = TextEditingController();
-
+   Future<void> _addItem(String profileid,String title, String? path1, String? path2, String? path3
+       ,String? cardno,String? expirydate,String? cardtype) async {
+       await SQLHelper.createCard(profileid, title,  path1,  path2,  path3
+           , cardno, expirydate, cardtype);
+   //  _refreshJournals();
+   }
+   Future<void> _addKey(String title) async {
+     if(title.length>0)
+     await SQLHelper.createKey(title);
+     //  _refreshJournals();
+   }
   @override
   void initState() {
+    _refreshkeys();
     super.initState();
 
     controller =
@@ -92,41 +125,13 @@ Center(
                       child: Center(
                         child: InkWell(
                           onTap: () async {
-                           // var imgFile= _showPicker(context);
-
-                            /* = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
-
-                            );*/_showPicker(context,1);
-                        //    img164 = base64Encode(Globalvireables.img164);
-
-                            setState((){
+                        _showPicker(context,1);
 
 
-                              // /100dp  imgs.add(Image.file(imgFile));
-                            /*  imgs3=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();*/
-                            });
-                   /*         var imgFile = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
-                            );
-                            setState((){
-                              // /100dp  imgs.add(Image.file(imgFile));
-                              imgs1=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();
-                              img164 = base64Encode(bytes);
-                            });
-*/
                           },
                           child: image(imgs1),
 
-                          /*ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset('assets/emptycards.png',
-                                width: 110.0, height: 110.0),
-                          ),*/
+
                         ),
                       ),
                     ),
@@ -137,39 +142,16 @@ Center(
                         child: InkWell(
                           onTap: () async {
 
-                            /* = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
 
-                            );*/
                             setState((){
-                            //  var imgFile=  _showPicker(context);
 
-                              // /100dp  imgs.add(Image.file(imgFile));
-                           /*   imgs3=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();*/
                               _showPicker(context,2);
-                             // img264 = base64Encode();
+
                             });
-                      /*      var imgFile = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
-                            );
-                            setState((){
-                              // /100dp  imgs.add(Image.file(imgFile));
-                              imgs2=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();
-                              img264 = base64Encode(bytes);
-                            });
-*/
+
                           },
                           child: image(imgs2),
 
-                          /*ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset('assets/emptycards.png',
-                                width: 110.0, height: 110.0),
-                          ),*/
                         ),
                       ),
                     ),
@@ -183,28 +165,16 @@ Center(
 
 
 
-                            /* = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
 
-                            );*/
                          setState((){
-                         /*  var imgFile=  _showPicker(context);
-                              // /100dp  imgs.add(Image.file(imgFile));
-                              imgs3=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();*/
+
                            _showPicker(context,3);
-                          // img364 = base64Encode();
+
                             });
 
                           },
                           child: image(imgs3),
 
-                          /*ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset('assets/emptycards.png',
-                                width: 110.0, height: 110.0),
-                          ),*/
                         ),
                       ),
                     )
@@ -281,13 +251,13 @@ Center(
                   await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
-                    firstDate: DateTime(2021),
+                    firstDate: DateTime(2022),
                     lastDate: DateTime(2040),
                   ).then((selectedDate) {
                     if (selectedDate != null) {
 
-                      ExpiryDatecontroler.text =
-                          DateFormat('yyyy-MM-dd').format(selectedDate);
+                    ExpiryDatecontroler.text =
+                        DateFormat('yyyy-MM-dd').format(selectedDate);
                     }
                   });
 
@@ -297,46 +267,19 @@ Center(
                   if (value == null || value.isEmpty) {
                     return 'Please enter date.';
                   }
-                  return null;
+                return null;
                 },
               )),
 
 
-          /*      child: TextField(
 
-                          controller: ExpiryDatecontroler,
-                          // enabled: false,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:HexColor(Globalvireables.basecolor), width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black, width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-
-                            ),
-
-
-                            contentPadding: EdgeInsets.only(
-                                top: 18, bottom: 18, right: 20, left: 20),
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText:"ExpiryDate",
-
-                          ),
-                        )*/
 
                     Container(
 
                         margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
                         //  alignment: Alignment.center,
                         child: TextField(
-
+                      //    keyboardType: TextInputType.numberWithOptions(decimal: true),
                           controller: cardnocontroler,
                           // enabled: false,
                           decoration: InputDecoration(
@@ -365,7 +308,6 @@ Center(
                           ),
                         )
                     ),
-
       Container(
 
           margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
@@ -401,7 +343,7 @@ Center(
       )
 
 ,
-          SingleChildScrollView(
+     /*     SingleChildScrollView(
             scrollDirection: Axis.horizontal,
 
             child: Row(
@@ -499,11 +441,43 @@ padding: EdgeInsets.all(5),
               ],
             ),
           )
-
-
-
-                    ,
+*/
+                    if(_journals.length>0)
                     Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _journals.length,
+                        itemBuilder: (context, index)
+                        => Container(
+
+                          child: new InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  typecontroler.text=_journals[index]['title'].toString();
+                                });  },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Center(child: Text(_journals[index]['title'].toString(),style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),)),
+
+                                margin: EdgeInsets.all(7),
+
+                                decoration: new BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.elliptical(
+                                            MediaQuery.of(context).size.width, 200.0)),
+                                    color: HexColor(Globalvireables.white3)),
+                              ),
+                            ),
+                        ),
+
+                        ),
+                    )
+
+                 ,
+        Container(
                       margin: EdgeInsets.only(top: 20),
                       height: 55,
                       padding: EdgeInsets.only(right: 2,left: 2),
@@ -515,11 +489,13 @@ padding: EdgeInsets.all(5),
 
 if(namecontroler.text.length>2) {
   print ("images this="+ img164+"  ---  "+ img164);
+  _addItem(Globalvireables.fileindex,namecontroler.text,  img164, img264, img364,cardnocontroler.text,ExpiryDatecontroler.text,typecontroler.text);
+
+  _addKey(typecontroler.text);
   SaveFile(namecontroler.text,  img164, img264, img364, context);
 }else{
   displayMessage("Add name to cards");
 }
-
 
 
                         },
@@ -584,6 +560,8 @@ if(namecontroler.text.length>2) {
 
 
       //await http.post(apiUrl,body: jsone);
+
+
 
       http.Response response=await http.post(apiUrl, body: json);
 
@@ -675,26 +653,40 @@ if(namecontroler.text.length>2) {
                          imgFile = await picker.getImage(
                             source: ImageSource.gallery
                         );
-                        File selected = File(imgFile.path);
-
+                        File? selected = await ImageCropper.cropImage(
+                            sourcePath: imgFile.path,
+                            compressQuality: 50,
+                            aspectRatioPresets: [
+                              CropAspectRatioPreset.square,
+                              CropAspectRatioPreset.ratio3x2,
+                              CropAspectRatioPreset.original,
+                              CropAspectRatioPreset.ratio4x3,
+                              CropAspectRatioPreset.ratio16x9
+                            ],
+                            androidUiSettings: AndroidUiSettings(
+                                toolbarTitle: 'Cropper',
+                                toolbarColor: Colors.deepOrange,
+                                toolbarWidgetColor: Colors.white,
+                                initAspectRatio: CropAspectRatioPreset.original,
+                                lockAspectRatio: false),
+                            iosUiSettings: IOSUiSettings(
+                              minimumAspectRatio: 1.0,
+                            )
+                        );
                         setState(() {
 if(x==1){
-  imgs1=Image.file(selected);
-  img164 = base64Encode(selected.readAsBytesSync());
-
-   }
+  imgs1=Image.file(selected!);
+ // img164 = base64Encode(selected.readAsBytesSync());
+  img164 =selected.path;
+}
 else if(x==2){
-  imgs2=Image.file(selected);
-  img264 = base64Encode(selected.readAsBytesSync());
+  imgs2=Image.file(selected!);
+  img264 =selected.path;
 }
 else{
-  imgs3=Image.file(selected);
-  img364 = base64Encode(selected.readAsBytesSync());
-
+  imgs3=Image.file(selected!);
+  img364 =selected.path;
 }
-
-
-
 });
                       //_imgFromGallery();
                       }),
@@ -708,23 +700,48 @@ else{
                           source: ImageSource.camera
 
                       );
-                      File selected = File(imgFile.path);
+                      File? selected = await ImageCropper.cropImage(
+                          sourcePath: imgFile.path,
+                          compressQuality: 50,
+                          aspectRatioPresets: [
+                            CropAspectRatioPreset.square,
+                            CropAspectRatioPreset.ratio3x2,
+                            CropAspectRatioPreset.original,
+                            CropAspectRatioPreset.ratio4x3,
+                            CropAspectRatioPreset.ratio16x9
+                          ],
+                          androidUiSettings: AndroidUiSettings(
+                              toolbarTitle: 'Cropper',
+                              toolbarColor: Colors.deepOrange,
+                              toolbarWidgetColor: Colors.white,
+                              initAspectRatio: CropAspectRatioPreset.original,
+                              lockAspectRatio: false),
+                          iosUiSettings: IOSUiSettings(
+                            minimumAspectRatio: 1.0,
+                          )
+                      );
                       setState(() {
 
                         if(x==1){
-                          imgs1=Image.file(selected);
-                          img164 = base64Encode(selected.readAsBytesSync());
+                          imgs1=Image.file(selected!);
+                          // img164 = base64Encode(selected.readAsBytesSync());
+                          img164 =selected.path;
 
                         }
                         else if(x==2){
-                          imgs2=Image.file(selected);
-                          img264 = base64Encode(selected.readAsBytesSync());
+                          imgs2=Image.file(selected!);
+                          img264 =selected.path;
+
+//  img264 = base64Encode(selected.readAsBytesSync());
                         }
                         else{
-                          imgs3=Image.file(selected);
-                          img364 = base64Encode(selected.readAsBytesSync());
+                          imgs3=Image.file(selected!);
+                          img364 =selected.path;
+
+                          // img364 = base64Encode(selected.readAsBytesSync());
 
                         }
+                        _createFileFromString(base64Encode(selected.readAsBytesSync()),x);
 
                       });
 
@@ -741,4 +758,39 @@ else{
 
 
   }
+
+   Future<String> _createFileFromString(String base,int x) async {
+     final encodedStr = base;
+     Uint8List bytes = base64.decode(encodedStr);
+     String dir = (await getApplicationDocumentsDirectory()).path;
+     File file = File(
+         "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+     await file.writeAsBytes(bytes).then((value) => {
+       setState(() {
+         Globalvireables.imagen=file.path;
+         //img1=file.path;
+
+
+         if(x==1){
+           img164 =file.path;
+
+         }
+         else if(x==2){
+           img264 =file.path;
+
+//  img264 = base64Encode(selected.readAsBytesSync());
+         }
+         else{
+           img364 =file.path;
+
+           // img364 = base64Encode(selected.readAsBytesSync());
+
+         }
+         print ("gg");
+       })
+     });
+
+
+     return file.path;
+   }
 }

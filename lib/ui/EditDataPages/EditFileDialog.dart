@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:cards/DataBase/SQLHelper.dart';
 import 'package:cards/LanguageProvider.dart';
+import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/color/HexColor.dart';
@@ -15,18 +18,25 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:io' as io;
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+
+
 class EditFileDialog extends StatefulWidget {
   @override
   final String name;
 
+  int id;
    String img1;
 
 
-  EditFileDialog(this.name,this.img1);
+  EditFileDialog(this.name,this.img1,this.id);
 
   State<StatefulWidget> createState() => LogoutOverlayStatecard(
     name,
-    img1
+    img1,
+    id
   );
 
 }
@@ -35,22 +45,23 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
     with SingleTickerProviderStateMixin {
   final picker = ImagePicker();
 
-  final String name;
+   String name;
    String img1;
-  LogoutOverlayStatecard( this.name,this.img1){
+int id;
+
+  TextEditingController namecontroler = TextEditingController();
+
+  LogoutOverlayStatecard( this.name,this.img1,this.id){
   }
 
    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   late http.Response response;
-  late AnimationController controller;
-  late Animation<double> scaleAnimation;
   Image? imgs1 ;
   Image? imgs2 ;
   Image? imgs3 ;
   String img164="";
   String img264="";
   String img364="";
-  TextEditingController namecontroler = TextEditingController();
   TextEditingController ExpiryDatecontroler = TextEditingController();
   TextEditingController typecontroler = TextEditingController();
   TextEditingController cardnocontroler = TextEditingController();
@@ -61,7 +72,7 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
     namecontroler.text=name;
 
     super.initState();
-
+/*
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 450));
     scaleAnimation =
@@ -71,7 +82,7 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
       setState(() {});
     });
 
-    controller.forward();
+    controller.forward();*/
   }
 
   @override
@@ -80,8 +91,7 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.transparent,
-        body: ScaleTransition(
-          scale: scaleAnimation,
+        body: Container(
           child: Container(
               margin: EdgeInsets.all(20.0),
               padding: EdgeInsets.all(15.0),
@@ -118,18 +128,18 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
                                 margin: EdgeInsets.only(top: 30),
                                 child: Center(
                                   child: InkWell(
-                                    onTap: () async {
+                                    onTap: ()  {
                                       // var imgFile= _showPicker(context);
 
                                       /* = await ImagePicker.pickImage(
                                 source: ImageSource.gallery
 
-                            );*/_showPicker(context,1);
+                            );*/
                                       //    img164 = base64Encode(Globalvireables.img164);
 
                                       setState((){
 
-
+                                        _showPicker(context,1);
                                         // /100dp  imgs.add(Image.file(imgFile));
                                         /*  imgs3=Image.file(imgFile);
                               final bytes =
@@ -162,7 +172,6 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
                             ])),
 
                     Container(
-
                         margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
                         //  alignment: Alignment.center,
                         child: TextField(
@@ -189,7 +198,7 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
                                 top: 18, bottom: 18, right: 20, left: 20),
                             fillColor: Colors.white,
                             filled: true,
-                            hintText:LanguageProvider.getTexts('name').toString(),
+                            hintText:name,
 
                           ),
                         )
@@ -199,15 +208,15 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
 
                     /*      child: TextField(
 
-                          controller: ExpiryDatecontroler,
-                          // enabled: false,
-                          decoration: InputDecoration(
+                            controller: ExpiryDatecontroler,
+                            enabled: false,
+                            decoration: InputDecoration(
                             prefixIcon: Icon(Icons.drive_file_rename_outline),
                             border: OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:HexColor(Globalvireables.basecolor), width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
+                            borderSide: BorderSide(
+                            color:HexColor(Globalvireables.basecolor), width: 0.0),
+                            borderRadius: BorderRadius.circular(10.0)
                             ),
                             enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -237,18 +246,25 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
                       height: 55,
                       padding: EdgeInsets.only(right: 2,left: 2),
                       child: ElevatedButton(
-                        child: Text(LanguageProvider.getTexts('add').toString()),
+                        child: Text(LanguageProvider.getTexts('save').toString()),
 
                         onPressed: () {
-
+                          if(namecontroler.text!=null)
+                            _updateItem(id,namecontroler.text,img1);
+                        /*  EditFile(namecontroler.text, img1, context);
+else
+                            EditFile(name, img1, context);
+*/
+/*
 
                           if(namecontroler.text.length>2) {
-                            print ("images this="+ img164+"  ---  "+ img164);
+                            print ("images this="+ img1+"  ---  "+ namecontroler.text);
                             EditFile(namecontroler.text, img1, context);
                           }else{
                             displayMessage("Add name to cards");
                           }
 
+*/
 
 
                         },
@@ -271,12 +287,12 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
     );
   }
   Widget image(Image? img,String imgg){
-    if(img !=null)
+    if(imgg !=null)
       return SingleChildScrollView(
         child: Container(
             width: 200,
             height: 150,
-            child:img
+            child:Image.file(File(imgg))
         ),
       );
     else
@@ -290,7 +306,9 @@ class LogoutOverlayStatecard extends State<EditFileDialog>
 
 
   EditFile (String name,String path,BuildContext context) async {
+
     try {
+      print("---path---"+path+"---path---");
 
       Uri apiUrl = Uri.parse(Globalvireables.cardfiles+"/"+Globalvireables.fileindex);
       showAlert(context,LanguageProvider.getTexts('saving').toString());
@@ -308,10 +326,11 @@ print("api used "+apiUrl.toString());
       http.Response response=await http.put(apiUrl, body: json);
 
       var jsonResponse = jsonDecode(response.body);
+      print("succ = "+jsonResponse.toString()+"   "+Globalvireables.fileindex);
 
       if (!jsonResponse.toString().contains("ID: 0")) {
 
-        print("succ = "+jsonResponse.toString());
+        print("succ = "+jsonResponse.toString()+"   "+Globalvireables.fileindex);
         Navigator.pop(context);
 
       }
@@ -355,13 +374,17 @@ print("api used "+apiUrl.toString());
       // displayMessage("Login information error");
 
     }on FormatException catch(_){
-
       Navigator.pop(context);
       displayMessage("Login information error");
-
-
     }
-    Navigator.pop(context);
+
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder:
+            (context) =>
+            Home_Body()
+        )
+    );
+
   }
   void showAlert(BuildContext context,String text) {
     showDialog(
@@ -370,6 +393,7 @@ print("api used "+apiUrl.toString());
           content: Text(text),
         ));
   }
+
   void displayMessage(String value) {
     _scaffoldKey.currentState!.showSnackBar(new SnackBar(content: new Text(value)));
   }
@@ -391,22 +415,22 @@ print("api used "+apiUrl.toString());
                       title: new Text('Photo Library'),
                       onTap: () async {
                         Navigator.of(context).pop();
-
-                        imgFile = await picker.getImage(
-                            source: ImageSource.gallery
-
+                        imgFile = await picker.pickImage(
+                        source: ImageSource.gallery
                         );
-                        File selected = File(imgFile.path);
+
+
+
+//                        File selected = File(imgFile.path);
+                        File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                          quality: 50,);
+
 
                         setState(() {
-                          if(x==1){
                             imgs1=Image.file(selected);
-                            img1 = base64Encode(selected.readAsBytesSync());
-
-                          }
-
-
-
+                            img1 =  selected.path;
+                            print ("start    "+img1+"   end");
+                            print("  end2");
                         });
                         //_imgFromGallery();
                       }),
@@ -416,30 +440,24 @@ print("api used "+apiUrl.toString());
                     onTap: () async {
                       Navigator.of(context).pop();
 
-                      imgFile = await picker.getImage(
+                      imgFile = await picker.pickImage(
                           source: ImageSource.camera
 
                       );
-                      File selected = File(imgFile.path);
+                     // File selected = File(imgFile.path);
+
+                      File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                        quality: 50,);
 
                       setState(() {
 
-                        if(x==1){
-                          imgs1=Image.file(selected);
-                          img164 = base64Encode(selected.readAsBytesSync());
-
-                        }
-                        else if(x==2){
-                          imgs2=Image.file(selected);
-                          img264 = base64Encode(selected.readAsBytesSync());
-                        }
-                        else{
-                          imgs3=Image.file(selected);
-                          img364 = base64Encode(selected.readAsBytesSync());
-
-                        }
+                        imgs1=Image.file(selected);
+                        img1 =  selected.path;
+                        print ("start    "+img1+"   end");
+                        print("  end2");
 
                       });
+                      _createFileFromString(base64Encode(selected.readAsBytesSync()));
 
                       //_imgFromCamera();
                     },
@@ -452,6 +470,33 @@ print("api used "+apiUrl.toString());
     );
 
 
+
+  }
+  Future<String> _createFileFromString(String base) async {
+    final encodedStr = base;
+    Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = File(
+        "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    await file.writeAsBytes(bytes).then((value) => {
+      setState(() {
+        Globalvireables.imagen=file.path;
+        img1=file.path;
+        print ("gg");
+      })
+    });
+
+
+    return file.path;
+  }
+  Future<void> _updateItem(int id,title,img1) async {
+    if(img1!=null)
+      await SQLHelper.updateItem(
+          id, title, img1).then((value) =>    Navigator.pop(context));
+    //setState(() {
+  // _refreshJournals(searchcontroler.text);
+
+    //});
 
   }
 }

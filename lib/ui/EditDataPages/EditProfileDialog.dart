@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:flutter_native_image/flutter_native_image.dart';
+
 import 'dart:io' as io;
 class EditProfileDialog extends StatefulWidget {
   @override
@@ -39,9 +41,19 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
   TextEditingController countrycontroler = TextEditingController();
   TextEditingController passwordcontroler = TextEditingController();
 
+
+
+
   @override
   void initState() {
     super.initState();
+
+    namecontroler.text=Globalvireables.name;
+    emailcontroler.text=Globalvireables.email;
+    mobilecontroler.text=Globalvireables.phone;
+    countrycontroler.text=Globalvireables.country;
+    passwordcontroler.text=Globalvireables.password;
+
 
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 450));
@@ -97,18 +109,15 @@ class LogoutOverlayStatecard extends State<EditProfileDialog>
                           onTap: () async {
 
 
-                             imgFile = await picker.getImage(
+                           /*  imgFile = await picker.getImage(
                                 source: ImageSource.gallery
 
-                            );
-                             File selected = File(imgFile.path);
+                            );*/
+                             /*File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                               quality: 50,);*/
 
                              setState((){
-                              // /100dp  imgs.add(Image.file(imgFile));
-                              imgs=Image.file(selected);
-                              final bytes =
-                              selected.readAsBytesSync();
-                              img64 = base64Encode(bytes);
+                               _showPicker(context);
                             });
 
                           },
@@ -330,11 +339,14 @@ if(Globalvireables.email!=null)
                       height: 55,
                       padding: EdgeInsets.only(right: 2,left: 2),
                       child: ElevatedButton(
-                      child: Text(LanguageProvider.getTexts('add').toString()),
+                      child: Text(LanguageProvider.getTexts('save').toString()),
 
                         onPressed: () {
                           if(namecontroler.text.length>2 && passwordcontroler.text!=null) {
-                            if(mobilecontroler.text.length>0)
+                            print(Globalvireables.phone);
+                            print(mobilecontroler.text.toString());
+
+                            if(mobilecontroler.text.length>0 && (mobilecontroler.text.toString().contains(Globalvireables.phone)))
                               {
                                 Globalvireables.regorupdate="1";
                                 Globalvireables.name=namecontroler.text;
@@ -342,7 +354,7 @@ if(Globalvireables.email!=null)
                                   if(emailcontroler.text.length>5)*/
                                 if(img64!=null)
                                   if(img64.length>10)
-                                    Globalvireables.imagen=img64;
+                                Globalvireables.imagen=img64;
                                 Globalvireables.email=emailcontroler.text;
                                 Globalvireables.phone=mobilecontroler.text;
                                 Globalvireables.country=countrycontroler.text;
@@ -509,4 +521,72 @@ if(email==null)
     _scaffoldKey.currentState!.showSnackBar(new SnackBar(content: new Text(value)));
   }
 
+   _showPicker(context) {
+     var imgFile;
+     var bytes;
+     showModalBottomSheet(
+         context: context,
+         builder: (BuildContext bc) {
+           return SafeArea(
+             child: Container(
+               child: new Wrap(
+                 children: <Widget>[
+                   new ListTile(
+                       leading: new Icon(Icons.photo_library),
+                       title: new Text('Photo Library'),
+                       onTap: () async {
+                         Navigator.of(context).pop();
+                         imgFile = await picker.pickImage(
+                             source: ImageSource.gallery
+                         );
+
+
+
+//                        File selected = File(imgFile.path);
+                         File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                           quality: 50,);
+
+
+                         setState(() {
+                           imgs=Image.file(selected);
+                           img64 =  base64Encode(selected.readAsBytesSync());
+                           print("  end2");
+                         });
+                         //_imgFromGallery();
+                       }),
+                   new ListTile(
+                     leading: new Icon(Icons.photo_camera),
+                     title: new Text('Camera'),
+                     onTap: () async {
+                       Navigator.of(context).pop();
+
+                       imgFile = await picker.pickImage(
+                           source: ImageSource.camera
+
+                       );
+                       // File selected = File(imgFile.path);
+
+                       File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                         quality: 50,);
+
+                       setState(() {
+
+                         imgs=Image.file(selected);
+                         img64 =  base64Encode(selected.readAsBytesSync());
+                         print("  end2");
+
+                       });
+                       //_imgFromCamera();
+                     },
+                   ),
+                 ],
+               ),
+             ),
+           );
+         }
+     );
+
+
+
+   }
 }

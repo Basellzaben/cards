@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:cards/DataBase/SQLHelper.dart';
 import 'package:cards/LanguageProvider.dart';
 import 'package:cards/ui/CardView/Card_Body.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +17,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
-import 'dart:io' as io;
+import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+
+
 class EditCardDialog extends StatefulWidget {
   @override
   final String name;
@@ -55,6 +62,20 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
   late http.Response response;
   late AnimationController controller;
   late Animation<double> scaleAnimation;
+  List<Map<String, dynamic>> _journals = [];
+
+  void _refreshkeys() async {
+    var data = await SQLHelper.getKeys();
+    /*  setState(() {
+
+    //  _isLoading = false;
+    });*/
+
+    setState(() {
+      _journals = data;
+    });
+
+  }
   Image? imgs1 ;
   Image? imgs2 ;
   Image? imgs3 ;
@@ -68,7 +89,7 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
 
   @override
   void initState() {
-
+    _refreshkeys();
     namecontroler.text=name;
     ExpiryDatecontroler.text=date;
     typecontroler.text=type;
@@ -90,513 +111,538 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.transparent,
-        body: ScaleTransition(
-          scale: scaleAnimation,
-          child: Container(
-              margin: EdgeInsets.all(20.0),
-              padding: EdgeInsets.all(15.0),
-              height: MediaQuery.of(context).size.height,
-              width: 500,
-              decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0))),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
+    return new WillPopScope(
+      onWillPop: () async {
+
+
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => Card_Body()),);
+
+        return true;
+
+      },
+      child: Center(
+        child: Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.transparent,
+          body: ScaleTransition(
+            scale: scaleAnimation,
+            child: Container(
+                margin: EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(15.0),
+                height: MediaQuery.of(context).size.height,
+                width: 500,
+                decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0))),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
 if(Globalvireables.languageCode=="en")
-                    Center(
-                        child: Text("Edit Card",style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w300,
-                            color: HexColor(Globalvireables.basecolor)
-                        ),))else
+                      Center(
+                          child: Text("Edit Card",style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w300,
+                              color: HexColor(Globalvireables.basecolor)
+                          ),))else
   Center(
-      child: Text("تعديل البطاقة",style: TextStyle(
-          fontSize: 25,
-          fontWeight: FontWeight.w300,
-          color: HexColor(Globalvireables.basecolor)
-      ),))
-                          ,
+        child: Text("تعديل البطاقة",style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.w300,
+            color: HexColor(Globalvireables.basecolor)
+        ),))
+                            ,
 
-                    SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                            children: [
+                      SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                              children: [
 
-                              Container(
-                                margin: EdgeInsets.only(top: 30),
-                                child: Center(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      // var imgFile= _showPicker(context);
+                                Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: Center(
+                                    child: InkWell(
+                                      onTap: () async {
 
-                                      /* = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
-
-                            );*/_showPicker(context,1);
-                                      //    img164 = base64Encode(Globalvireables.img164);
-
-                                      setState((){
+                                        setState((){
+                                          _showPicker(context,1);
+                                        });
+                                      },
+                                      child: image(imgs1,img1,1),
 
 
-                                        // /100dp  imgs.add(Image.file(imgFile));
-                                        /*  imgs3=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();*/
-                                      });
-                                      /*         var imgFile = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
-                            );
-                            setState((){
-                              // /100dp  imgs.add(Image.file(imgFile));
-                              imgs1=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();
-                              img164 = base64Encode(bytes);
-                            });
-*/
-                                    },
-                                    child: image(imgs1,img1),
-
-                                    /*ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset('assets/emptycards.png',
-                                width: 110.0, height: 110.0),
-                          ),*/
+                                    ),
                                   ),
                                 ),
+
+                                Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: Center(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        setState((){
+                                          _showPicker(context,2);
+                                        });
+
+                                      },
+                                      child: image(imgs2,img2,2),
+
+                                    ),
+                                  ),
+                                ),
+
+                                Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: Center(
+                                    child: InkWell(
+                                      onTap: () async {
+                                        setState((){
+                                          _showPicker(context,3);
+                                        });
+                                      },
+                                      child: image(imgs3,img3,3),
+                                    ),
+                                  ),
+                                )
+
+                              ])),
+
+                      Container(
+
+                          margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
+                          //  alignment: Alignment.center,
+                          child: TextField(
+
+                            controller: namecontroler,
+                            // enabled: false,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.drive_file_rename_outline),
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:HexColor(Globalvireables.basecolor), width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black, width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+
                               ),
 
-                              Container(
-                                margin: EdgeInsets.only(top: 30),
-                                child: Center(
-                                  child: InkWell(
-                                    onTap: () async {
 
-                                      /* = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
+                              contentPadding: EdgeInsets.only(
+                                  top: 18, bottom: 18, right: 20, left: 20),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText:LanguageProvider.getTexts('name').toString(),
 
-                            );*/
-                                      setState((){
-                                        //  var imgFile=  _showPicker(context);
+                            ),
+                          )
+                      )
 
-                                        // /100dp  imgs.add(Image.file(imgFile));
-                                        /*   imgs3=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();*/
-                                        _showPicker(context,2);
-                                        // img264 = base64Encode();
-                                      });
-                                      /*      var imgFile = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
-                            );
-                            setState((){
-                              // /100dp  imgs.add(Image.file(imgFile));
-                              imgs2=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();
-                              img264 = base64Encode(bytes);
-                            });
-*/
-                                    },
-                                    child: image(imgs2,img2),
 
-                                    /*ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset('assets/emptycards.png',
-                                width: 110.0, height: 110.0),
-                          ),*/
-                                  ),
-                                ),
+                      ,Container(
+
+                          margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
+                          //  alignment: Alignment.center,
+
+                          child: TextFormField(
+                            readOnly: true,
+                            controller: ExpiryDatecontroler,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.timer),
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: HexColor(Globalvireables.basecolor) , width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black, width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+
                               ),
 
-                              Container(
-                                margin: EdgeInsets.only(top: 30),
-                                child: Center(
-                                  child: InkWell(
-                                    onTap: () async {
 
-
-
-
-                                      /* = await ImagePicker.pickImage(
-                                source: ImageSource.gallery
-
-                            );*/
-                                      setState((){
-                                        /*  var imgFile=  _showPicker(context);
-                              // /100dp  imgs.add(Image.file(imgFile));
-                              imgs3=Image.file(imgFile);
-                              final bytes =
-                              imgFile.readAsBytesSync();*/
-                                        _showPicker(context,3);
-                                        // img364 = base64Encode();
-                                      });
-                                    },
-                                    child: image(imgs3,img3),
-
-                                    /*ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.asset('assets/emptycards.png',
-                                width: 110.0, height: 110.0),
-                          ),*/
-                                  ),
-                                ),
-                              )
-
-                            ])),
-
-                    Container(
-
-                        margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
-                        //  alignment: Alignment.center,
-                        child: TextField(
-
-                          controller: namecontroler,
-                          // enabled: false,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:HexColor(Globalvireables.basecolor), width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black, width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
+                              contentPadding: EdgeInsets.only(
+                                  top: 18, bottom: 18, right: 20, left: 20),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText: LanguageProvider.getTexts('ExpiryDate').toString(),
 
                             ),
+                            onTap: () async {
+                              await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2021),
+                                lastDate: DateTime(2040),
+                              ).then((selectedDate) {
+                                if (selectedDate != null) {
 
+                                  ExpiryDatecontroler.text =
+                                      DateFormat('yyyy-MM-dd').format(selectedDate);
+                                }
+                              });
 
-                            contentPadding: EdgeInsets.only(
-                                top: 18, bottom: 18, right: 20, left: 20),
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText:LanguageProvider.getTexts('name').toString(),
-
-                          ),
-                        )
-                    )
-
-
-                    ,Container(
-
-                        margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
-                        //  alignment: Alignment.center,
-
-                        child: TextFormField(
-                          readOnly: true,
-                          controller: ExpiryDatecontroler,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.timer),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: HexColor(Globalvireables.basecolor) , width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black, width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-
-                            ),
-
-
-                            contentPadding: EdgeInsets.only(
-                                top: 18, bottom: 18, right: 20, left: 20),
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText: LanguageProvider.getTexts('ExpiryDate').toString(),
-
-                          ),
-                          onTap: () async {
-                            await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2021),
-                              lastDate: DateTime(2040),
-                            ).then((selectedDate) {
-                              if (selectedDate != null) {
-
-                                ExpiryDatecontroler.text =
-                                    DateFormat('yyyy-MM-dd').format(selectedDate);
+                              //  calculatelongtimee();
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter date.';
                               }
-                            });
+                              return null;
+                            },
+                          )),
 
-                            //  calculatelongtimee();
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter date.';
+
+                      /*      child: TextField(
+
+                            controller: ExpiryDatecontroler,
+                            // enabled: false,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.drive_file_rename_outline),
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:HexColor(Globalvireables.basecolor), width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black, width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+
+                              ),
+
+
+                              contentPadding: EdgeInsets.only(
+                                  top: 18, bottom: 18, right: 20, left: 20),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText:"ExpiryDate",
+
+                            ),
+                          )*/
+
+                      Container(
+
+                          margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
+                          //  alignment: Alignment.center,
+                          child: TextField(
+                           // keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            controller: cardnocontroler,
+                            // enabled: false,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.drive_file_rename_outline),
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:HexColor(Globalvireables.basecolor), width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black, width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+
+                              ),
+
+
+                              contentPadding: EdgeInsets.only(
+                                  top: 18, bottom: 18, right: 20, left: 20),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText:LanguageProvider.getTexts('cardno').toString(),
+
+
+                            ),
+                          )
+                      ),
+
+                      Container(
+
+                          margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
+                          //  alignment: Alignment.center,
+                          child: TextField(
+
+                            controller: typecontroler,
+                            // enabled: false,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.drive_file_rename_outline),
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:HexColor(Globalvireables.basecolor), width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.black, width: 0.0),
+                                  borderRadius: BorderRadius.circular(10.0)
+
+                              ),
+
+
+                              contentPadding: EdgeInsets.only(
+                                  top: 18, bottom: 18, right: 20, left: 20),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText:LanguageProvider.getTexts('cardtype').toString(),
+
+                            ),
+                          )
+                      )
+
+                      ,
+        /*              SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+
+                        child: Row(
+                          children: [
+                            new InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  typecontroler.text="SHOP";
+                                });  },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Text("#SHOP",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
+
+                                margin: EdgeInsets.all(7),
+
+                                decoration: new BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.elliptical(
+                                            MediaQuery.of(context).size.width, 100.0)),
+                                    color: HexColor(Globalvireables.white3)),
+                              ),
+                            ),
+                            new InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  typecontroler.text="WORK";
+                                });  },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Text("#WORK",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
+
+                                margin: EdgeInsets.all(7),
+
+                                decoration: new BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.elliptical(
+                                            MediaQuery.of(context).size.width, 100.0)),
+                                    color: HexColor(Globalvireables.white3)),
+                              ),
+                            ),
+                            new InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  typecontroler.text="STUDY";
+                                });  },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Text("#STUDY",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
+
+                                margin: EdgeInsets.all(7),
+
+                                decoration: new BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.elliptical(
+                                            MediaQuery.of(context).size.width, 100.0)),
+                                    color: HexColor(Globalvireables.white3)),
+                              ),
+                            ),
+                            new InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  typecontroler.text="BANK";
+                                });  },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Text("#BANK",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
+
+                                margin: EdgeInsets.all(10),
+
+                                decoration: new BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.elliptical(
+                                            MediaQuery.of(context).size.width, 100.0)),
+                                    color: HexColor(Globalvireables.white3)),
+                              ),
+                            ),
+                            new InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  typecontroler.text="PERSONAL";
+                                });  },
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Text("#PERSONAL",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
+
+                                margin: EdgeInsets.all(10),
+
+                                decoration: new BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.elliptical(
+                                            MediaQuery.of(context).size.width, 100.0)),
+                                    color: HexColor(Globalvireables.white3)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+*/
+
+                      if(_journals.length>0)
+                        Container(
+                          height: 50,
+                          width: MediaQuery.of(context).size.width,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _journals.length,
+                            itemBuilder: (context, index)
+                            => Container(
+
+                              child: new InkWell(
+                                onTap: () async {
+                                  setState(() {
+                                    typecontroler.text=_journals[index]['title'].toString();
+                                  });  },
+                                child: Container(
+                                  padding: EdgeInsets.all(5),
+                                  child: Center(child: Text(_journals[index]['title'].toString(),style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),)),
+
+                                  margin: EdgeInsets.all(7),
+
+                                  decoration: new BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.elliptical(
+                                              MediaQuery.of(context).size.width, 200.0)),
+                                      color: HexColor(Globalvireables.white3)),
+                                ),
+                              ),
+                            ),
+
+                          ),
+                        )
+
+                      ,
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        height: 55,
+                        padding: EdgeInsets.only(right: 2,left: 2),
+                        child: ElevatedButton(
+                          child: Text(LanguageProvider.getTexts('save').toString()),
+
+                          onPressed: () {
+
+
+                            if(namecontroler.text.length>2) {
+                              print ("images this="+ img164+"  ---  "+ img164);
+                              SQLHelper.updateCard(Globalvireables.cardindex,Globalvireables.fileindex
+                              ,namecontroler.text,  img1, img2, img3,cardnocontroler.text,ExpiryDatecontroler.text,typecontroler.text);
+                           //   EditFile(namecontroler.text,  img1, img2, img3, context);
+                              _addKey(typecontroler.text);
+                             // Navigator.pop(context);
+
+                            }else{
+                              displayMessage("Add name to cards");
                             }
-                            return null;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Card_Body()),);
+
+
                           },
-                        )),
-
-
-                    /*      child: TextField(
-
-                          controller: ExpiryDatecontroler,
-                          // enabled: false,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:HexColor(Globalvireables.basecolor), width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black, width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-
-                            ),
-
-
-                            contentPadding: EdgeInsets.only(
-                                top: 18, bottom: 18, right: 20, left: 20),
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText:"ExpiryDate",
-
-                          ),
-                        )*/
-
-                    Container(
-
-                        margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
-                        //  alignment: Alignment.center,
-                        child: TextField(
-
-                          controller: cardnocontroler,
-                          // enabled: false,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:HexColor(Globalvireables.basecolor), width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black, width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-
-                            ),
-
-
-                            contentPadding: EdgeInsets.only(
-                                top: 18, bottom: 18, right: 20, left: 20),
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText:LanguageProvider.getTexts('cardno').toString(),
-
-
-                          ),
-                        )
-                    ),
-
-                    Container(
-
-                        margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
-                        //  alignment: Alignment.center,
-                        child: TextField(
-
-                          controller: typecontroler,
-                          // enabled: false,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:HexColor(Globalvireables.basecolor), width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black, width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-
-                            ),
-
-
-                            contentPadding: EdgeInsets.only(
-                                top: 18, bottom: 18, right: 20, left: 20),
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText:LanguageProvider.getTexts('cardtype').toString(),
-
-                          ),
-                        )
-                    )
-
-                    ,
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-
-                      child: Row(
-                        children: [
-                          new InkWell(
-                            onTap: () async {
-                              setState(() {
-                                typecontroler.text="SHOP";
-                              });  },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Text("#SHOP",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
-
-                              margin: EdgeInsets.all(7),
-
-                              decoration: new BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.elliptical(
-                                          MediaQuery.of(context).size.width, 100.0)),
-                                  color: HexColor(Globalvireables.white3)),
-                            ),
-                          ),
-                          new InkWell(
-                            onTap: () async {
-                              setState(() {
-                                typecontroler.text="WORK";
-                              });  },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Text("#WORK",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
-
-                              margin: EdgeInsets.all(7),
-
-                              decoration: new BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.elliptical(
-                                          MediaQuery.of(context).size.width, 100.0)),
-                                  color: HexColor(Globalvireables.white3)),
-                            ),
-                          ),
-                          new InkWell(
-                            onTap: () async {
-                              setState(() {
-                                typecontroler.text="STUDY";
-                              });  },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Text("#STUDY",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
-
-                              margin: EdgeInsets.all(7),
-
-                              decoration: new BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.elliptical(
-                                          MediaQuery.of(context).size.width, 100.0)),
-                                  color: HexColor(Globalvireables.white3)),
-                            ),
-                          ),
-                          new InkWell(
-                            onTap: () async {
-                              setState(() {
-                                typecontroler.text="BANK";
-                              });  },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Text("#BANK",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
-
-                              margin: EdgeInsets.all(10),
-
-                              decoration: new BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.elliptical(
-                                          MediaQuery.of(context).size.width, 100.0)),
-                                  color: HexColor(Globalvireables.white3)),
-                            ),
-                          ),
-                          new InkWell(
-                            onTap: () async {
-                              setState(() {
-                                typecontroler.text="PERSONAL";
-                              });  },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Text("#PERSONAL",style: TextStyle(fontWeight: FontWeight.w800,color: HexColor(Globalvireables.bluedark)),),
-
-                              margin: EdgeInsets.all(10),
-
-                              decoration: new BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.elliptical(
-                                          MediaQuery.of(context).size.width, 100.0)),
-                                  color: HexColor(Globalvireables.white3)),
-                            ),
-                          ),
-                        ],
+                          style: ElevatedButton.styleFrom(
+                              primary: HexColor(Globalvireables.basecolor),
+                              padding: EdgeInsets.symmetric(horizontal: 100, vertical: 0),
+                              textStyle: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold)),
+                        ),
                       ),
-                    )
 
 
 
-                    ,
-                    Container(
-                      margin: EdgeInsets.only(top: 20),
-                      height: 55,
-                      padding: EdgeInsets.only(right: 2,left: 2),
-                      child: ElevatedButton(
-                        child: Text(LanguageProvider.getTexts('add').toString()),
-
-                        onPressed: () {
-
-
-                          if(namecontroler.text.length>2) {
-                            print ("images this="+ img164+"  ---  "+ img164);
-                            EditFile(namecontroler.text,  img1, img2, img3, context);
-                          }else{
-                            displayMessage("Add name to cards");
-                          }
-
-
-
-                        },
-                        style: ElevatedButton.styleFrom(
-                            primary: HexColor(Globalvireables.basecolor),
-                            padding: EdgeInsets.symmetric(horizontal: 100, vertical: 0),
-                            textStyle: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-
-
-
-                  ],
-                ),
-              )),
+                    ],
+                  ),
+                )),
+          ),
         ),
       ),
     );
   }
-  Widget image(Image? img,String? imgg){
-    if(img !=null)
+  Widget image(Image? img,String imgg,int x){
+
+    if(imgg!=null)
+    {if(imgg.length>5)
       return SingleChildScrollView(
-        child: Container(
+          child: Stack(
+            alignment: Alignment.bottomRight,
+            children: <Widget>[
+
+              Container(
+                width: 200,
+                height: 150,
+                child:  Container(
+                  child: ClipRRect(
+                    //  borderRadius: BorderRadius.circular(50.0),
+                      child: Image.file(
+                        File(imgg),
+                      )
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -15,
+                left: -10,
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(Icons.clear,color: Colors.red,size: 25,),
+                    onPressed: () {
+
+                      setState(() {
+if(x==1)
+                        img1="";
+        else if(x==2)
+        img2="";
+    else
+      img3="";
+                       // x=1;
+                      });
+
+
+                    },
+                  ),
+                ),
+
+
+              ),
+            ],
+          )
+
+        /*child: Container(
             width: 200,
             height: 150,
-            child:img
+            child:  Container(
+          child: ClipRRect(
+  //        borderRadius: BorderRadius.circular(50.0),
+    child: Image.memory(
+    base64.decode(img1),
+    gaplessPlayback: true,
+    )
+    ),
         ),
-      );
-    else if(imgg!=null && imgg.length>5)
-      return Container(
+      )*/);
 
-        //child: Image.asset('assets/emptyfile.png'),
-        child: Image.network('http://cardskeeper-001-site1.ftempurl.com'+imgg,width: 200,height: 150,)
-      );
-      else return Container(
+    else return Container(
 
         //child: Image.asset('assets/emptyfile.png'),
         child: Icon(
@@ -606,11 +652,64 @@ if(Globalvireables.languageCode=="en")
         ),
       );
 
+    }else{
+
+      if(imgs1 !=null && img1.length>10)
+        return SingleChildScrollView(
+          child: Container(
+              width: 200,
+              height: 150,
+              child:imgs1
+          ),
+        );
+      else
+        return Container(
+
+          //child: Image.asset('assets/emptyfile.png'),
+          child: Icon(
+            Icons.image,
+            size: 100.0,
+            color: HexColor(Globalvireables.basecolor),
+          ),
+        );
+    }
+
+/*
+    if(imgg != null) {
+      if (imgg.length > 10)
+        return SingleChildScrollView(
+          child: Container(
+              width: 200,
+              height: 150,
+              child: Image.memory(
+                base64.decode(imgg),
+                gaplessPlayback: true,
+              )
+          ),
+
+        );
+      else
+      return Container(
+        child: Icon(
+          Icons.image,
+          size: 100.0,
+          color: HexColor(Globalvireables.basecolor),
+        ),   );
+    } else
+      return Container(
+    child: Icon(
+        Icons.image,
+        size: 100.0,
+        color: HexColor(Globalvireables.basecolor),
+      ),   );
+*/
+
   }
 
 
 
   EditFile (String name,String path1,String path2,String path3,BuildContext context) async {
+
     if(path1==null)
       path1="";
     if(path2==null)
@@ -696,7 +795,7 @@ if(Globalvireables.languageCode=="en")
     }
     Navigator.pop(context);
     Navigator.pop(context);
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => Card_Body()),);
 
@@ -730,25 +829,46 @@ if(Globalvireables.languageCode=="en")
                       onTap: () async {
                         Navigator.of(context).pop();
 
-                        imgFile = await picker.getImage(
+                          imgFile = await picker.pickImage(
                             source: ImageSource.gallery
-
                         );
-                        File selected = File(imgFile.path);
 
-                        setState(() {
+                    //      print("paathgg"+imgFile.path);
+
+                        File? selected = await ImageCropper.cropImage(
+                            sourcePath: imgFile.path,
+                            compressQuality: 50,
+                            aspectRatioPresets: [
+                              CropAspectRatioPreset.square,
+                              CropAspectRatioPreset.ratio3x2,
+                              CropAspectRatioPreset.original,
+                              CropAspectRatioPreset.ratio4x3,
+                              CropAspectRatioPreset.ratio16x9
+                            ],
+                            androidUiSettings: AndroidUiSettings(
+                                toolbarTitle: 'Cropper',
+                                toolbarColor: Colors.deepOrange,
+                                toolbarWidgetColor: Colors.white,
+                                initAspectRatio: CropAspectRatioPreset.original,
+                                lockAspectRatio: false),
+                            iosUiSettings: IOSUiSettings(
+                              minimumAspectRatio: 1.0,
+                            )
+                        );
+
+                            setState(() {
                           if(x==1){
-                            imgs1=Image.file(selected);
-                            img1 = base64Encode(selected.readAsBytesSync());
+                            imgs1=Image.file(selected!);
+                            img1 = selected.path;
 
                           }
                           else if(x==2){
-                            imgs2=Image.file(selected);
-                            img2 = base64Encode(selected.readAsBytesSync());
+                            imgs2=Image.file(selected!);
+                            img2 = selected.path;
                           }
-                          else{
-                            imgs3=Image.file(selected);
-                            img3 = base64Encode(selected.readAsBytesSync());
+                          else if(x==3){
+                            imgs3=Image.file(selected!);
+                            img3 = selected.path;
 
                           }
 
@@ -762,28 +882,43 @@ if(Globalvireables.languageCode=="en")
                     title: new Text('Camera'),
                     onTap: () async {
                       Navigator.of(context).pop();
-
-                      imgFile = await picker.getImage(
-                          source: ImageSource.camera
-
+                      imgFile = await picker.pickImage(
+                          source: ImageSource.camera,
                       );
-                      File selected = File(imgFile.path);
+
+                      File? selected = await ImageCropper.cropImage(
+                          sourcePath: imgFile.path,
+                          compressQuality: 50,
+                          aspectRatioPresets: [
+                            CropAspectRatioPreset.square,
+                            CropAspectRatioPreset.ratio3x2,
+                            CropAspectRatioPreset.original,
+                            CropAspectRatioPreset.ratio4x3,
+                            CropAspectRatioPreset.ratio16x9
+                          ],
+                          androidUiSettings: AndroidUiSettings(
+                              toolbarTitle: 'Cropper',
+                              toolbarColor: Colors.deepOrange,
+                              toolbarWidgetColor: Colors.white,
+                              initAspectRatio: CropAspectRatioPreset.original,
+                              lockAspectRatio: false),
+                          iosUiSettings: IOSUiSettings(
+                            minimumAspectRatio: 1.0,
+                          )
+                      );
 
                       setState(() {
-
                         if(x==1){
-                          imgs1=Image.file(selected);
-                          img164 = base64Encode(selected.readAsBytesSync());
-
+                          imgs1=Image.file(selected!);
+                          img1 = selected.path;
                         }
                         else if(x==2){
-                          imgs2=Image.file(selected);
-                          img264 = base64Encode(selected.readAsBytesSync());
+                          imgs2=Image.file(selected!);
+                          img2 = selected.path;
                         }
-                        else{
-                          imgs3=Image.file(selected);
-                          img364 = base64Encode(selected.readAsBytesSync());
-
+                        else if(x==3){
+                          imgs3=Image.file(selected!);
+                          img3 = selected.path;
                         }
 
                       });
@@ -800,5 +935,33 @@ if(Globalvireables.languageCode=="en")
 
 
 
+  }
+  Future<String> _createFileFromString(String base) async {
+    final encodedStr = base;
+    Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = File(
+        "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    await file.writeAsBytes(bytes).then((value) => {
+      setState(() {
+        Globalvireables.imagen=file.path;
+        img1=file.path;
+        print ("gg");
+      })
+    });
+
+
+    return file.path;
+  }
+  /*_cropImage(filePath) async {
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: filePath,
+      maxWidth: 1080,
+      maxHeight: 1080,
+    );*/
+  Future<void> _addKey(String title) async {
+    if(title.length>0)
+      await SQLHelper.createKey(title);
+    //  _refreshJournals();
   }
 }

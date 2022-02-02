@@ -1,34 +1,22 @@
-
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:cards/DataBase/SQLHelper.dart';
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/LanguageProvider.dart';
-import 'package:cards/Models/HttpService.dart';
-import 'package:cards/Models/Fileofcards.dart';
-import 'package:cards/Models/Fileofcards.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:cards/color/HexColor.dart';
+import 'dart:ui' as ui;
 import 'package:cards/ui/CardsPage/Cards_Body.dart';
 import 'package:cards/ui/EditDataPages/EditFileDialog.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:cards/color/HexColor.dart';
 import 'package:cards/ui/NavDrawer.dart';
 import 'package:cards/ui/Profile/Body_profile.dart';
-import 'package:cards/ui/Regeister/Register_Body.dart';
-import 'package:cards/ui/login/Login_Body.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import '../FileDialog.dart';
-import 'package:flutter/material.dart';
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:path_provider/path_provider.dart';
+import 'dart:typed_data';
 
 class Home_Body extends StatefulWidget {
 
@@ -37,163 +25,215 @@ class Home_Body extends StatefulWidget {
 
 }
 
-class _Home_Body extends State<Home_Body> with SingleTickerProviderStateMixin {
-  TextEditingController searchController = TextEditingController();
-
-  final HttpService httpService = HttpService();
-
-  GlobalKey<ScaffoldState>  globalKey = GlobalKey<ScaffoldState>();
-   var username;
-  late Future<List<Fileofcards>> ListPage=httpService.getPosts(searchController.text);
-
-  RefreshPage(){
-    if(searchController.text.toString().length>0){
-    print("refresh ... ");
-    setState(() {
-      ListPage=httpService.getPosts(searchController.text);
-
+class _Home_Body extends State<Home_Body>   {
+  String albumName ='Media';
+  Widget bodyd() {
+    Future.delayed(Duration.zero, () async {
+      _refreshJournals(searchcontroler.text);
     });
-  }else{
-      ListPage=httpService.getPosts(searchController.text);
-    }
+    return Container(
+      child: SingleChildScrollView(
+
+        child: Column(
+          children: [
+            Container(
+                alignment: Alignment.topCenter,
+                margin: EdgeInsets.only(top: 100),
+                child: Text(LanguageProvider.getTexts('addfirstfile').toString(), style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w300,
+                    color: HexColor(Globalvireables.bluedark)
+                ),)),
 
 
+            Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Icon(
+                  Icons.credit_card_outlined,
+                  size: 80.0,
+                  color: HexColor(Globalvireables.bluedark),
+                ))
+            ,
+
+          ],
+        ),
+      ),
+    );
   }
 
+  List<Map<String, dynamic>> _journals = [];
+  final picker = ImagePicker();
+  var imgFile;
+  bool _disposed = false;
+  bool _isLoading = true;
+  void _refreshJournals(String text) async {
+    var data = await SQLHelper.getItems(text);
+  /*  setState(() {
 
-  setloginstate() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //  _isLoading = false;
+    });*/
 
-    prefs.setString("Login","1");
+        setState(() {
+          _journals = data;
+        });
+
   }
-
+  Image? imgs1 ;
+  String img1="";
+ @override
+  void dispose() {
+   // timer?.cancel();
+   // _disposed = true;
+    super.dispose();
+  }
   @override
   void initState() {
-    setloginstate();
-    if(Globalvireables.languageCode=="en")
-    {
-    Globalvireables.lantext="اللغة العربية";
-    }
-    else {
 
-      Globalvireables.lantext="English Language";
 
-    }
+   SQLHelper.db();
+
+
     super.initState();
-  /*  const oneSecond = const Duration(seconds: 25);
-    new Timer.periodic(oneSecond, (Timer t) => setState((){
 
-      RefreshPage();
+ //Timer.periodic(Duration(seconds: 15), (Timer t) => _refreshJournals(searchcontroler.text));
+    _refreshJournals(searchcontroler.text);
+     // Loading the diary when the app starts
+  }
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-    }));
-     */
-    RefreshPage();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  // This function will be triggered when the floating button is pressed
+  // It will also be triggered when you want to update an item
+
+
+  final TextEditingController searchcontroler = TextEditingController();
+
+
+// Insert a new journal to the database
+  Future<void> _addItem() async {
+    if(img1!=null)
+    await SQLHelper.createItem(
+        _titleController.text, img1);
+    setState(() {
+      _refreshJournals(searchcontroler.text);
+
+    });
+    img1="";
+  }
+
+  // Update an existing journal
+  Future<void> _updateItem(int id) async {
+    if(img1!=null)
+      await SQLHelper.updateItem(
+        id, _titleController.text, img1);
+    //setState(() {
+      _refreshJournals(searchcontroler.text);
+
+    //});
 
   }
 
-  TextEditingController timeinput = TextEditingController();
-  TextEditingController timeout = TextEditingController();
-  TextEditingController longtimecontroler = TextEditingController();
-  String date = "";
-  String timelong = "";
-  User? user = FirebaseAuth.instance.currentUser;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-//final GlobalKey<ScaffoldState> scafold=new GlobalKey<ScaffoldState>();
+  // Delete an item
+  void _deleteItem(int id) async {
+
+    await SQLHelper.deleteItem(id);
+  /*  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Successfully deleted a profile!'),
+    ));*/
+    _refreshJournals(searchcontroler.text);
+  }
+
   @override
   Widget build(BuildContext context) {
-    setState(() {
+  //  _refreshJournals(searchcontroler.text);
 
-      RefreshPage();
-
-    });
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return new WillPopScope(
+      onWillPop: () async => false,
       child: Scaffold(
         key: _scaffoldKey,
-        //endDrawer: ,
         backgroundColor: HexColor(Globalvireables.white2),
         drawerEnableOpenDragGesture: false,
         // resizeToAvoidBottomInset : false,
         endDrawer: NavDrawer(),
-          appBar: PreferredSize(
+        appBar: PreferredSize(
 
-            preferredSize: Size.fromHeight(150), // Set this height
-              child: Container(
+          preferredSize: Size.fromHeight(150), // Set this height
+          child: Container(
 
-      decoration: new BoxDecoration(
-      borderRadius: BorderRadius.vertical(
-      bottom: Radius.elliptical(
-      MediaQuery.of(context).size.width, 50.0)),
+            decoration: new BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                    bottom: Radius.elliptical(
+                        MediaQuery.of(context).size.width, 50.0)),
                 color: HexColor(Globalvireables.bluedark)),
-                child: Column(
-                  //    mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+            child: Column(
+              //    mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 Container(
                   color: HexColor(Globalvireables.bluedark),
                   child: Material(
                     color: HexColor(Globalvireables.bluedark),
 
 
-                  child: ClipRRect(
+                    child: ClipRRect(
 
                       child: Row(
 
                           children: <Widget>[
                             Container(
-                              child: InkWell(
+                      /*        child: InkWell(
 
-                                onTap: () {
+                                  onTap: () {
 
-                                  Navigator.push(context,
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder:
+                                            (context) =>
+                                            Body_profile()
+                                        )
+                                    );
+
+
+                                  },
+                                  child: Row(
+
+                                      children: <Widget>[
+                                        Container(
+                                            margin: EdgeInsets.only(right: 5, left: 5, top: 40),
+
+                                            child: Icon(
+                                              Icons.person_rounded,
+                                              size: 40.0,
+                                              color: Colors.white,
+                                            )),
+
+                                        Container(
+                                          alignment: Alignment.topLeft,
+                                          margin: EdgeInsets.only(right: 0, left: 0, top: 45),
+                                          child: Text(Globalvireables.name,
+                                            style: TextStyle(color: Colors.white, fontSize: 16),),
+                                        ),])
+
+
+
+
+                              ),*/),
+                            Spacer(),
+                            InkWell(
+
+                              onTap: () {
+                                _scaffoldKey.currentState!.openEndDrawer();
+                                /* Navigator.push(context,
                                       MaterialPageRoute(builder:
                                           (context) =>
                                           Body_profile()
                                       )
                                   );
-
-
-                                },
-                                  child: Row(
-
-                                      children: <Widget>[
-                              Container(
-                                  margin: EdgeInsets.only(right: 5, left: 5, top: 40),
-
-                                  child: Icon(
-                                    Icons.person_rounded,
-                                    size: 40.0,
-                                    color: Colors.white,
-                                  )),
-
-                             Container(
-                              alignment: Alignment.topLeft,
-                              margin: EdgeInsets.only(right: 0, left: 0, top: 45),
-                              child: Text(Globalvireables.name,
-                                style: TextStyle(color: Colors.white, fontSize: 16),),
-                            ),])
-
-
-
-
-                              ),),
-Spacer(),
-                            InkWell(
-
-                              onTap: () {
-                                _scaffoldKey.currentState!.openEndDrawer();
-                               /* Navigator.push(context,
-                                    MaterialPageRoute(builder:
-                                        (context) =>
-                                        Body_profile()
-                                    )
-                                );
 */
 
                               },
                               child: Container(
-                                alignment: Alignment.topRight,
+                                  alignment: Alignment.topRight,
                                   margin: EdgeInsets.only(right: 5, left: 5, top: 40),
 
                                   child: Icon(
@@ -207,7 +247,7 @@ Spacer(),
                           ]),
 
 
-                  ),
+                    ),
 
                   ),
 
@@ -215,483 +255,375 @@ Spacer(),
 
                 ),
 
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.only(right: 0, left: 0, top: 16),
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(right: 0, left: 0, top: 16),
 
-                        width: 290
-                        , height: 55,
-                        child: Center(
+                    width: 290
+                    , height: 55,
+                    child: Center(
 
-                            child: TextField(
-                              autofocus: false,
-                              onChanged: RefreshPage(),
-                              controller: searchController,
-                              autocorrect: true,
-                              decoration: InputDecoration(
-                                hintText: LanguageProvider.getTexts('search').toString(),
+                        child: TextField(
+                          autofocus: false,
+                          onChanged: RefreshPage(),
+                          controller: searchcontroler,
+                            autocorrect: true,
+                            decoration: InputDecoration(
+                            hintText: LanguageProvider.getTexts('search').toString(),
 
-                                prefixIcon: Icon(Icons.search),
-                                hintStyle: TextStyle(color: Colors.black12),
-                                filled: true,
-                                fillColor: Colors.white,
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(20.0)),
-                                  //      borderSide: BorderSide(color: Colors.green, width: 2),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(20.0)),
-                                  //   borderSide: BorderSide(color: Colors.green, width: 2),
-                                ),
-                              ),)
+                            prefixIcon: Icon(Icons.search),
+                            hintStyle: TextStyle(color: Colors.black12),
+                            filled: true,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0)),
+                              //      borderSide: BorderSide(color: Colors.green, width: 2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0)),
+                              //   borderSide: BorderSide(color: Colors.green, width: 2),
+                            ),
+                          ),)
 
-                        ),
-                      ),
-                    )
+                    ),
+                  ),
+                )
 
 
-                  ],
-                ),
-              ),
-
+              ],
+            ),
           ),
-          body: new FutureBuilder<List<Fileofcards>>(
-            future: ListPage,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return Container();
-              List<Fileofcards>? posts = snapshot.data;
-            if(!date.isEmpty || !posts!.isEmpty){
-              return Container(
-                child: Stack(
+        ),
+        body: _journals.isEmpty
+            ?  bodyd()
+
+            : ListView.builder(
+            itemCount: _journals.length,
+            itemBuilder: (context, index)
+                    => Container(
+                margin: EdgeInsets.only(top: 40,left: 20,right: 20,bottom: 50),
+                height: 200,
+                child:Stack(
                     alignment: Alignment.topCenter,
                     fit: StackFit.passthrough,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     overflow: Overflow.visible,
                     children: <Widget>[
-                  new ListView(
-                    children: posts!.map((post) => Container(
 
-margin: EdgeInsets.only(top: 40,left: 20,right: 20,bottom: 22),
-                       height: 170,
-                        child:Stack(
 
-                            alignment: Alignment.topCenter,
-                            fit: StackFit.passthrough,
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            overflow: Overflow.visible,
-                            children: <Widget>[
-                          SizedBox(
+                      SizedBox(
+                          child:new GestureDetector(
+                            onTap: (){
 
-                            child:new GestureDetector(
-                              onTap: (){
+                              Globalvireables.fileindex=_journals[index]['id'].toString();
 
-  Globalvireables.fileindex=post.Id.toString();
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder:
+                                      (context) =>
+                                      Cards_Body()
+                                  )
+                              );
 
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder:
-                                        (context) =>
-                                        Cards_Body()
-                                    )
-                                );
+                            //  print("Container clicked" +post.Id.toString());
+                            },
+                            child: Card(
 
-                                print("Container clicked" +post.Id.toString());
-                              },
-                              child: Card(
-                                  elevation: 7,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
+
+
+                                elevation: 7,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                                 child: Container(
-                                /*  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
+
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.bottomLeft,
+                                        stops: [
+                                          0.5,
+                                          0.1,
+                                          0.4,
+                                          0.1,
+                                        ],
+                                        colors: [
+
+                                          HexColor(Globalvireables.white2),
+                                          HexColor(Globalvireables.white2),
+                                          HexColor(Globalvireables.white3),
+                                          HexColor(Globalvireables.white3),
+
+                                        ],
+                                      )),
+
+                                  /*  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
 
 
-                                    image: DecorationImage(
-                                      image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage),
-                                      fit: BoxFit.cover,
-                                    ),
+                                      image: DecorationImage(
+                                        image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage),
+                                        fit: BoxFit.cover,
+                                      ),
 
-                                  ),*/
+                                    ),*/
                                   child: Container(
-                                    child: Column(
+                                    child: SingleChildScrollView(
+                                      child: Column(
 
-                                      children: [
+                                        children: [
 
-                                        Center(
-                                          child: Container(
-
-                                            margin: EdgeInsets.only(left: 14,top: 77),
-alignment: Alignment.center,
-                                              //margin: EdgeInsets.only(top: 40),
-                                              child: Text(post.ProfileName ,style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
-                                          ),
-                                        ),
-              Row(
-
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 10,left: 5,right: 5)
-
-                  ,
-                                          child: new GestureDetector(
-                                            onTap: (){
-
-                                            showAlertDialog(context);
-
-                                            },
+                                          Center(
                                             child: Container(
-                                                alignment: Alignment.bottomLeft,
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  size: 30.0,
-                                                  color:HexColor(Globalvireables.basecolor),
 
-                                                )
+                                                margin: EdgeInsets.only(left: 14,top: 77),
+                                                alignment: Alignment.center,
+                                                //margin: EdgeInsets.only(top: 40),
+                                                child: Text(_journals[index]['title'],style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
                                             ),
                                           ),
-                                        ),
+                                          Row(
+
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(top: 10,left: 5,right: 5)
+                                                  ,
+                                                  child: new GestureDetector(
+                                                    onTap: (){
+                                                      showAlertDialog(context,index);
+                                                     // Globalvireables.fileindex=post.Id.toString();
+
+                                                      //showAlertDialog(context);
+
+                                                    },
+                                                    child: Container(
+                                                        alignment: Alignment.bottomLeft,
+                                                        child: Icon(
+                                                          Icons.delete,
+                                                          size: 30.0,
+                                                          color:HexColor(Globalvireables.basecolor),
+
+                                                        )
+                                                    ),
+                                                  ),
+                                                ),
 
 
 
-                                        Container(
-                                          margin: EdgeInsets.only(top: 10,left: 10,right: 10)
-                                          ,
-                                          child: new GestureDetector(
-                                            onTap: (){
+                                                Container(
+                                                  margin: EdgeInsets.only(top: 10,left: 10,right: 10)
+                                                  ,
+                                                  child: new GestureDetector(
+                                                    onTap: (){
+                                                     // Globalvireables.fileindex=post.Id.toString();
 
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => EditFileDialog(post.ProfileName,post.ProfileImage)),);
+                                                 Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(builder: (context) => EditFileDialog(_journals[index]['title'],_journals[index]['path'],_journals[index]['id'])),);
 
-
-                                            },
-                                            child: Container(
-                                                alignment: Alignment.bottomLeft,
-                                                child: Icon(
-                                                  Icons.edit,
-                                                  size: 30.0,
-                                                  color:HexColor(Globalvireables.basecolor),
+                                                    setState(() {
+                                                     // Navigator.of(context).pop();
+                                                    // _showFormEdit(_journals[index]['id'],context);
+                                                    });
+                                                    },
+                                                    child: Container(
+                                                        alignment: Alignment.bottomLeft,
+                                                        child: Icon(
+                                                          Icons.edit,
+                                                          size: 30.0,
+                                                          color:HexColor(Globalvireables.basecolor),
+                                                        )
+                                                    ),
+                                                  ),
                                                 )
-                                            ),
-                                          ),
-                                        )
-                                        ])
-                                      ],
+                                              ])
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 )),
-                            )
-                          ),
-              Positioned(
-              top: -50,
-              child:   Container(
-              width: MediaQuery.of(context).size.height,
-              height: 120,
+                          )
+                      ),
+                      if(_journals[index]['path']!=null)
+                        if(_journals[index]['path'].toString().length>5)
+                          Positioned(
+                            top: -50,
+                            child:   new GestureDetector(
+                          onTap: (){
 
-              child: Container(
-              margin: const EdgeInsets.only(top: 33.0,left: 10,right: 10),
+                          Globalvireables.fileindex=_journals[index]['id'].toString();
 
-              alignment: Alignment.center,
+                          Navigator.push(context,
+                          MaterialPageRoute(builder:
+                          (context) =>
+                          Cards_Body()
+                          )
+                          );
 
-              child:
+                          //  print("Container clicked" +post.Id.toString());
+                          },
+                              child: Container(
 
-              Container(
-                width: 100.0,
-                height: 120.0,
-                decoration: BoxDecoration(
-                  color: const Color(0xff7c94b6),
-                  image: DecorationImage(
-                    image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.all( Radius.circular(100.0)),
-                  border: Border.all(
-                    color: HexColor(Globalvireables.white),
-                    width: 0.0,
-                  ),
-                ),
-              )))),
-                /*Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,*//*
-              //  height: 200,
-              // width: 200,
+                                  width: MediaQuery.of(context).size.height,
+                                  height: 120,
 
-              ),
-              ),
-              *//*child: Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,height: 100,width: 100,) ,) *//*
-              )*/
+                                  child: Container(
+                                      margin: const EdgeInsets.only(top: 33.0,left: 10,right: 10),
 
-              ])/* */
+                                      alignment: Alignment.center,
 
-                    )).toList(),
-                  ),
+                                      child:
 
+                                      Container(
+                                        width: 90.0,
+                                        height: 90.0,
+
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(50.0),
+                                            child: Image.file(
+                                              File(_journals[index]['path']),
+                                              gaplessPlayback: true,
+                                            )
+                                        ),
 
 
-              Positioned(
-              top: 220 ,
-                child:Container(
-                alignment: Alignment.bottomCenter,
-                height: 100,
-                width: 100,
-                margin: EdgeInsets.only(top: 200),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      //  primary: HexColor("#4267b2")
-                      primary:  HexColor(Globalvireables.basecolor)
-                  ),
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(shape: BoxShape.circle),
-                    child: Text(
-                      LanguageProvider.getTexts('add').toString(),
-                      style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w300,),
+                                        /*decoration: BoxDecoration(
+                    color: const Color(0xff7c94b6),
+                  *//*  image: DecorationImage(
+                      image: NetworkImage("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage),
+                      fit: BoxFit.cover,
+                    ),*//*
+
+                    borderRadius: BorderRadius.all( Radius.circular(40.0)),
+                    border: Border.all(
+                      color: HexColor(Globalvireables.white),
+                      width: 0.0,
                     ),
+                  ),*/
+                                      ))),
+                            )),
+                      /*Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,*//*
+                //  height: 200,
+                // width: 200,
+
+                ),
+                ),
+                *//*child: Image.network("http://cardskeeper-001-site1.ftempurl.com"+post.ProfileImage,height: 100,width: 100,) ,) *//*
+                )*/
+
+                    ])/* */
+
+            )),
+
+
+
+
+
+
+/*          : ListView.builder(
+          itemCount: _journals.length,
+          itemBuilder: (context, index) => Card(
+            color: HexColor(Globalvireables.white),
+            margin: const EdgeInsets.all(15),
+            child: Container(height: 80,
+              child: ListTile(
+                  leading: Container(
+
+                      child: Image.memory(
+                        base64.decode(_journals[index]['path']),
+                        gaplessPlayback: true,
+                      )
+
+                   *//* child: CircleAvatar(
+                      backgroundImage: AssetImage('assets/logo.jpg'), // no matter how big it is, it won't overflow
+                    ),*//*
                   ),
-                  onPressed: () {
-
-                    setState(() {
-                      RefreshPage();
-                    });
-
-                    //  getUser();
-                    showDialog(
-                      context: context,
-                      builder: (_) => FileDialog(),
-                    );
-//RefreshPage();
-
-
-                  },
-                ),
-              ),
-              )
-
-               ] ),
-              );}else{
-return bodyd();
-      };
-              },
-          ),),
-    );
-  }
-
-
-
-
-
-  Widget bodyd() {
-    Future.delayed(Duration.zero, () async {
-      RefreshPage();
-    });
-    return Container(
-      child: SingleChildScrollView(
-
-        child: Column(
-          children: [
-            Container(
-              alignment: Alignment.topCenter,
-                margin: EdgeInsets.only(top: 100),
-                child: Text(LanguageProvider.getTexts('addfirstfile').toString(), style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w300,
-                    color: HexColor(Globalvireables.bluedark)
-                             ),)),
-
-
-        Container(
-          margin: EdgeInsets.only(top: 20),
-          child: Icon(
-            Icons.credit_card_outlined,
-            size: 80.0,
-            color: HexColor(Globalvireables.bluedark),
-          ))
-    ,
-            Container(
-              alignment: Alignment.bottomCenter,
-              height: 100,
-              width: 100,
-            margin: EdgeInsets.only(top: 200),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
-                  //  primary: HexColor("#4267b2")
-                    primary:  HexColor(Globalvireables.basecolor)
-                ),
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(shape: BoxShape.circle),
-                  child: Text(
-                    LanguageProvider.getTexts('add').toString(),
-
-                    style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w300,),
-                  ),
-                ),
-                onPressed: () {
-                //  getUser();
-               showDialog(
-                    context: context,
-                    builder: (_) => FileDialog(),
-                  );
-
-                },
-              ),
+                  title: Text(_journals[index]['title']),
+               //   subtitle: Text(_journals[index]['path']),
+                  trailing: SizedBox(
+                    width: 100,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit,color: Colors.lightGreen,),
+                          onPressed: () =>setState(() {
+                            _showForm(_journals[index]['id'],context);
+                          })
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete,color: Colors.deepOrange,),
+                          onPressed: () =>
+                              _deleteItem(_journals[index]['id']),
+                        ),
+                      ],
+                    ),
+                  )),
             ),
+          ),
+        ),*/
 
-          ],
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: HexColor(Globalvireables.basecolor),
+          child: Icon(Icons.add),
+          onPressed: () async {
+              //Navigator.pop(context);
+
+
+
+            //  await Future.delayed(const Duration(milliseconds: 100));
+          //    await Future.delayed(Duration(seconds: 1));
+      _showForm(null,context);
+
+
+
+  }
         ),
       ),
     );
   }
 
-  Future<bool> _onWillPop() async {
-/*
-    // This dialog will exit your app on saying yes
-    return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('leave'),
-        content: new Text('leave confirm'),
-        actions: <Widget>[
-
-          new TextButton(
-            onPressed: () {Navigator.of(context).pop(false);},
-            style: TextButton.styleFrom(
-              primary: Colors.white10,
-            ),
-            child: Text('cancel'),
-          ),
-          new FlatButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: new Text('cancel'),
-            ),
-          new TextButton(
-            onPressed: () {return;},
-            style: TextButton.styleFrom(
-              primary: Colors.white10,
-            ),
-            child: Text('Yes'),
-          ),
-          new FlatButton(
-              // onPressed: () =>Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage(title: '', ))),
-
-              onPressed: () { Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Login_Body()),);} ,
-              child: new Text('Yes'),
-
-            ),
-        ],
-      ),
-    )) ??*/
-       return false;
-  }
-
-  delete () async {
-    try {
-print("tis delete profile link "+Globalvireables.cardfiles);
-      Uri apiUrl = Uri.parse(Globalvireables.cardfiles+"/"+Globalvireables.fileindex);
-showAlert(context,LanguageProvider.getTexts('deleting').toString());
-showAlert(context,LanguageProvider.getTexts('deleting').toString());
-      final json = {
-        "Id": Globalvireables.fileindex ,
-        "CustomerId":Globalvireables.ID
-      };
-      print ("card save");
 
 
-      //await http.post(apiUrl,body: jsone);
 
-      http.Response response=await http.delete(apiUrl, body: json);
-
-      var jsonResponse = jsonDecode(response.body);
-
-      if (!jsonResponse.toString().contains("ID: 0")) {
-
-        print("succ = "+jsonResponse.toString());
-        Navigator.pop(context);
-
-      }
-      else {
-        Navigator.pop(context);
-        //  displayMessage("Login information error");
-        /* displayMessage('out time');*/
-        print("error="+jsonResponse.toString());
-      }
-      print("succ = "+jsonResponse.toString());
-
-      //  print("esaf = "+jsonResponse.toString());
-
-      /*   response = await http.post(apiUrl, body: jsone).whenComplete(() {
-
-
-        var jsonResponse = jsonDecode(response.body);
-
-        if (!jsonResponse.toString().contains("ID: 0")) {
-
-          print("succ = "+jsonResponse.toString());
-          Navigator.pop(context);
-
-        }
-        else {
-          Navigator.pop(context);
-          displayMessage("Login information error");
-          *//* displayMessage('out time');*//*
-          print("error="+jsonResponse.toString());
-        }
-        print("succ = "+jsonResponse.toString());
-
-        //  print("esaf = "+jsonResponse.toString());
-
-
-      });*/
-   RefreshPage();
-
-    }on TimeoutException catch (_) {
-      // displayMessage('out time');
-      // displayMessage("out time");
-   //   Navigator.pop(context);
-      // displayMessage("Login information error");
-
-    }on FormatException catch(_){
-
-     // Navigator.pop(context);
-      // displayMessage("Login information error");
-
-
-    }
-   // Navigator.pop(context);
-  }
-  void showAlert(BuildContext context,String text) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Text(text),
-        ));
-  }
-  showAlertDialog(BuildContext context) {
+  showAlertDialog(BuildContext context,var index) {
 
     // set up the buttons
     Widget cancelButton = TextButton(
       child: Text(LanguageProvider.getTexts('Cancel').toString()),
-      onPressed:  () {        Navigator.of(context).pop(); // dismiss dialog
+      onPressed:  () {
+        setState(() {
+
+          Navigator.of(context).pop();
+          /* ListPage=httpService.getPosts("x");
+          ListPage=httpService.getPosts("");
+          RefreshPage*/
+          /*  Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Home_Body()),);
+*/
+
+        });
+        // dismiss dialog
       },
     );
     Widget continueButton = TextButton(
       child: Text(LanguageProvider.getTexts('Continue').toString()),
       onPressed:  () {
 
-        Navigator.of(context).pop();
-        delete(); // dismiss dialog
-       // launchMissile();
+
+        setState(() {
+
+          Navigator.of(context).pop();
+
+          _deleteItem(_journals[index]['id']);
+
+
+        });
+
+
+
+        // launchMissile();
       },
     );
 
@@ -713,6 +645,535 @@ showAlert(context,LanguageProvider.getTexts('deleting').toString());
       },
     );
   }
+
+  RefreshPage() {
+setState(() {
+  //_showForm(null,context);
+  _refreshJournals(searchcontroler.text);
+
+
+});
+
+  }
+
+  Future<String> _createFileFromString(String base) async {
+    final encodedStr = base;
+    Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = File(
+        "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    await file.writeAsBytes(bytes).then((value) => {
+    setState(() {
+    Globalvireables.imagen=file.path;
+    img1=file.path;
+print ("gg");
+    })
+    });
+
+
+    return file.path;
+  }
+  void _showForm(int? id,BuildContext context) async {
+   img1="";
+   _refreshJournals("");
+    if (id != null) {
+      // id == null -> create new item
+      // id != null -> update an existing item
+      final existingJournal =
+      _journals.firstWhere((element) => element['id'] == id);
+      _titleController.text = existingJournal['title'];
+      _descriptionController.text = existingJournal['path'];
+
+    }
+    showModalBottomSheet(
+        context: context,
+        elevation: 10,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  padding: EdgeInsets.only(
+                    top: 15,
+                    left: 15,
+                    right: 15,
+                    // this will prevent the soft keyboard from covering the text fields
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 120,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+
+
+
+                        Center(
+                          child: InkWell(
+                            onTap: () async {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext bc) {
+                                    return SafeArea(
+                                      child: Container(
+                                        child: new Wrap(
+                                          children: <Widget>[
+                                            new ListTile(
+                                                leading: new Icon(Icons.photo_library),
+                                                title: new Text('Photo Library'),
+                                                onTap: () async {
+                                                  Navigator.of(context).pop();
+                                                  imgFile = await picker.getImage(
+                                                      source: ImageSource.gallery
+                                                  );
+
+/*
+
+                                                    final String path = await imgFile.getApplicationDocumentsDirectory();
+                                                    final String fileName = imgFile.basename(imgFile.path); // Filename without extension
+                                                    final String fileExtension = imgFile.extension(imgFile.path); // e.g. '.jpg'
+
+                                                    // 6. Save the file by copying it to the new location on the device.
+                                                    final String filePath = '$path/$fileName$fileExtension';
+                                                    print("path== "+filePath);
+*/
+
+
+                                                  File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                                                    quality: 50,);
+
+                                                  // File selected = File(imgFile.path);
+
+
+
+
+                                                  //    print("path=="+selected.path);
+                                                  setState(() {
+                                                    print("this path    "+selected.path);
+                                                    /*  imgs1=Image.file(selected);
+                                                      img1 = selected.path;//base64Encode(selected.readAsBytesSync());
+                                                 */     imgs1=Image.file(selected);
+                                                    img1 =selected.path.toString();// base64Encode(selected.readAsBytesSync());
+
+                                                  });
+                                                  //_imgFromGallery();
+                                                }),
+                                            new ListTile(
+                                              leading: new Icon(Icons.photo_camera),
+                                              title: new Text('Camera'),
+                                              onTap: () async {
+                                                Navigator.of(context).pop();
+
+                                                imgFile = await picker.pickImage(
+                                                    source: ImageSource.camera
+
+                                                );
+                                                File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                                                  quality: 50,);
+                                                setState(() {
+                                                  imgs1=Image.file(selected);
+
+                                                  img1 = selected.path.toString();
+                                                });
+                                                _createFileFromString(base64Encode(selected.readAsBytesSync()));
+
+                                                //_imgFromCamera();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+                              );
+                              //  _showPicker(context,1);
+                            },
+                            child: image(1),
+                          ),
+                        ),
+
+
+                        TextField(
+                          controller: _titleController,
+                          decoration: InputDecoration(hintText: LanguageProvider.getTexts('name').toString()),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        /*   TextField(
+                            controller: _descriptionController,
+                            decoration: const InputDecoration(hintText: 'path'),
+                          ),*/
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // Save new journal
+                            if (id == null) {
+                              await _addItem();
+                            }
+
+                            if (id != null) {
+                               _updateItem(id);
+                            }
+
+                            // Clear the text fields
+                            _titleController.text = '';
+                            _descriptionController.text = '';
+
+                            // Close the bottom sheet
+                            Navigator.of(context).pop();
+                          },
+                          child: Center(child: Text(id == null ? LanguageProvider.getTexts('add').toString()
+                              : LanguageProvider.getTexts('save').toString())),
+                        )
+                      ],
+                    ),
+                  ),);});});
+  }
+  Widget image(var x){
+
+    if(x==0 && img1!=null)
+    {if(img1.length>5)
+      return SingleChildScrollView(
+          child: Stack(
+            alignment: Alignment.bottomRight,
+            children: <Widget>[
+
+              Container(
+                width: 200,
+                height: 150,
+                child:  Container(
+                  child: ClipRRect(
+                    //  borderRadius: BorderRadius.circular(50.0),
+                      child: Image.file(
+                        File(img1),
+                      )
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -15,
+                left: -10,
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(Icons.clear,color: Colors.red,size: 25,),
+                    onPressed: () {
+
+                      setState(() {
+
+                        img1="";
+                        x=1;
+                      });
+
+
+                    },
+                  ),
+                ),
+
+
+              ),
+            ],
+          )
+
+        /*child: Container(
+            width: 200,
+            height: 150,
+            child:  Container(
+          child: ClipRRect(
+  //        borderRadius: BorderRadius.circular(50.0),
+    child: Image.memory(
+    base64.decode(img1),
+    gaplessPlayback: true,
+    )
+    ),
+        ),
+      )*/);
+
+    else return Container(
+
+        //child: Image.asset('assets/emptyfile.png'),
+        child: Icon(
+          Icons.image,
+          size: 100.0,
+          color: HexColor(Globalvireables.basecolor),
+        ),
+      );
+
+    }else{
+
+      if(imgs1 !=null && img1.length>10)
+        return SingleChildScrollView(
+          child: Container(
+              width: 200,
+              height: 150,
+              child:imgs1
+          ),
+        );
+      else
+        return Container(
+
+          //child: Image.asset('assets/emptyfile.png'),
+          child: Icon(
+            Icons.image,
+            size: 100.0,
+            color: HexColor(Globalvireables.basecolor),
+          ),
+        );
+    }}
+  void _showFormEdit(int? id,BuildContext context) async {
+    img1="";
+    if (id != null) {
+      // id == null -> create new item
+      // id != null -> update an existing item
+      final existingJournal =
+      _journals.firstWhere((element) => element['id'] == id);
+      _titleController.text = existingJournal['title'];
+      img1= existingJournal['path'];
+
+    }
+    showModalBottomSheet(
+        context: context,
+        elevation: 10,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  padding: EdgeInsets.only(
+                    top: 15,
+                    left: 15,
+                    right: 15,
+                    // this will prevent the soft keyboard from covering the text fields
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 120,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+
+
+
+                        Center(
+                          child: InkWell(
+                              onTap: () async {
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext bc) {
+                                      return SafeArea(
+                                        child: Container(
+                                          child: new Wrap(
+                                            children: <Widget>[
+                                              new ListTile(
+                                                  leading: new Icon(Icons.photo_library),
+                                                  title: new Text('Photo Library'),
+                                                  onTap: () async {
+                                                    Navigator.of(context).pop();
+                                                    imgFile = await picker.pickImage(
+                                                        source: ImageSource.gallery
+                                                    );
+
+/*
+
+                                                    final String path = await imgFile.getApplicationDocumentsDirectory();
+                                                    final String fileName = imgFile.basename(imgFile.path); // Filename without extension
+                                                    final String fileExtension = imgFile.extension(imgFile.path); // e.g. '.jpg'
+
+                                                    // 6. Save the file by copying it to the new location on the device.
+                                                    final String filePath = '$path/$fileName$fileExtension';
+                                                    print("path== "+filePath);
+*/
+
+
+                                                    File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                                                      quality: 50,);
+
+
+                                                    print(selected.path+"   path");
+
+
+                                                    // File selected = File(imgFile.path);
+
+
+
+
+                                                    //    print("path=="+selected.path);
+                                                    setState(() {
+
+                                                      imgs1=Image.file(selected);
+                                                      img1 =selected.path.toString();// base64Encode(selected.readAsBytesSync());
+
+                                                    });
+                                                    //_imgFromGallery();
+                                                  }),
+                                              new ListTile(
+                                                leading: new Icon(Icons.photo_camera),
+                                                title: new Text('Camera'),
+                                                onTap: () async {
+                                                  Navigator.of(context).pop();
+
+                                                  imgFile = await picker.getImage(
+                                                      source: ImageSource.camera
+
+                                                  );
+
+/*
+                                                  final String path = await imgFile.getApplicationDocumentsDirectory();
+                                                  final String fileName = imgFile.basename(imgFile.path); // Filename without extension
+                                                  final String fileExtension = imgFile.extension(imgFile.path); // e.g. '.jpg'
+
+                                                  // 6. Save the file by copying it to the new location on the device.
+                                                  final String filePath = '$path/$fileName$fileExtension';
+print("path== "+filePath);*/
+
+
+                                                  //  File selected = File(imgFile.path);
+                                                  File selected = await FlutterNativeImage.compressImage(imgFile.path,
+                                                    quality: 50,);
+                                                  setState(() {
+                                                    imgs1=Image.file(selected);
+                                                    img1=selected.path.toString();
+                                                  });
+                                                  _createFileFromString(base64Encode(selected.readAsBytesSync()));
+
+                                                  //_imgFromCamera();
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                );
+                                //  _showPicker(context,1);
+                              },
+                              child: //image(0),
+                              SingleChildScrollView(
+                                  child: Stack(
+                                    alignment: Alignment.bottomRight,
+                                    children: <Widget>[
+                                      if(img1!=null)
+                                        if(img1.length>5)
+                                          Container(
+                                            width: 200,
+                                            height: 150,
+                                            child:  Container(
+                                              child: ClipRRect(
+                                                //  borderRadius: BorderRadius.circular(50.0),
+                                                  child: Image.file(
+                                                    File(img1),
+                                                  )
+                                              ),
+                                            ),
+                                          ),
+                                      if(img1!=null)
+                                        if(img1.length>5)
+                                          Positioned(
+                                            top: -15,
+                                            left: -10,
+                                            child: Center(
+                                              child: IconButton(
+                                                icon: Icon(Icons.clear,color: Colors.red,size: 25,),
+                                                onPressed: () {
+
+                                                  setState(() {
+
+                                                    img1="";
+                                                    // x=1;
+                                                  });
+
+
+                                                },
+                                              ),
+                                            ),
+
+
+                                          ),
+                                      // if(img1!=null)
+                                      if(img1.length<5)
+                                        Container(
+                                          //child: Image.asset('assets/emptyfile.png'),
+                                          child: Icon(
+                                            Icons.image,
+                                            size: 100.0,
+                                            color: HexColor(Globalvireables.basecolor),
+                                          ),
+                                        ),
+
+
+
+                                    ],
+                                  )
+
+                                /*child: Container(
+            width: 200,
+            height: 150,
+            child:  Container(
+          child: ClipRRect(
+  //        borderRadius: BorderRadius.circular(50.0),
+    child: Image.memory(
+    base64.decode(img1),
+    gaplessPlayback: true,
+    )
+    ),
+        ),
+      )*/)
+
+
+
+
+
+                          ),
+                        ),
+
+
+                        TextField(
+                          controller: _titleController,
+                          decoration: InputDecoration(hintText: LanguageProvider.getTexts('name').toString()),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        /*   TextField(
+                            controller: _descriptionController,
+                            decoration: const InputDecoration(hintText: 'path'),
+                          ),*/
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            //  primary: HexColor("#4267b2")
+                              primary:  HexColor(Globalvireables.basecolor)
+                          ),
+                          /* style: ButtonStyle(foregroundColor: MaterialStateProperty.all<Color>(HexColor(Globalvireables.basecolor))
+                                ,backgroundColor: MaterialStateProperty.all<Color>(HexColor(Globalvireables.basecolor))),
+                */  onPressed: () async {
+                          // Save new journal
+                          if (id == null) {
+                            await _addItem();
+                          }
+
+                          if (id != null) {
+                             _updateItem(id);
+                          }
+
+                          // Clear the text fields
+                          _titleController.text = '';
+                          _descriptionController.text = '';
+
+                          // Close the bottom sheet
+                          Navigator.of(context).pop();
+                        },
+                          child: Center(child: Text(id == null ? LanguageProvider.getTexts('add').toString()
+                              : LanguageProvider.getTexts('save').toString())),
+                        )
+                      ],
+                    ),
+                  ),);});});
+  }
+
+
 }
-
-

@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/ui/FingerAuth/FingerPrintAuth.dart';
+import 'package:cards/ui/Home/Home_Body.dart';
 import 'package:cards/ui/login/Login_Body.dart';
 import 'package:cards/ui/login/Login_Main.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'color/HexColor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  GestureBinding.instance?.resamplingEnabled = true;
+
   runApp(MyApp());
 }
 
@@ -34,7 +35,12 @@ class MyHomePage extends StatefulWidget {
 }
 class _MyHomePageState extends State<MyHomePage> {
 
-  login () async {
+  login ()  {
+    Navigator.push(context,
+        MaterialPageRoute(builder:
+            (context) =>
+            Login_Body()));
+/*
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if(prefs.getBool('activefingerprint')!=null){
       if(prefs.getBool('activefingerprint')!){
@@ -56,22 +62,28 @@ class _MyHomePageState extends State<MyHomePage> {
             }
 
     print(prefs.getBool('activefingerprint').toString()+"savvvve");
+*/
 
   }
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 8),
+    Timer(Duration(seconds: 5),
             ()=>
 
-
-                Navigator.pushReplacement(context,
+           /*     Navigator.pushReplacement(context,
             MaterialPageRoute(builder:
                 (context) =>
                 Login_Body()
 
+
+
             )
-        )
+        )*/
+
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Home_Body())),
+
     );
   }
 
