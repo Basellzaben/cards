@@ -432,6 +432,9 @@ print("api used "+apiUrl.toString());
                             print ("start    "+img1+"   end");
                             print("  end2");
                         });
+                        savegalary(base64Encode(selected.readAsBytesSync()),1);
+
+                      //  savegalary()
                         //_imgFromGallery();
                       }),
                   new ListTile(
@@ -476,8 +479,8 @@ print("api used "+apiUrl.toString());
     final encodedStr = base;
     Uint8List bytes = base64.decode(encodedStr);
     String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = File(
-        "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    File file = File("/storage/emulated/0/Android/data/com.galaxyinternational.cards/files/"
+       /* "$dir/"*/ + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
     await file.writeAsBytes(bytes).then((value) => {
       setState(() {
         Globalvireables.imagen=file.path;
@@ -498,5 +501,28 @@ print("api used "+apiUrl.toString());
 
     //});
 
+  }
+  Future<String> savegalary(String base,int x) async {
+    final encodedStr = base;
+    Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getTemporaryDirectory()).path;
+    File file = File("/storage/emulated/0/Android/data/com.galaxyinternational.cards/files/"+ DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    await file.writeAsBytes(bytes).then((value) => {
+      setState(() {
+        Globalvireables.imagen=file.path;
+        //img1=file.path;
+
+
+        if(x==1){
+          img1 =file.path;
+
+        }
+
+        print ("gg");
+      })
+    });
+
+    print(file.path+"file.pathh");
+    return file.path;
   }
 }

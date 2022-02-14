@@ -17,8 +17,18 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,12 +46,18 @@ class LogoutOverlayStatecard extends State<CardsDialog>
   late AnimationController controller;
   late Animation<double> scaleAnimation;
   Image? imgs1 ;
+
+  int imgselect=0;
+
+
   Image? imgs2 ;
+   var idofcardsaved;
   Image? imgs3 ;  final picker = ImagePicker();
    List<Map<String, dynamic>> _journals = [];
 
    void _refreshkeys() async {
-     var data = await SQLHelper.getKeys();
+     var data = await SQLHelper.getKeyswithoutall();
+     
      /*  setState(() {
 
     //  _isLoading = false;
@@ -49,21 +65,30 @@ class LogoutOverlayStatecard extends State<CardsDialog>
 
      setState(() {
        _journals = data;
+       _journals.removeAt(1);
      });
 
    }
+   final GlobalKey qrKey = GlobalKey();
+   late QRViewController? qrcontroller;
+   Barcode? result;
    String img164="";
   String img264="";
   String img364="";
-  TextEditingController namecontroler = TextEditingController();
+
+   List<Image> imgs = [];
+   List<String> imgsPath = [];
+
+
+   TextEditingController namecontroler = TextEditingController();
   TextEditingController ExpiryDatecontroler = TextEditingController();
   TextEditingController typecontroler = TextEditingController();
   TextEditingController cardnocontroler = TextEditingController();
-   Future<void> _addItem(String profileid,String title, String? path1, String? path2, String? path3
+   Future<int> _addItem(String profileid,String title, String? path1, String? path2, String? path3
        ,String? cardno,String? expirydate,String? cardtype) async {
-       await SQLHelper.createCard(profileid, title,  path1,  path2,  path3
+   return await SQLHelper.createCard(profileid, title,  path1,  path2,  path3
            , cardno, expirydate, cardtype);
-   //  _refreshJournals();
+
    }
    Future<void> _addKey(String title) async {
      if(title.length>0)
@@ -115,7 +140,9 @@ Center(
                     color: HexColor(Globalvireables.basecolor)
                 ),)),
 
-              SingleChildScrollView(
+
+
+/*              SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                   children: [
@@ -179,9 +206,9 @@ Center(
                       ),
                     )
 
-                  ])),
+                  ])),*/
 
-                     Container(
+                    Container(
 
                         margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
                         //  alignment: Alignment.center,
@@ -214,9 +241,8 @@ Center(
                           ),
                         )
                     )
-
-
-                    ,Container(
+                    ,
+                    Container(
 
                         margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
                         //  alignment: Alignment.center,
@@ -274,45 +300,82 @@ Center(
 
 
 
-                    Container(
+/*                    GestureDetector(
+                      onTap: () {
+                        barcodeScanning();
+print("im click");
+                      },*/
+                    /*  child: Row(
+                        children: [*/
+                          Container(
+                              margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
+                              //  alignment: Alignment.center,
+                              child: TextField(
 
-                        margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
-                        //  alignment: Alignment.center,
-                        child: TextField(
-                      //    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          controller: cardnocontroler,
-                          // enabled: false,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.drive_file_rename_outline),
-                            border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:HexColor(Globalvireables.basecolor), width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.black, width: 0.0),
-                                borderRadius: BorderRadius.circular(10.0)
+                              //  readOnly: true,
+                            //    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                controller: cardnocontroler,
+                                // enabled: false,
+                                decoration: InputDecoration(
 
-                            ),
+                                  suffixIcon: IconButton(
+                                    onPressed: barcodeScanning,
+                                    icon: Icon(Icons.camera_alt,color: Colors.black26
+
+                                      ,),
+                                  ),
+
+                                  prefixIcon: Icon(Icons.drive_file_rename_outline),
+                                  border: OutlineInputBorder(),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:HexColor(Globalvireables.basecolor), width: 0.0),
+                                      borderRadius: BorderRadius.circular(10.0)
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 0.0),
+                                      borderRadius: BorderRadius.circular(10.0)
+
+                                  ),
 
 
-                            contentPadding: EdgeInsets.only(
-                                top: 18, bottom: 18, right: 20, left: 20),
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintText:LanguageProvider.getTexts('cardno').toString(),
+                                  contentPadding: EdgeInsets.only(
+                                      top: 18, bottom: 18, right: 20, left: 20),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  hintText:LanguageProvider.getTexts('cardno').toString(),
 
 
+                                ),
+                              )
                           ),
-                        )
-                    ),
+
+                       /*   Container(
+                            margin: EdgeInsets.only(right: 2, left: 2, top: 25),
+
+                            height: 40,
+                            width: 40,
+
+                              child: FloatingActionButton(
+                                child: Icon(Icons.camera_alt),
+                                onPressed: () {
+                                  barcodeScanning();
+                                },
+                              ),
+
+                          ),*/
+
+/*
+                        ],
+                      ),*/
+
       Container(
 
           margin: const EdgeInsets.only(top: 25, left: 20, right: 20),
           //  alignment: Alignment.center,
           child: TextField(
+          //  readOnly: true,
 
             controller: typecontroler,
             // enabled: false,
@@ -340,9 +403,7 @@ Center(
 
             ),
           )
-      )
-
-,
+      ),
      /*     SingleChildScrollView(
             scrollDirection: Axis.horizontal,
 
@@ -451,7 +512,7 @@ padding: EdgeInsets.all(5),
                         scrollDirection: Axis.horizontal,
                         itemCount: _journals.length,
                         itemBuilder: (context, index)
-                        => Container(
+                        =>  Container(
 
                           child: new InkWell(
                               onTap: () async {
@@ -474,9 +535,89 @@ padding: EdgeInsets.all(5),
                         ),
 
                         ),
-                    )
+                    ),
+                    if(imgselect==0)
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      color: Colors.white,
+                      child: InkWell(
+                        child: Icon(
+                          Icons.image,
+                          size: 100.0,
+                          color: HexColor(Globalvireables.basecolor),
+                        ),
+                      onTap:  () async {
+                        _showPicker(context, 1);
+                        setState((){
+                          imgselect=1;
+                          // /100dp  imgs.add(Image.file(imgFile));
+                        });
+                      },
+                      )
+                    ),
 
-                 ,
+
+   // Center(child: Container(margin: EdgeInsets.only(top: 10),child: Text("Now .. Add card images",style: TextStyle(fontWeight: FontWeight.w700),),)),
+if(imgselect==1)
+    SingleChildScrollView(
+    child: Column(
+    children: <Widget>[
+
+    Container(
+    margin: EdgeInsets.only(top: 20),
+
+    height: 100,
+    child: ListView.builder(
+    shrinkWrap: true,
+    scrollDirection: Axis.horizontal,
+    itemCount: imgs.length,
+
+
+    itemBuilder: (context, i) =>
+    Column(
+    children: [
+
+    Container(
+    width: 100,
+    height: 100,
+    child: imgs[i],
+    )
+
+
+
+    //  Divider()
+    ]
+    ),
+    )),
+
+
+
+
+
+    ])),
+                    if(imgselect==1)
+                      Container(
+                      margin: EdgeInsets.only(top: 10),
+                      color: Colors.white,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,),
+                        child: Icon(
+                          Icons.image,
+                          size: 30.0,
+                          color: HexColor(Globalvireables.basecolor),
+                        ),
+                        onPressed:
+                            () async {
+                          _showPicker(context, 1);
+                          setState((){
+                            imgselect=1;
+                            // /100dp  imgs.add(Image.file(imgFile));
+                          });
+                        },
+                      ),
+                    ),
+
         Container(
                       margin: EdgeInsets.only(top: 20),
                       height: 55,
@@ -484,12 +625,23 @@ padding: EdgeInsets.all(5),
                       child: ElevatedButton(
                         child: Text(LanguageProvider.getTexts('add').toString()),
 
-                        onPressed: () {
-
+                        onPressed: () async {
+                        //  barcodeScanning();
 
 if(namecontroler.text.length>2) {
   print ("images this="+ img164+"  ---  "+ img164);
-  _addItem(Globalvireables.fileindex,namecontroler.text,  img164, img264, img364,cardnocontroler.text,ExpiryDatecontroler.text,typecontroler.text);
+  idofcardsaved= _addItem(Globalvireables.fileindex,namecontroler.text,  imgsPath[0], img264, img364,cardnocontroler.text,ExpiryDatecontroler.text,typecontroler.text)
+  .then((value) async => {
+  for(var i=0;i<imgsPath.length;i++){
+      await SQLHelper.addimagetocard(imgsPath[i],Globalvireables.cardindex),
+  print("saveisdone = $idofcardsaved")
+}
+
+  });
+
+
+  idofcardsaved="";
+
 
   _addKey(typecontroler.text);
   SaveFile(namecontroler.text,  img164, img264, img364, context);
@@ -650,7 +802,7 @@ if(namecontroler.text.length>2) {
                       onTap: () async {
                         Navigator.of(context).pop();
 
-                         imgFile = await picker.getImage(
+                         imgFile = await picker.pickImage(
                             source: ImageSource.gallery
                         );
                         File? selected = await ImageCropper.cropImage(
@@ -674,21 +826,11 @@ if(namecontroler.text.length>2) {
                             )
                         );
                         setState(() {
-if(x==1){
-  imgs1=Image.file(selected!);
- // img164 = base64Encode(selected.readAsBytesSync());
-  img164 =selected.path;
-}
-else if(x==2){
-  imgs2=Image.file(selected!);
-  img264 =selected.path;
-}
-else{
-  imgs3=Image.file(selected!);
-  img364 =selected.path;
-}
-});
-                      //_imgFromGallery();
+
+_createFileFromString(base64Encode(selected!.readAsBytesSync()),x,1);
+imgs.add(Image.file(selected));
+                        });
+                        //_imgFromGallery();
                       }),
                   new ListTile(
                     leading: new Icon(Icons.photo_camera),
@@ -696,7 +838,7 @@ else{
                     onTap: () async {
                       Navigator.of(context).pop();
 
-                      imgFile = await picker.getImage(
+                      imgFile = await picker.pickImage(
                           source: ImageSource.camera
 
                       );
@@ -722,26 +864,9 @@ else{
                       );
                       setState(() {
 
-                        if(x==1){
-                          imgs1=Image.file(selected!);
-                          // img164 = base64Encode(selected.readAsBytesSync());
-                          img164 =selected.path;
 
-                        }
-                        else if(x==2){
-                          imgs2=Image.file(selected!);
-                          img264 =selected.path;
-
-//  img264 = base64Encode(selected.readAsBytesSync());
-                        }
-                        else{
-                          imgs3=Image.file(selected!);
-                          img364 =selected.path;
-
-                          // img364 = base64Encode(selected.readAsBytesSync());
-
-                        }
-                        _createFileFromString(base64Encode(selected.readAsBytesSync()),x);
+                        _createFileFromString(base64Encode(selected!.readAsBytesSync()),x,1);
+                        imgs.add(Image.file(selected));
 
                       });
 
@@ -759,38 +884,121 @@ else{
 
   }
 
-   Future<String> _createFileFromString(String base,int x) async {
+   Future<String> _createFileFromString(String base,int x,int from) async {
      final encodedStr = base;
      Uint8List bytes = base64.decode(encodedStr);
      String dir = (await getApplicationDocumentsDirectory()).path;
      File file = File(
-         "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+         "/storage/emulated/0/Android/data/com.galaxyinternational.cards/files/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
      await file.writeAsBytes(bytes).then((value) => {
        setState(() {
          Globalvireables.imagen=file.path;
          //img1=file.path;
 
 
-         if(x==1){
-           img164 =file.path;
 
-         }
-         else if(x==2){
-           img264 =file.path;
-
-//  img264 = base64Encode(selected.readAsBytesSync());
-         }
-         else{
            img364 =file.path;
 
            // img364 = base64Encode(selected.readAsBytesSync());
+         imgsPath.add(img364);
 
-         }
-         print ("gg");
+
+         print ("adddone"+img364);
        })
      });
 
 
      return file.path;
    }
+/*   Future<void> scanBarcode() async {
+     print("scanBarcode");
+     try {
+       print("succscanBarcode");
+
+       var barcode = await FlutterBarcodeScanner.scanBarcode(
+         '#ff6666',
+         'Cancel',
+         true,
+         ScanMode.QR,
+       );
+
+       if (!mounted) return;
+
+       setState(() {
+         cardnocontroler.text= barcode;
+       });
+     } on PlatformException {
+       print("platform version error");
+    //   barcode = 'Failed to get platform version.';
+     }
+   }*/
+  Future barcodeScanning() async {
+    try {
+      ScanResult barcode = await BarcodeScanner.scan();
+      setState(() =>  cardnocontroler.text=barcode.rawContent/*print(barcode.rawContent+"  bars")*/);
+    } on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
+        setState(() {
+          cardnocontroler.text = 'No camera permission!';
+        });
+      } else {
+        setState(() =>  cardnocontroler.text = 'Unknown error: $e');
+      }
+    } on FormatException {
+      setState(() =>  cardnocontroler.text =
+      'Nothing captured.');
+    } catch (e) {
+      setState(() =>  cardnocontroler.text = 'Unknown error: $e');
+    }
+  }
+
+  /*void barcodeScanning(QRViewController p1)
+  {
+//called when View gets created.
+    this.qrcontroller = p1;
+    qrcontroller!.scannedDataStream.listen((scanevent) {
+      setState(() {
+//UI gets created with new QR code.
+        cardnocontroler.text = scanevent.code!;
+      });
+    });
+  }*/
+
+
+  showAlertDialog(BuildContext context) {
+
+    // set up the buttons
+    Widget remindButton = TextButton(
+      child: Text("Barcode reader"),
+      onPressed:  () {barcodeScanning();},
+    );
+    Widget cancelButton = TextButton(
+      child: Text("QR-code reader"),
+      onPressed:  () {barcodeScanning();},
+
+    );
+    Widget launchButton = TextButton(
+      child: Text("cancel"),
+      onPressed:  () {},
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("read card no"),
+      content: Text(""),
+      actions: [
+        remindButton,
+        cancelButton,
+        launchButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 }

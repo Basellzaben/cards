@@ -136,10 +136,6 @@ notifyListeners();
     return en[txt];
   }
 
-
-
-
-
   static getStringValuesSF(String key) async {
   //  SharedPreferences prefs = await SharedPreferences.getInstance();
     String prefs = Globalvireables.languageCode;//Platform.localeName.split('_')[0];
@@ -148,6 +144,8 @@ notifyListeners();
     String? stringValue = prefs/*.getString(key);*/;
     if(stringValue !="en" && stringValue !="ar")
       return "en";
+    else
+      return prefs;
     return stringValue;
   }
 

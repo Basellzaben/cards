@@ -105,13 +105,55 @@ class NavDrawer extends StatelessWidget {
                   })
             ],
           ),*/
+
+
+          new InkWell(
+            onTap: () async {
+
+              if(Globalvireables.languageCode=="en")
+              {    Globalvireables.languageCode="ar";
+              Globalvireables.lantext="English Language";
+
+              }
+              else {
+                Globalvireables.languageCode = "en";
+                Globalvireables.lantext="اللغة العربية";
+
+              }
+
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+
+              prefs.setString("Login","0");
+
+
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Home_Body()));
+
+            },
+            child: Card(
+              margin: EdgeInsets.only(top:40,left: 12,right: 12),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                    children: <Widget>[
+                      Icon(Icons.language,size: 30,color: HexColor(Globalvireables.bluedark),),
+
+                      Container( margin:EdgeInsets.only(left: 8,right: 8),
+                          child: Text( Globalvireables.lantext.toString(),style: TextStyle(fontSize: 18),)),
+                    ]
+                ),
+              ),),
+          ),
+
           Container(
-            height: 350,
+            height: 280,
             alignment: Alignment.bottomCenter,
             child: Container(
                 margin: EdgeInsets.only(bottom: 10),
                 child: Text("version 1.0 - 2021",style: TextStyle(color: Colors.black26,fontWeight: FontWeight.w300),)),
-
           ),
 
         ],

@@ -27,6 +27,11 @@ class Home_Body extends StatefulWidget {
 
 class _Home_Body extends State<Home_Body>   {
   String albumName ='Media';
+
+  bool _isListening = false;
+  String _text = 'Press the button and start speaking';
+  double _confidence = 1.0;
+
   Widget bodyd() {
     Future.delayed(Duration.zero, () async {
       _refreshJournals(searchcontroler.text);
@@ -54,49 +59,87 @@ class _Home_Body extends State<Home_Body>   {
                   color: HexColor(Globalvireables.bluedark),
                 ))
             ,
-
           ],
         ),
       ),
     );
   }
-
+late int cc;
   List<Map<String, dynamic>> _journals = [];
+  late List<String> countcards=["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""];
   final picker = ImagePicker();
   var imgFile;
   bool _disposed = false;
   bool _isLoading = true;
   void _refreshJournals(String text) async {
+    //_journals.clear();
     var data = await SQLHelper.getItems(text);
-  /*  setState(() {
+   // _journals = data;
+  //  countcards.clear();
+   // if(_journals.length>0)
+/*    for(var i=0;i<_journals.length;i++){
 
-    //  _isLoading = false;
-    });*/
 
+      try {
+
+      var datasize = await SQLHelper.getcountcards(_journals[i]['id']);
+      setState(() {
+       *//* if(countcards.length>_journals.length)
+          countcards.removeAt(i);*//*
+        countcards.add(datasize.toString());
+
+      });
+      print(countcards.toString()+"tessssr");
+      } on Exception catch (_) {
+        countcards[i]="0";
+      }
+    }*/
+
+    // _journals = data;
         setState(() {
           _journals = data;
+         // print(_journals.length.toString()+ " islength");
+
+     //     cc=_journals.length;
         });
 
   }
+  void getcount() async {
+   // countcards.clear();
+    for(var i=0;i<_journals.length;i++){
+      try {
+        var datasize = await SQLHelper.getcountcards(_journals[i]['id']);
+        setState(() {
+          countcards[i]=datasize.toString();
+        });
+        print(countcards.toString()+"tessssr");
+      } on Exception catch (_) {
+        countcards[i]="0";
+      }
+
+    }
+    _refreshJournals(searchcontroler.text);
+  }
   Image? imgs1 ;
   String img1="";
- @override
+/* @override
   void dispose() {
    // timer?.cancel();
    // _disposed = true;
     super.dispose();
-  }
+  }*/
   @override
   void initState() {
+  //  cc =  SQLHelper.getcountcards("").toString();
 
+    getcount();
 
    SQLHelper.db();
-
-
     super.initState();
 
  //Timer.periodic(Duration(seconds: 15), (Timer t) => _refreshJournals(searchcontroler.text));
     _refreshJournals(searchcontroler.text);
+  // getcount();
      // Loading the diary when the app starts
   }
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -118,7 +161,6 @@ class _Home_Body extends State<Home_Body>   {
         _titleController.text, img1);
     setState(() {
       _refreshJournals(searchcontroler.text);
-
     });
     img1="";
   }
@@ -130,9 +172,7 @@ class _Home_Body extends State<Home_Body>   {
         id, _titleController.text, img1);
     //setState(() {
       _refreshJournals(searchcontroler.text);
-
     //});
-
   }
 
   // Delete an item
@@ -148,7 +188,8 @@ class _Home_Body extends State<Home_Body>   {
   @override
   Widget build(BuildContext context) {
   //  _refreshJournals(searchcontroler.text);
-
+  //  countcards.clear();
+    getcount();
     return new WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -181,43 +222,25 @@ class _Home_Body extends State<Home_Body>   {
                       child: Row(
 
                           children: <Widget>[
-                            Container(
-                      /*        child: InkWell(
 
-                                  onTap: () {
+                             Row(
+                               children: [
+                                 Container(
+                                    // alignment: Alignment.topLeft,
+                                     margin: EdgeInsets.only(right: 0, left: 0, top: 33),
 
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder:
-                                            (context) =>
-                                            Body_profile()
-                                        )
-                                    );
+                                     child: Image.asset('assets/logo2.png',height: 60,width: 60,)),
 
+                                 Container(
+                                    // alignment: Alignment.topLeft,
+                                     margin: EdgeInsets.only(right: 0, left: 0, top: 33),
 
-                                  },
-                                  child: Row(
-
-                                      children: <Widget>[
-                                        Container(
-                                            margin: EdgeInsets.only(right: 5, left: 5, top: 40),
-
-                                            child: Icon(
-                                              Icons.person_rounded,
-                                              size: 40.0,
-                                              color: Colors.white,
-                                            )),
-
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          margin: EdgeInsets.only(right: 0, left: 0, top: 45),
-                                          child: Text(Globalvireables.name,
-                                            style: TextStyle(color: Colors.white, fontSize: 16),),
-                                        ),])
+                                     child:Text("Card Keeper",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700,fontSize: 16),))
+                               ],
+                             ),
 
 
 
-
-                              ),*/),
                             Spacer(),
                             InkWell(
 
@@ -255,40 +278,45 @@ class _Home_Body extends State<Home_Body>   {
 
                 ),
 
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.only(right: 0, left: 0, top: 16),
+                Row(
+                  children: [
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 15, left: 15, top: 16),
 
-                    width: 290
-                    , height: 55,
-                    child: Center(
+                        width: 300
+                        , height: 55,
+                        child: Center(
 
-                        child: TextField(
-                          autofocus: false,
-                          onChanged: RefreshPage(),
-                          controller: searchcontroler,
-                            autocorrect: true,
-                            decoration: InputDecoration(
-                            hintText: LanguageProvider.getTexts('search').toString(),
+                            child: TextField(
+                              autofocus: false,
+                              onChanged: RefreshPage(),
+                              controller: searchcontroler,
+                                autocorrect: true,
+                                decoration: InputDecoration(
+                                hintText: LanguageProvider.getTexts('search').toString(),
+                                prefixIcon: Icon(Icons.search),
+                                hintStyle: TextStyle(color: Colors.black12),
+                                filled: true,
+                                fillColor: Colors.white,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0)),
+                                  //      borderSide: BorderSide(color: Colors.green, width: 2),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0)),
+                                  //   borderSide: BorderSide(color: Colors.green, width: 2),
+                                ),
+                              ),)
 
-                            prefixIcon: Icon(Icons.search),
-                            hintStyle: TextStyle(color: Colors.black12),
-                            filled: true,
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0)),
-                              //      borderSide: BorderSide(color: Colors.green, width: 2),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0)),
-                              //   borderSide: BorderSide(color: Colors.green, width: 2),
-                            ),
-                          ),)
-
+                        ),
+                      ),
                     ),
-                  ),
+
+
+                  ],
                 )
 
 
@@ -330,12 +358,10 @@ class _Home_Body extends State<Home_Body>   {
                             },
                             child: Card(
 
-
-
                                 elevation: 7,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                ),
+                                                ),
                                 child: Container(
 
                                   decoration: BoxDecoration(
@@ -437,7 +463,18 @@ class _Home_Body extends State<Home_Body>   {
                                                         )
                                                     ),
                                                   ),
-                                                )
+                                                ),
+                                                Spacer(),
+                                                if(countcards.length==_journals.length)
+                                                Container(
+                                                      margin: EdgeInsets.only(left: 15,right: 15,top: 13),
+                                                    child: Text(countcards[index] ,style: TextStyle(fontSize: 16,color: Colors.black87,fontWeight: FontWeight.w800),)),
+
+                                              /*    Container(
+
+                                                      child: Text("0",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w800),)
+                                                  ),*/
+
                                               ])
                                         ],
                                       ),
@@ -660,8 +697,8 @@ setState(() {
     final encodedStr = base;
     Uint8List bytes = base64.decode(encodedStr);
     String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = File(
-        "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    File file = File("/storage/emulated/0/Android/data/com.galaxyinternational.cards/files/"
+        /*"$dir/"*/ + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
     await file.writeAsBytes(bytes).then((value) => {
     setState(() {
     Globalvireables.imagen=file.path;
@@ -671,6 +708,29 @@ print ("gg");
     });
 
 
+    return file.path;
+  }
+  Future<String> savegalary(String base,int x,String path) async {
+    final encodedStr = base;
+    Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getTemporaryDirectory()).path;
+    File file = File("/storage/emulated/0/Android/data/com.galaxyinternational.cards/files/"+ DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    await file.writeAsBytes(bytes).then((value) => {
+      setState(() {
+        Globalvireables.imagen=file.path;
+        //img1=file.path;
+
+
+        if(x==1){
+          img1 =file.path;
+
+        }
+
+        print ("gg");
+      })
+    });
+
+    print(file.path+"file.pathh");
     return file.path;
   }
   void _showForm(int? id,BuildContext context) async {
@@ -756,6 +816,8 @@ print ("gg");
                                                     img1 =selected.path.toString();// base64Encode(selected.readAsBytesSync());
 
                                                   });
+                                                  savegalary(base64Encode(selected.readAsBytesSync()),1,selected.path);
+
                                                   //_imgFromGallery();
                                                 }),
                                             new ListTile(
@@ -1004,8 +1066,10 @@ print ("gg");
 
                                                       imgs1=Image.file(selected);
                                                       img1 =selected.path.toString();// base64Encode(selected.readAsBytesSync());
+                                                      _createFileFromString(base64Encode(selected.readAsBytesSync()));
 
                                                     });
+
                                                     //_imgFromGallery();
                                                   }),
                                               new ListTile(

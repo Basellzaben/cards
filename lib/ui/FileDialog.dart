@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:cards/LanguageProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
@@ -11,7 +12,40 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'Home/Home_Body.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:cards/DataBase/SQLHelper.dart';
+import 'package:cards/LanguageProvider.dart';
+import 'package:http/http.dart' as http;
+import 'package:cards/GlobalVaribales.dart';
+//nbnbnbnmbnn
+import 'package:cards/color/HexColor.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
 class FileDialog extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => LogoutOverlayState();
@@ -330,7 +364,7 @@ print(json.toString());
                        onTap: () async {
                          Navigator.of(context).pop();
 
-                         imgFile = await picker.getImage(
+                         imgFile = await picker.pickImage(
                              source: ImageSource.gallery
 
                          );
@@ -344,10 +378,21 @@ print(json.toString());
                              img1 = base64Encode(selected.readAsBytesSync());
 
                            }
+                           else if(x==2){
+                             imgs2=Image.file(selected);
+                             img1 = base64Encode(selected.readAsBytesSync());
+                           }
+                           else{
+                             imgs3=Image.file(selected);
+                             img1 = base64Encode(selected.readAsBytesSync());
+
+                           }
 
 
 
                          });
+                         savegalary(base64Encode(selected.readAsBytesSync()),1,selected.path);
+
                          //_imgFromGallery();
                        }),
                    new ListTile(
@@ -368,7 +413,8 @@ print(json.toString());
                          if(x==1){
                            imgs1=Image.file(selected);
                            img1 = base64Encode(selected.readAsBytesSync());
-
+                           _createFileFromString(base64Encode(selected.readAsBytesSync()),1);
+print("الكفروضض تم");
                          }
                          else if(x==2){
                            imgs2=Image.file(selected);
@@ -395,4 +441,52 @@ print(json.toString());
 
 
    }
+
+  Future<String> _createFileFromString(String base,int x) async {
+    final encodedStr = base;
+    Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getTemporaryDirectory()).path;
+    File file = File(
+        "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    await file.writeAsBytes(bytes).then((value) => {
+      setState(() {
+        Globalvireables.imagen=file.path;
+        //img1=file.path;
+
+
+        if(x==1){
+          img1 =file.path;
+
+        }
+
+        print ("gg");
+      })
+    });
+
+
+    return file.path;
+  }
+  Future<String> savegalary(String base,int x,String path) async {
+    final encodedStr = base;
+    Uint8List bytes = base64.decode(encodedStr);
+    String dir = (await getTemporaryDirectory()).path;
+    File file = File(path);
+    await file.writeAsBytes(bytes).then((value) => {
+      setState(() {
+        Globalvireables.imagen=file.path;
+        //img1=file.path;
+
+
+        if(x==1){
+          img1 =file.path;
+
+        }
+
+        print ("gg");
+      })
+    });
+
+print(file.path+"file.pathh");
+    return file.path;
+  }
 }

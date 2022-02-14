@@ -20,6 +20,12 @@ import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import '../CardsDialog.dart';
 import '../FileDialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:highlight_text/highlight_text.dart';
+import 'package:speech_to_text/speech_to_text.dart' as speechToText;
+
 class Cards_Body extends StatefulWidget {
   goBackToPreviousScreen(BuildContext context){
     // Navigator.pop(context);
@@ -52,6 +58,12 @@ class _Cards_Body extends State<Cards_Body> with SingleTickerProviderStateMixin 
   Random random = new Random();
   late AnimationController controller;
   List<Map<String, dynamic>> _journals = [];
+
+
+  late speechToText.SpeechToText speech;
+  String textString = "Press The Button";
+  bool isListen = false;
+  double confidence = 1.0;
 
   late Animation colorAnimation;
   late Animation sizeAnimation;
@@ -153,9 +165,53 @@ if(txt.length>2)
     });
     print(data.toString()+"data");
   }
+  void listen() async {
+    if (!isListen) {
+      bool avail = await speech.initialize();
+      if (avail) {
+        setState(() {
+          isListen = true;
+        });
+        speech.listen(onResult: (value) {
+         // localeId: Locale('en', 'US');
+
+          setState(() {
+            textString = value.recognizedWords;
+            searchController.text=textString;
+            if (value.hasConfidenceRating && value.confidence > 0) {
+              confidence = value.confidence;
+            }
+          });
+        });
+      }
+    } else {
+      setState(() {
+        isListen = false;
+      });
+      speech.stop();
+    }
+
+
+
+    Timer(Duration(seconds: 5),
+    ()=>
+
+    {
+    setState(() {
+    isListen = false;
+    }),
+        speech.stop()
+    });
+
+
+
+
+  }
   @override
   void initState() {
     super.initState();
+    speech = speechToText.SpeechToText();
+
     Future.delayed(Duration.zero, () async {
       _refreshJournals(searchController.text);
       _refreshkeys();
@@ -282,6 +338,9 @@ if(txt.length>2)
                   ),
                 ),
 
+
+
+
                 if(_journalstype.length>0 )
                   Container(
                     height: 50,
@@ -297,11 +356,19 @@ if(txt.length>2)
                           onTap: () async {
                             setState(() {
 
-                              selected=_journalstype[index]['title'].toString();
+                              if(_journalstype[index]['title'].toString()=="All"){
+                                searchController.clear();
+                              }else{
+                                selected=_journalstype[index]['title'].toString();
 
-                              //   search(_journalstype[index]['title'].toString());
-                              //  typecontroler.text=_journals[index]['title'].toString();
-                              searchController.text=_journalstype[index]['title'].toString();
+                                //   search(_journalstype[index]['title'].toString());
+                                //  typecontroler.text=_journals[index]['title'].toString();
+                                searchController.text=_journalstype[index]['title'].toString();
+
+                              }
+
+
+
                             });  },
                           child: Container(
                             padding: EdgeInsets.all(9),
@@ -333,44 +400,77 @@ if(txt.length>2)
                   )
 
                 ,
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.only(right: 0, left: 0, top: 0),
-                    width: 290
-                    , height: 55,
-                    child: Center(
-                        child: TextField(
-                          controller: searchController,
-                          onChanged: search("",0),
-                          autocorrect: true,
-                          decoration: InputDecoration(
-                            hintText: LanguageProvider.getTexts('search').toString(),
-                            suffixIcon: IconButton(
-                              onPressed: searchController.clear,
-                              icon: Icon(Icons.clear,color:
-                              searchController.text.length>0 ?Colors.red : Colors.white
+                Row(
+                  children: [
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 10, left: 10, top: 0),
+                        width: 270
+                        , height: 55,
+                        child: Center(
+                            child: TextField(
+                              controller: searchController,
+                              onChanged: search("",0),
+                              autocorrect: true,
+                              decoration: InputDecoration(
+                                hintText: LanguageProvider.getTexts('search').toString(),
+                                suffixIcon: IconButton(
+                                  onPressed: searchController.clear,
+                                  icon: Icon(Icons.clear,color:
+                                  searchController.text.length>0 ?Colors.red : Colors.white
 
-                                ,),
-                            ),
-                            prefixIcon: Icon(Icons.search),
 
-                            hintStyle: TextStyle(color: Colors.black12),
-                            filled: true,
-                            fillColor: Colors.white,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0)),
-                              //      borderSide: BorderSide(color: Colors.green, width: 2),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0)),
-                              //   borderSide: BorderSide(color: Colors.green, width: 2),
-                            ),
-                          ),)
+                                    ,),
+                                ),
+                                prefixIcon: Icon(Icons.search),
 
+                                hintStyle: TextStyle(color: Colors.black12),
+                                filled: true,
+                                fillColor: Colors.white,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0)),
+                                  //      borderSide: BorderSide(color: Colors.green, width: 2),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0)),
+                                  //   borderSide: BorderSide(color: Colors.green, width: 2),
+                                ),
+                              ),)
+,
+
+                        ),
+                      ),
                     ),
-                  ),
+
+                     Container(
+                       margin: EdgeInsets.only(right: 2, left: 2, top: 0),
+
+                       height: 40,
+                       width: 40,
+                       child: AvatarGlow(
+
+                        animate: isListen,
+                        glowColor: Colors.red,
+                        endRadius: 65.0,
+                        duration: Duration(milliseconds: 2000),
+                        repeatPauseDuration: Duration(milliseconds: 100),
+                        repeat: true,
+                        child: FloatingActionButton(
+                          child: Icon(isListen ? Icons.mic : Icons.mic_off,color: Colors.white,),
+                          onPressed: () {
+                            listen();
+                          },
+                        ),
+                    ),
+                     ),
+
+
+
+
+
+                  ],
                 )
 
 

@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:cards/DataBase/SQLHelper.dart';
 import 'package:cards/LanguageProvider.dart';
 import 'package:cards/ui/CardView/Card_Body.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:cards/GlobalVaribales.dart';
 import 'package:cards/color/HexColor.dart';
@@ -21,7 +22,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:barcode_scan/barcode_scan.dart';
 
 class EditCardDialog extends StatefulWidget {
   @override
@@ -54,7 +55,13 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
   final String type;
    String img1;
    String img2;
-   String img3;
+
+
+  List<String> imgsPath = [];
+  List<int> imgsid = [];
+
+
+  String img3;
   LogoutOverlayStatecard( this.name, this.no, this.date, this.type,this.img1,this.img2,this.img3){
   }
 
@@ -63,6 +70,24 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
   late AnimationController controller;
   late Animation<double> scaleAnimation;
   List<Map<String, dynamic>> _journals = [];
+
+  List<Map<String, dynamic>> imageadded = [];
+
+  List<Map<String, dynamic>> imagesc = [];
+  Future<void> deleteimage(String index) async {
+    await SQLHelper.deleteimage(index);
+    getallimages();
+
+  }
+  void getallimages() async {
+    var data = await SQLHelper.getcardimages(Globalvireables.cardindex);
+
+    setState(() {
+      imagesc = data+imageadded;
+      print(data.toString()+"    =thisimageee");
+    });
+
+  }
 
   void _refreshkeys() async {
     var data = await SQLHelper.getKeys();
@@ -90,6 +115,7 @@ class LogoutOverlayStatecard extends State<EditCardDialog>
   @override
   void initState() {
     _refreshkeys();
+    getallimages();
     namecontroler.text=name;
     ExpiryDatecontroler.text=date;
     typecontroler.text=type;
@@ -154,7 +180,144 @@ if(Globalvireables.languageCode=="en")
         ),))
                             ,
 
-                      SingleChildScrollView(
+                      Column(
+                        children: [
+                          Container(
+
+                            height: 150,
+
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: imagesc.length,
+                              itemBuilder: (context, index)
+                              => Container(
+
+                                child: new InkWell(
+                                  onTap: () async {
+                                    setState(() {
+
+                                      _showPicker(context, 1,imagesc[index]['id']);
+
+
+
+
+                                             });  },
+                                  child:
+                                  SingleChildScrollView(
+                                      child: Stack(
+                                        alignment: Alignment.bottomRight,
+                                        children: <Widget>[
+
+                                          Container(
+                                            margin: EdgeInsets.all( 10),
+
+                                            width: 150,
+                                            height: 150,
+                                            child:  Container(
+                                              child: ClipRRect(
+                                                //  borderRadius: BorderRadius.circular(50.0),
+                                                  child: Image.file(
+                                                    File(imagesc[index]['path']),
+
+                                                  )
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: -15,
+                                            left: -10,
+                                            child: Center(
+                                              child: IconButton(
+                                                icon: Icon(Icons.clear,color: Colors.red,size: 25,),
+                                                onPressed: () async {
+                                                var d=  await SQLHelper.getcardimages(Globalvireables.cardindex);
+                                                if(index>=d.length) {
+                                                  setState(() {
+
+                                                    print("isindexdelete"+(index - d.length).toString());
+
+                                                    imageadded.removeAt(index - d.length);
+                                                    imgsPath.removeAt(index - d.length);
+                                                  });
+                                                getallimages();
+                                                }
+                                                  else
+                                                  deleteimage(imagesc[index]['id'].toString());
+                                               //   });
+
+
+                                                },
+                                              ),
+                                            ),
+
+
+                                          ),
+                                        ],
+                                      )
+                                  )
+                                  /*Container(
+                                    margin: EdgeInsets.all( 20),
+                                    child: Image.file(
+
+                                      File(imagesc[index]['path']),
+                                      height: MediaQuery.of(context).size.width/4,
+                                      width: MediaQuery.of(context).size.width/4,
+
+                                      gaplessPlayback: true,
+                                      fit: BoxFit.fill,
+
+                                    ),
+                                  ),*/
+                                ),/*Container(
+
+            child: Image.file(
+
+              File(imagesc[index]['path']),
+              height: MediaQuery.of(context).size.width/4,
+              width: MediaQuery.of(context).size.width/4,
+
+              gaplessPlayback: true,
+              fit: BoxFit.fill,
+
+            ),
+       ),*/
+                              ),
+                            ),
+
+                          ),
+
+
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            color: Colors.white,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.white,),
+                              child: Icon(
+                                Icons.image,
+                                size: 30.0,
+                                color: HexColor(Globalvireables.basecolor),
+                              ),
+                              onPressed:
+                                  () async {
+
+                                setState((){
+                                  _showPicker(context, 1,-1);
+
+
+                                  // /100dp  imgs.add(Image.file(imgFile));
+                                });
+                              },
+                            ),
+                          ),
+
+
+                        ],
+                      ),
+
+
+/*                      SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                               children: [
@@ -206,7 +369,7 @@ if(Globalvireables.languageCode=="en")
                                   ),
                                 )
 
-                              ])),
+                              ])),*/
 
                       Container(
 
@@ -337,6 +500,14 @@ if(Globalvireables.languageCode=="en")
                             controller: cardnocontroler,
                             // enabled: false,
                             decoration: InputDecoration(
+
+                              suffixIcon: IconButton(
+                                onPressed: barcodeScanning,
+                                icon: Icon(Icons.camera_alt,color: Colors.black26
+
+                                  ,),
+                              ),
+
                               prefixIcon: Icon(Icons.drive_file_rename_outline),
                               border: OutlineInputBorder(),
                               focusedBorder: OutlineInputBorder(
@@ -540,16 +711,26 @@ if(Globalvireables.languageCode=="en")
                         child: ElevatedButton(
                           child: Text(LanguageProvider.getTexts('save').toString()),
 
-                          onPressed: () {
+                          onPressed: () async {
 
 
                             if(namecontroler.text.length>2) {
                               print ("images this="+ img164+"  ---  "+ img164);
+                              if(imagesc[0]["path"]==null || imagesc[0]["path"].toString().length<2)
+                                displayMessage("Add name to cards");
+else
                               SQLHelper.updateCard(Globalvireables.cardindex,Globalvireables.fileindex
-                              ,namecontroler.text,  img1, img2, img3,cardnocontroler.text,ExpiryDatecontroler.text,typecontroler.text);
+                              ,namecontroler.text,  imagesc[0]["path"], img2, img3,cardnocontroler.text,ExpiryDatecontroler.text,typecontroler.text);
                            //   EditFile(namecontroler.text,  img1, img2, img3, context);
+
+
                               _addKey(typecontroler.text);
                              // Navigator.pop(context);
+
+                              for(var i=0;i<imgsPath.length;i++){
+                                await SQLHelper.addimagetocard(imgsPath[i],Globalvireables.cardindex);
+                          //  print("saveisdone = $idofcardsaved")
+                            }
 
                             }else{
                               displayMessage("Add name to cards");
@@ -559,7 +740,7 @@ if(Globalvireables.languageCode=="en")
                               MaterialPageRoute(builder: (context) => Card_Body()),);
 
 
-                          },
+                            },
                           style: ElevatedButton.styleFrom(
                               primary: HexColor(Globalvireables.basecolor),
                               padding: EdgeInsets.symmetric(horizontal: 100, vertical: 0),
@@ -627,20 +808,7 @@ if(x==1)
               ),
             ],
           )
-
-        /*child: Container(
-            width: 200,
-            height: 150,
-            child:  Container(
-          child: ClipRRect(
-  //        borderRadius: BorderRadius.circular(50.0),
-    child: Image.memory(
-    base64.decode(img1),
-    gaplessPlayback: true,
-    )
-    ),
-        ),
-      )*/);
+);
 
     else return Container(
 
@@ -813,7 +981,7 @@ if(x==1)
 
 
 
-  _showPicker(context,var x) {
+  _showPicker(context,var x,int id) {
     var imgFile;
     var bytes;
     showModalBottomSheet(
@@ -871,6 +1039,7 @@ if(x==1)
                             img3 = selected.path;
 
                           }
+                          _createFileFromString(base64Encode(selected!.readAsBytesSync()),id);
 
 
 
@@ -920,6 +1089,7 @@ if(x==1)
                           imgs3=Image.file(selected!);
                           img3 = selected.path;
                         }
+                        _createFileFromString(base64Encode(selected!.readAsBytesSync()),id);
 
                       });
 
@@ -936,17 +1106,31 @@ if(x==1)
 
 
   }
-  Future<String> _createFileFromString(String base) async {
+  Future<String> _createFileFromString(String base,int id) async {
     final encodedStr = base;
     Uint8List bytes = base64.decode(encodedStr);
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = File(
-        "$dir/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    String dir =
+        "/storage/emulated/0/Android/data/com.galaxyinternational.cards/files/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
+    /*(await getApplicationDocumentsDirectory()).path;*/
+    File file = File(dir);
     await file.writeAsBytes(bytes).then((value) => {
       setState(() {
+
+        imageadded.add(
+          {"id": -1, "path":file.path, "cardid": Globalvireables.cardindex}
+      );
+        //imageadded.removeAt(index)
+        getallimages();
         Globalvireables.imagen=file.path;
-        img1=file.path;
-        print ("gg");
+        //img1=file.path;
+
+        img364 =file.path;
+        if(id>=0)
+deleteimage(id.toString())
+;        // img364 = base64Encode(selected.readAsBytesSync());
+        imgsPath.add(img364);
+
+        print ("adddone"+img364);
       })
     });
 
@@ -963,5 +1147,24 @@ if(x==1)
     if(title.length>0)
       await SQLHelper.createKey(title);
     //  _refreshJournals();
+  }
+  Future barcodeScanning() async {
+    try {
+      ScanResult barcode = await BarcodeScanner.scan();
+      setState(() =>  cardnocontroler.text=barcode.rawContent/*print(barcode.rawContent+"  bars")*/);
+    } on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
+        setState(() {
+          cardnocontroler.text = 'No camera permission!';
+        });
+      } else {
+        setState(() =>  cardnocontroler.text = 'Unknown error: $e');
+      }
+    } on FormatException {
+      setState(() =>  cardnocontroler.text =
+      'Nothing captured.');
+    } catch (e) {
+      setState(() =>  cardnocontroler.text = 'Unknown error: $e');
+    }
   }
 }

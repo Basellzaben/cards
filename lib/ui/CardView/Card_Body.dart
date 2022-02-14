@@ -60,6 +60,19 @@ class _Card_Body extends State<Card_Body> {
   final HttpService httpService = HttpService();
   List<Map<String, dynamic>> _journals = [];
 
+//
+  List<Map<String, dynamic>> imagesc = [];
+  void getallimages() async {
+    var data = await SQLHelper.getcardimages(Globalvireables.cardindex);
+
+    setState(() {
+      imagesc = data;
+      print(data.toString()+"    =thisimageee  "+Globalvireables.cardindex);
+    });
+
+  }
+
+
 
   void _refreshJournals() async {
     final data = await SQLHelper.getcarddata(Globalvireables.fileindex,Globalvireables.cardindex);
@@ -76,6 +89,7 @@ class _Card_Body extends State<Card_Body> {
   @override
   void initState() {
     _refreshJournals();
+    getallimages();
     //RefreshPage();
 
     Globalvireables.barcodedata="0";
@@ -168,7 +182,7 @@ width: MediaQuery.of(context).size.width,
                       //    mainAxisAlignment: MainAxisAlignment.center,
                         children: [
 
-Container(alignment: LanguageProvider.Align() ,margin:EdgeInsets.only(top: 46,left: 10),child: Text(_journals[0]['title'].toString(),style: TextStyle(color: Colors.white,fontSize: 25),),)
+Container(alignment: LanguageProvider.Align() ,margin:EdgeInsets.only(top: 46,left: 10),child: Text(_journals[0]['title'].toString(),style: TextStyle(color: Colors.white,fontSize: 20),),)
 
                         ])),
 
@@ -176,7 +190,69 @@ Container(alignment: LanguageProvider.Align() ,margin:EdgeInsets.only(top: 46,le
  //Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 10,left: 10),child:Text("Card Data",style: TextStyle(fontSize: 15),)),
 
 
-  SingleChildScrollView(
+
+   Container(
+     height: 150,
+
+     child: ListView.builder(
+      shrinkWrap: true,
+      scrollDirection: Axis.horizontal,
+      itemCount: imagesc.length,
+      itemBuilder: (context, index)
+      => Container(
+
+        child: new InkWell(
+          onTap: () async {
+            setState(() {
+              Globalvireables.imagen=imagesc[index]['path'];
+              showDialog(
+                context: context,
+                builder: (_) => Showimage(),
+              );
+             // selected=imagesc[index]['title'].toString();
+
+              //   search(_journalstype[index]['title'].toString());
+              //  typecontroler.text=_journals[index]['title'].toString();
+             // searchController.text=_journalstype[index]['title'].toString();
+            });  },
+          child: Container(
+        margin: EdgeInsets.all( 20),
+        child: Image.file(
+
+        File(imagesc[index]['path']),
+        height: MediaQuery.of(context).size.width/4,
+        width: MediaQuery.of(context).size.width/4,
+
+        gaplessPlayback: true,
+        fit: BoxFit.fill,
+
+        ),
+        ),
+        ),/*Container(
+
+            child: Image.file(
+
+              File(imagesc[index]['path']),
+              height: MediaQuery.of(context).size.width/4,
+              width: MediaQuery.of(context).size.width/4,
+
+              gaplessPlayback: true,
+              fit: BoxFit.fill,
+
+            ),
+       ),*/
+        ),
+      ),
+
+  ),
+
+
+
+
+
+
+
+/*  SingleChildScrollView(
         child: Column(
             children: <Widget>[
               SingleChildScrollView(
@@ -265,7 +341,7 @@ if(_journals[0]['path2']!=null)
 
 
 
-            ])),
+            ])),*/
   if(Globalvireables.languageCode=="en" &&_journals[0]['id'].toString()!=null )
       Card(
         child: Container(
@@ -274,7 +350,12 @@ if(_journals[0]['path2']!=null)
             children: [
 
               Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(LanguageProvider.getTexts('cardno').toString()+" :",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w800))),
-              Container(alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),child:Text(_journals[0]['cardno'].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),)),
+              Container(width:200,alignment:Alignment.topLeft,margin: EdgeInsets.only(top: 20,left: 20),
+                  child:SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Text(_journals[0]['cardno'].toString(),
+                      style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),),
+                  )),
             ],
           ),
         ),
@@ -286,7 +367,10 @@ if(_journals[0]['path2']!=null)
         children: [
           Spacer(),
 
-          Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(_journals[0]['cardno'].toString(),textDirection: LanguageProvider.getDirection(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),)),
+          Container(width:200,alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20)
+              ,child:SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Text(_journals[0]['cardno'].toString(),textDirection: LanguageProvider.getDirection(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800),))),
           Container(alignment:Alignment.topRight,margin: EdgeInsets.only(top: 20,right: 20),child:Text(" :"+LanguageProvider.getTexts('cardno').toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600))),
 
         ],
